@@ -131,7 +131,7 @@ projekktor = $p = function() {
 
     function PPlayer(srcNode, cfg, onReady) {
 
-    this.config = new projekktorConfig('1.3.03');
+    this.config = new projekktorConfig('1.3.04');
 
     this.env = {
         muted: false,
@@ -851,8 +851,15 @@ projekktor = $p = function() {
         return result;
     };
 
-    /* promote an event to all registered plugins */
+    
     this._promote = function(evt, value) {
+        var ref = this;
+        this._enqueue(function() { try {ref.__promote(evt, value);} catch(e) {} } );
+        // this._enqueue(function() {onReady(ref);});
+    };
+    
+    /* promote an event to all registered plugins */
+    this.__promote = function(evt, value) {
 
         var event = evt,
             pluginData={};
@@ -1708,7 +1715,7 @@ projekktor = $p = function() {
             return true;
         });
 
-        return (this.getPlaybackQualities().indexOf('auto')>-1) ? 'auto' : temp.key || 'default';
+        return ($.inArray('auto', this.getPlaybackQualities())>-1) ? 'auto' : temp.key || 'default';
     };
         
     /* asynchronously loads external XML and JSON data from server */
@@ -2336,7 +2343,7 @@ projekktor = $p = function() {
     this._reset = function() {
 
         var cleanConfig = {},
-                ref = this;
+            ref = this;
               
         this.setFullscreen(false);
         
@@ -2989,7 +2996,8 @@ projekktor = $p = function() {
             }
              
         if (typeof onReady==='function') {
-        this._enqueue(function() {onReady(ref);});
+            // this._queue.unshift({command:function() {onReady(ref);}});
+            this._enqueue(function() {onReady(ref);});
         }
 
         // playlist?
