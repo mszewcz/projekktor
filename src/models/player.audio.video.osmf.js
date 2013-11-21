@@ -88,8 +88,7 @@ $p.newModel({
             FlashVars: $.extend({
                 // streamType: this.pp.getConfig('streamType', ''), // "dvr", //  "live" "recorded", "dvr"
                 // dvrSnapToLiveClockOffset: "5",
-                autoDynamicStreamSwitch: false,
-                bufferingOverlay: false,
+                // autoDynamicStreamSwitch: false,
                 javascriptCallbackFunction: 'window.projekktorOSMFReady'+this.pp.getId()               
             }, this.pp.getConfig('OSMFVars'))
             };
