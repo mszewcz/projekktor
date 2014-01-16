@@ -1,12 +1,48 @@
 PROJEKKTOR - simply mighty <video>
 http://www.projekktor.com
 
+V1.3.09
+=======
+
+  fixes:
+  * [core] general issues with jQuery oder than V1.6.x
+  * [core] leaving fullscreen on "done" doesn´t make the player stuck in a loop anymore
+  
+
+V1.3.08
+=======
+
+  fixes:
+  * [core] general scrubbing issues after dynamic change of platforms
+  
+  
+V1.3.07
+=======
+
+  fixes:
+  * [core] quality toggled audio covers
+  * [plugin:controlbar] loop button behavior
+  
+
+V1.3.06
+=======
+
+ fixes:
+ * [core] OSMF model: fixed problems with not or not properly promoted load progress information 
+
+
+V1.3.05
+=======
+
+ additions:
+ * [core] new possibilities to bypass hardware acceleration during flash fallback
+ 
 
 V1.3.04
 =======
 
   additions:
-  * [core] error messages can now also be customized on playlist item level
+  * [core] error messages can now also be customized on item level
   * [core] HLS on Android still sucks - added a workaround anyway
   
   fixes:

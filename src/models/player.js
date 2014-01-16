@@ -239,7 +239,7 @@ jQuery(function ($) {
                     if (this.getState('ERROR')) break;
                     if (this.getSeekState('SEEKING')) break;
                     if (this.getState('IDLE')) break;
-                    if (this.media.loadProgress == -1) break;
+                    if (this.media.loadProgress == -1) break;                   
                     this._setSeekState('seeking', value);               
                     this.setSeek(value);
                     break;
@@ -399,7 +399,8 @@ jQuery(function ($) {
         },
 
         getPoster: function () {      
-            var result = this.pp.getConfig('poster'),
+            var type = 'poster', 
+                result = this.pp.getConfig(type),
                 qual = 'default',
                 quals = [];
 
@@ -413,9 +414,9 @@ jQuery(function ($) {
             }
 
             qual = this.pp.getAppropriateQuality(quals);
-            for (var j in this.pp.getConfig('poster')) {
-                if (this.pp.getConfig('poster')[j].quality == qual) {
-                    result = this.pp.getConfig('poster')[j].src || null;
+            for (var j in this.pp.getConfig(type)) {
+                if (this.pp.getConfig(type)[j].quality == qual) {
+                    result = this.pp.getConfig(type)[j].src || null;
                     break;
                 }
             }
@@ -519,9 +520,10 @@ jQuery(function ($) {
             var me = this.mediaElement.get(0),
                 progress = 0;
           
-            if (typeof me.buffered !== 'object') return;
-            if (me.buffered.length === 0 &&  me.seekable.length===0) return;
-            if (this.media.loadProgress == 100) return;
+            if (this.media.duration===0) return;
+            if (typeof me.buffered!=='object') return;
+            if (me.buffered.length===0 &&  me.seekable.length===0) return;
+            if (this.media.loadProgress==100) return;
 
             if (me.seekable && me.seekable.length > 0) {
                 progress = Math.round(me.seekable.end(0) * 100 / this.media.duration);

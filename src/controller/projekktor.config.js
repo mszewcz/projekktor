@@ -38,7 +38,7 @@ projekktorConfig.prototype = {
     _ns:                            'pp',
     
     /* a priorised array of available platforms */
-    _platforms:                     ['browser', 'android', 'ios', 'native', 'vlc', 'flash'],
+    _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'vlc'],
     
     /* if set to true, projekktor assumes to live within an iframe and will act accordingly (used for embedding) */
     _iframe:                        false,
@@ -163,10 +163,10 @@ projekktorConfig.prototype = {
     videoScaling:                   'aspectratio',
         
     /* path to the MP4 Flash-player fallback component */
-    playerFlashMP4:                 'jarisplayer.swf',
+    playerFlashMP4:                 '',
         
     /* path to the MP3 Flash-player fallback component */
-    playerFlashMP3:                 'jarisplayer.swf',  
+    playerFlashMP3:                 '',  
             
     /* defines the streamtype of the current item.
         'http':  http  streaming

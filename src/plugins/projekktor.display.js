@@ -35,7 +35,7 @@ projekktorDisplay.prototype = {
         staticControls:     false,
         
         /* time to delay buffering-icon-overlay once "waiting" event has been triggered */
-        bufferIconDelay:    1,
+        bufferIconDelay:    1000,
             
         /* if set the indicator animation is tinkered from a cssprite - must be horizontal */
         spriteUrl:          '',
@@ -93,25 +93,26 @@ projekktorDisplay.prototype = {
     *****************************************/
     displayReadyHandler: function() {
         var ref = this;
-    
-        // the startbutton
-            this.startButton.unbind().click(function(){
-            ref.pp.setPlay();
-        });
+        this.hideStartButton();    
         
-        this.hideStartButton();
+        // the startbutton
+        this.startButton.unbind().click(function(){
+            ref.pp.setPlay();           
+        });
     },
 
     syncingHandler: function() {
         this.showBufferIcon();
-        if (this.pp.getState('IDLE'))
-                this.hideStartButton();        
+        if (this.pp.getState('IDLE')) {
+            this.hideStartButton();        
+        }
     },
     
     readyHandler: function() {
         this.hideBufferIcon();
-        if (this.pp.getState('IDLE'))
-                this.showStartButton();        
+        if (this.pp.getState('IDLE')) {
+            this.showStartButton();        
+        }
     },    
     
     bufferHandler: function(state) {
@@ -128,12 +129,7 @@ projekktorDisplay.prototype = {
                 clearTimeout(this._cursorTimer);
                 this.display.css('cursor', 'pointer');
                 break;
-            
-            case 'STARTING':
-                this.showBufferIcon();
-                this.hideStartButton();
-                break;
-            
+
             case 'PLAYING':
                 this.hideBufferIcon();
                 this.hideStartButton();
@@ -143,6 +139,7 @@ projekktorDisplay.prototype = {
                 this.showStartButton();
                 break;
             
+            case 'STARTING':
             case 'AWAKENING':
                 this.showBufferIcon();
                 this.hideStartButton();
