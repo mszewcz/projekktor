@@ -70,7 +70,7 @@ $p.newModel({
         var ref = this;
 
         window['projekktorOSMFReady'+this.pp.getId()] = function() {
-            ref.pp.playerModel._OSMFListener(arguments);
+            projekktor(ref.pp.getId()).playerModel._OSMFListener(arguments);
         };
 
         var domOptions = {
