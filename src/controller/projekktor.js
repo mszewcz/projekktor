@@ -2413,6 +2413,7 @@ projekktor = $p = function() {
             precision: (obj.precision==null) ? 1 : obj.precision,
             title: (obj.title==null) ? '' : obj.title,
             once: obj.once || false,
+            blipEvents: obj.blipEvents || [],
             
             _listeners: [],
             _unlocked: false,
