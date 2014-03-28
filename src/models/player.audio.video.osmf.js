@@ -98,7 +98,10 @@ $p.newModel({
         this.createFlash(domOptions, destContainer);
     },
     
-    flashReadyListener: function() {},    
+    flashReadyListener: function() {        
+        this.applySrc();
+        this.displayReady();         
+    },    
 
     // 
     removeListeners: function() {},
@@ -139,15 +142,15 @@ $p.newModel({
             value = arguments[0][2],
             ref = this;
  
-        this.mediaElement = $('#' +  this.pp.getMediaId()+"_flash"); // IE 10 sucks      
+        this.mediaElement = $('#' +  this.pp.getMediaId()+"_flash"); // IE 10 sucks
+        
         switch(event) {
             case 'onJavaScriptBridgeCreated':
                 if (this.mediaElement!==null && this.getState('AWAKENING') ) {                
                     $.each(this._eventMap, function(key, value){
                         ref.mediaElement.get(0).addEventListener(key, "projekktor('"+ref.pp.getId()+"').playerModel." + value);
                     });
-                    this.applySrc();
-                    this.displayReady();      
+                    this.flashReadyListener();
                 }
                 break;
             
@@ -200,7 +203,7 @@ $p.newModel({
     },
     
     OSMF_seekingChange: function(value) {
-        this.seekedListener(value);
+        this.seekedListener();
     },
     
     OSMF_bufferingChange: function(state) {
@@ -217,7 +220,7 @@ $p.newModel({
                 break;
             case 'ready':
                 if (this.getState('awakening')) {
-                    // this.displayReady();
+                    this.displayReady();
                 }            
                 if (this.getState('starting')) {
                     this.setPlay();
@@ -300,14 +303,14 @@ $p.newModel({
     
     OSMF_canSeekChange: function(enabled) {
         if(enabled){
-            this.allowRandomSeek = true;        
-            this.media.loadProgress = 100;        
+            this.allowRandomSeek = true;
+            this.media.loadProgress = 100;
         }
         else {
             this.allowRandomSeek = false;
         }
     },
-
+    
     /* todo */
     switchDynamicStreamIndex: function(index) {
         if (index==-1) {
@@ -326,13 +329,11 @@ $p.newModel({
             case 15:
                 this.sendUpdate('error', 5);
                 break;
-            case 16:
-                this.sendUpdate('error', 80);
-                break;                    
+            // case 16:
             case 80:
-            case 7:
                 this.sendUpdate('error', 80);
-                break;                
+                break;
+                
             default:
                 // this.sendUpdate('error', 0);
                 break;
@@ -350,7 +351,7 @@ $p.newModel({
     endedListener: function (obj) {
         if (this.mediaElement === null) return;
         if (this.media.maxpos <= 0) return;
-        if (this.getState('STARTING')) return;
+        if (this.getState() == 'STARTING') return;
         if (this._qualitySwitching===true) return;
         this._setState('completed');
     },    
@@ -369,7 +370,7 @@ $p.newModel({
         if (newpos==-1) {
             newpos = this.getDuration();
         }
-        
+
         this.mediaElement.get(0).seek(newpos);
     },
     

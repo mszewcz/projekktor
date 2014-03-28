@@ -1034,20 +1034,26 @@ projekktor = $p = function() {
     /*******************************
     DOM manipulations
     *******************************/
-    /* make player fill the whole window viewport */
+/* make player fill the whole window viewport */
     this._enterFullViewport = function(forcePlayer) {
+	
+	var win, target, targetParent, overflow;
+		
         // get relevant elements
-        var win = this.getIframeParent() || $(window),
-        target = this.getIframe() || this.getDC(),
-                overflow = $(win[0].document.body).css('overflow');
-
-        if (forcePlayer) {
-        win = $(window);
-        target = this.getDC();
-        }
+		if (forcePlayer) { // when we setup the player to fill up the iframe on its startup when it's in the iframe mode
+			win = $(window);
+			target = this.getDC();
+		}
+		else { 
+			win = this.getIframeParent() || $(window);
+			target = this.getIframe() || this.getDC();
+			targetParent = target.parent() || null;
+		}
+		
+		overflow = $(win[0].document.body).css('overflow');
             
         // prepare target:
-            target.data('fsdata', {
+        target.data('fsdata', {
                 scrollTop: win.scrollTop() || 0,
                 scrollLeft: win.scrollLeft() || 0,
                 targetStyle: target.attr('style') || '',
@@ -1059,59 +1065,86 @@ projekktor = $p = function() {
                 iframeWidth: target.attr('width') || 0,
                 iframeHeight: target.attr('height') || 0
             }).css({
-        position: 'absolute',
+        position: forcePlayer ? 'absolute' : 'fixed', // to prevent Android native browser bad 'fixed' positioning when the player is in the iframe mode
         display: 'block',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: 99999,
+        zIndex: 999999, // that still not guarantee that the target element will be on top. Theoretically we could move the target element to the body but this causing reload of the iframe so it's not an option.
         margin: 0,
         padding: 0
-        });     
+        });
+
+		// prepare target parent
+		if(!forcePlayer && !!targetParent && targetParent[0].tagName != 'BODY'){ //check if it's not in the iframe mode and if the targetParent is not <body>
+			targetParent.data('fsdata', {
+				overflow: targetParent.css('overflow'),
+				overflowX: targetParent.css('overflow-x'),
+				overflowY: targetParent.css('overflow-y'),
+				styles: targetParent.attr('style')
+			}).attr('style', (!targetParent.attr('style') ? '' : targetParent.attr('style') + '; ') + 'overflow: visible!important;'); // that fixes IE issues with visibility of the element
+		}
 
         // prepare parent window
         win.scrollTop(0).scrollLeft(0);
-        $(win[0].document.body).css({
+        $(win[0].document.body).addClass(this.getNS() + 'fullviewport') // add class to eventually create more specific rules for site elements with high z-indexes
+		.css({
                 overflow: 'hidden',
                 overflowX: 'hidden',
                 overflowY: 'hidden'
-            });
+        });
     };
 
     /* reset player from "full (parent) window viewport" iframe thing */
-    this._exitFullViewport = function(forcePlayer) {
+    this._exitFullViewport = function(forcePlayer) { // forcePlayer is quite useless in this case, but for the sake of consistency it's here
+		var win, target, targetParent, fsData, fsTargetParentData;
+		
         // get relevant elements
-        var win = this.getIframeParent() || $(window),
-        target = this.getIframe() || this.getDC(),
-                fsData = target.data('fsdata') || null;
-
-        if (forcePlayer) {
-        win = $(window);
-        target = this.getDC();
-        }
+		if (forcePlayer) {
+			win = $(window);
+			target = this.getDC();
+		}
+		else { 
+			win = this.getIframeParent() || $(window);
+			target = this.getIframe() || this.getDC();
+			targetParent = target.parent() || null;
+		}
+		
+        fsData = target ? target.data('fsdata') : null;
+		fsTargetParentData = targetParent ? targetParent.data('fsdata') : null;
 
         // reset
             if (fsData!=null) {
                 // rebuild parent window state
                 win.scrollTop(fsData.scrollTop).scrollLeft(fsData.scrollLeft);
-                $(win[0].document.body).css('overflow', fsData.bodyOverflow);
-                $(win[0].document.body).css('overflow-x', fsData.bodyOverflowX);
-                $(win[0].document.body).css('overflow-y', fsData.bodyOverflowY);
+				
+                $(win[0].document.body).removeClass(this.getNS() + 'fullviewport')
+				.css({
+					overflow: fsData.bodyOverflow,
+					overflowX: fsData.bodyOverflowX,
+					overflowY: fsData.bodyOverflowY
+				});
                 
                 // rebuild iframe:
                 if ( fsData.iframeWidth > 0 && !forcePlayer) {
                     target
                         .attr('width', fsData.iframeWidth+"px")
                         .attr('height', fsData.iframeHeight+"px");
-                } else {
+                } 
+				else {
                     target
                         .width(fsData.targetWidth)
                         .height(fsData.targetHeight);
-                }
+                };
                 target
                     .attr('style', (fsData.targetStyle==null) ? '' : fsData.targetStyle )
                     .data('fsdata', null);
+				
+                if(!forcePlayer && !!fsTargetParentData){
+                        targetParent.attr('style', !fsTargetParentData.styles ? '' : fsTargetParentData.styles )
+                                        .data('fsdata', null);
+                }
             }
     };
 
