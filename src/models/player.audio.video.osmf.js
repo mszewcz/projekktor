@@ -384,12 +384,14 @@ $p.newModel({
             this.applySrc();
             return;
         }
-
-        if (newpos==-1) {
-            newpos = this.getDuration();
-        }
         
-        this.mediaElement.get(0).seek(newpos);
+        // snap to live position
+        if (newpos < 0) {
+            this.mediaElement[0].snapToLive();
+        }
+        else {
+            this.mediaElement[0].seek(newpos);
+        }
     },
     
     setVolume: function(newvol) {
