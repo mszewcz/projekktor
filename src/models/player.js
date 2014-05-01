@@ -19,7 +19,7 @@ jQuery(function ($) {
         _currentBufferState: null,
         _currentSeekState: null,        
 
-        _ap: false, // autday
+        _ap: false, // autoplay
         _volume: 0, // async
         _quality: 'default',
 

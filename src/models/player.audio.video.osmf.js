@@ -43,7 +43,9 @@ $p.newModel({
     _isStarted: false,
     _qualitySwitching: false,
     _isDynamicStream: false,
+    _requestedDynamicStreamIndex: -1, // inited with "auto switch" value to indicate that no index was manually requested
     _volume: 0,
+    _cbTimeout: null,
 
     _eventMap: {
         //  mediaPlayerStateChange: "OSMF_playerStateChange", obsolete
@@ -56,15 +58,25 @@ $p.newModel({
         playStateChange: "OSMF_playerStateChange",
         seekingChange: "OSMF_seekingChange",
         canPlayChange: "OSMF_seekingChange",
+        canSeekChange: "OSMF_canSeekChange",
+        
         isRecordingChange: "OSMF_isRecordingChange",
         complete: "endedListener",
         volumeChange: "volumeListener",
         mediaError: "errorListener",
         MBRItemChange: "OSMF_universal",
-        isDynamicStreamChange: "OSMF_updateDynamicStream",
-        autoSwitchChange: "OSMF_updateDynamicStream",
-        switchingChange: "OSMF_updateDynamicStream",
-        canSeekChange: "OSMF_canSeekChange"
+        
+        // Dynamic Streams
+        
+        isDynamicStreamChange: "OSMF_isDynamicStreamChange",
+        
+        // org.osmf.traits.DynamicStreamTrait
+        autoSwitchChange: "OSMF_autoSwitchChange", // Dispatched when the autoSwitch property changed.
+        numDynamicStreamsChange: "OSMF_numDynamicStreamsChange", // Dispatched when the number of dynamic streams has changed.
+        switchingChange: "OSMF_switchingChange" // Dispatched when a stream switch is requested, completed, or failed.
+        
+        
+        
     },
     
     _scalingMap: {
@@ -74,10 +86,13 @@ $p.newModel({
     },
     
     applyMedia: function(destContainer) {
-        var ref = this; 
-
-        window['projekktorOSMFReady'+this.pp.getId()] = function() {
-            projekktor(ref.pp.getId()).playerModel._OSMFListener(arguments);
+        var ref = this,
+            ppId = ref.pp.getId(),
+            ppMediaId = ref.pp.getMediaId();
+        
+        // register global listener
+        window['projekktorOSMFReady' + ppId] = function() {
+            projekktor(ppId).playerModel._OSMFListener(arguments);
         };     
 
         destContainer
@@ -88,11 +103,11 @@ $p.newModel({
                 'position': 'absolute',
                 'top': 0,
                 'left': 0
-            })        
+            });
         
         var domOptions = {
-            id: this.pp.getMediaId()+"_flash",
-            name: this.pp.getMediaId()+"_flash",
+            id: ppMediaId + "_flash",
+            name: ppMediaId + "_flash",
             src: this.pp.getConfig('playerFlashMP4'),
             width: '100%',
             height: '100%',
@@ -101,7 +116,7 @@ $p.newModel({
             quality: "high", 
             menu: false,
             allowFullScreen: 'true',
-            wmode: ($p.utils.ieVersion()) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
+            wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
             SeamlessTabbing: 'false',
             bgcolor: '#000000',
             FlashVars: $.extend({
@@ -109,30 +124,29 @@ $p.newModel({
                 scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
                 enableStageVideo: this._hardwareAcceleration,
                 disableHardwareAcceleration: !this._hardwareAcceleration,
-                javascriptCallbackFunction: 'window.projekktorOSMFReady'+this.pp.getId()               
+                javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId
             }, this.pp.getConfig('OSMFVars'))
         };
     
         this.createFlash(domOptions, destContainer);
     },
     
-    flashReadyListener: function() {},    
+    flashReadyListener: function() {},
 
-    // 
+    // disable default addListener & removeListeners methods
+    addListeners: function() {},
     removeListeners: function() {},
     
     loadProgressUpdate: function () {},
-    
-    // disable default addListener method
-    addListeners: function() {},
         
     applySrc: function() {
         var ref = this,
             sources = this.getSource();
 
-        this.mediaElement.get(0).setMediaResourceURL(sources[0].src);
+        this.mediaElement[0].setMediaResourceURL(sources[0].src);
         
         this.streamType = sources[0].streamType || this.pp.getConfig('streamType') || 'http';
+        
         if (this.getState('PLAYING')) {
             this.setPlay();
             if (ref.isPseudoStream!==true && this.media.position>0) {
@@ -152,23 +166,29 @@ $p.newModel({
         }
     }, 
 
-    _OSMFListener: function() {    
-        var event = arguments[0][1],
+    _OSMFListener: function() {
+        var mediaId = arguments[0][0],
+            event = arguments[0][1],
             value = arguments[0][2],
             ref = this;
- 
-        this.mediaElement = $('#' +  this.pp.getMediaId()+"_flash"); // IE 10 sucks
+        
+        if(!this.mediaElement){
+            this.mediaElement = $('#' +  mediaId); // IE 10 sucks
+        }
 
         switch(event) {
             case 'onJavaScriptBridgeCreated':
-                if (this.mediaElement!==null && (this.getState('AWAKENING') || this.getState('STARTING'))) {                
+                if (this.mediaElement !== null && (this.getState('AWAKENING') || this.getState('STARTING'))) {
+                    // add OSMF event listeners
                     $.each(this._eventMap, function(key, value){
-                        ref.mediaElement.get(0).addEventListener(key, "projekktor('"+ref.pp.getId()+"').playerModel." + value);
+                        ref.mediaElement[0].addEventListener(key, "projekktor('"+ref.pp.getId()+"').playerModel." + value);
                     });
+                    
                     this.applySrc();
-                    this.displayReady();      
+                    this.displayReady();
+                    
                 }
-                break;
+            break;
             
             // ther is no public event-hook for this:
             case 'loadedmetadata':
@@ -176,12 +196,29 @@ $p.newModel({
                 break;
                 
             case 'progress':
-            break;
                 this.progressListener({
                     loaded: value.buffered._end,
                     total: this.media.duration
                 });
-                break;                    
+            break;
+            
+            // other possible events
+            case "emptied":
+            case "loadstart":
+            case "play":
+            case "pause":
+            case "waiting": // buffering
+            case "loadedmetadata":
+            case "seeking":
+            case "seeked":
+            case "volumechange":
+            case "durationchange":
+            case "timeupdate":
+            case "complete":
+
+            default:
+            // console.log(event, obj);
+            break;
         }           
     },
     
@@ -189,10 +226,10 @@ $p.newModel({
     
     OSMF_isRecordingChange: function() {},
     
-    OSMF_PlayerCapabilityChange: function(state) {},        
+    OSMF_PlayerCapabilityChange: function(state) {},
  
     OSMF_bytesLoadedChange: function() {
-        var me = this.mediaElement.get(0),
+        var me = this.mediaElement[0],
             progress = 0;
             
         progress = me.getBytesLoaded() * 100 / me.getBytesTotal();
@@ -222,6 +259,16 @@ $p.newModel({
         this.seekedListener(value);
     },
     
+    OSMF_canSeekChange: function(value) {
+        if(value){
+            this.allowRandomSeek = true;        
+            this.media.loadProgress = 100;
+        }
+        else {
+            this.allowRandomSeek = false;
+        }
+    },
+    
     OSMF_bufferingChange: function(state) {
         if (state===true) 
             this.waitingListener();
@@ -241,15 +288,15 @@ $p.newModel({
                 if (this.getState('starting')) {
                     this.setPlay();
                 }
-                if (this.mediaElement.get(0).getStreamType().indexOf('dvr')>-1) {
+                if (this.mediaElement[0].getStreamType().indexOf('dvr')>-1) {
                     this.allowRandomSeek = true;
                     this.media.loadProgress = 100;
                 }                        
                 break;
             case 'loadError':
                 // causes false positive in case of dynamically loaded plugins
-                // this.errorListener(80);                
-                break;            
+                // this.errorListener(80);
+            break;            
         }
     },
     
@@ -258,7 +305,7 @@ $p.newModel({
         var ref = this;
         
         // getIsDVR & getIsDVRLive seem to be broken - workaround:
-        if (!this._isDVR && this.mediaElement.get(0).getStreamType()=='dvr') {
+        if (!this._isDVR && this.mediaElement[0].getStreamType()=='dvr') {
             this._isDVR = true;
             this.sendUpdate('streamTypeChange', 'dvr');
         }
@@ -285,58 +332,247 @@ $p.newModel({
                 if (!this.getSeekState('SEEKING')) {
                     this.endedListener();
                 }
-                break;                
+                break;
         }
     },    
     
-    OSMF_updateDynamicStream: function() {
-        var dynamicStreams = this.mediaElement.get(0).getStreamItems(),
-            name = '',
-            result = [];
-            // switchMode = this.mediaElement.get(0).getAutoDynamicStreamSwitch() ? "Auto" : "Manual";
-
-        for (var index in dynamicStreams) {
-            if (dynamicStreams.hasOwnProperty(index) && dynamicStreams[index].bitrate!==undefined) {
-                name = dynamicStreams[index].width + "x" + dynamicStreams[index].height;
-                if ( this.pp.getConfig('OSMFQualityMap') &&  this.pp.getConfig('OSMFQualityMap')[name] ) {
-                    this.availableQualities[ this.pp.getConfig('OSMFQualityMap')[name] ] = index;
-                }
-                
-            }
-        }
-
-        $p.utils.log( dynamicStreams );
-        
-        $.each( this.availableQualities, function(key, val) {
-            result.push(key);
-        });
-        
-        result.push('auto');
-        
-        this._isDynamicStream = true; // important: set this before sending the update
-        this.sendUpdate('availableQualitiesChange', result);        
+    OSMF_isDynamicStreamChange: function(value) {
+        this.getDynamicStreamingStatus('OSMF_isDynamicStreamChange');
+        this._isDynamicStream = value;
     },
     
-    OSMF_canSeekChange: function(enabled) {
-        if(enabled){
-            this.allowRandomSeek = true;        
-            this.media.loadProgress = 100;        
-        }
-        else {
-            this.allowRandomSeek = false;
+    OSMF_autoSwitchChange: function() {
+         this.getDynamicStreamingStatus('OSMF_autoSwitchChange');
+         if(this._requestedDynamicStreamIndex < 0){
+            this.clearBuffer();
+         }
+    },
+    
+    OSMF_numDynamicStreamsChange: function(){
+         this.getDynamicStreamingStatus('OSMF_numDynamicStreamsChange');
+         
+         // Note: update available dynamic stream qualities should be performed only after OSMF 'numDynamicStreamsChange' event.
+         // Strobe Media Playback getStreamItems() method can sometimes return wrong random width & hight values if it's called later.
+         this.updateAvailableDynamicStreamsQualities();
+    },
+    
+    OSMF_switchingChange: function(){
+        this.getDynamicStreamingStatus('OSMF_switchingChange');
+       
+        // Flush the buffer only when the switch to the requested index was succesfully performed, otherwise the Strobe Media Playback will hang
+        // and stop reacting on manual quality switch requests. We never flush buffer if 'auto switch' (index < 0) was requested.
+        if(this._requestedDynamicStreamIndex >= 0 && this.getCurrentDynamicStreamIndex() === this._requestedDynamicStreamIndex){
+            this.clearBuffer();
         }
     },
+    
+    /**
+     * Update projekktor internal quality keys for currently active playlist item
+     * with Strobe Media Playback dynamic stream item values
+     * 
+     * To use different quality keys format than default:
+     * audio/video key: '%{height}p | %{bitrate}kbps'
+     * audio-only key: 'audio | %{bitrate}kbps'
+     * 
+     * set 'dynamicStreamQualityKeyFormatAudioVideo', 'dynamicStreamQualityKeyFormatAudioOnly' config options respectively.
+     * 
+     * To show audio-only qualities set 'dynamicStreamShowAudioOnlyQualities' config option to true (default: false)
+     * 
+     * Note: Quality keys must have unique names, otherwise they will be overwriten.
+     * 
+     * @returns {Array} - returns available dynamic streams quality keys in the projekktor's format
+     */
+    updateAvailableDynamicStreamsQualities: function() {
 
-    /* todo */
-    switchDynamicStreamIndex: function(index) {
-        if (index==-1) {
-            this.mediaElement.get(0).setAutoDynamicStreamSwitch(true);	
-        } else {
-            if (this.mediaElement.get(0).getAutoDynamicStreamSwitch()) {
-                this.mediaElement.get(0).setAutoDynamicStreamSwitch(false);	
+        var dynamicStreams = this.getStreamItems(),
+            numStreams = dynamicStreams.length,
+            name = '',
+            qualityKeys = [];
+    
+        this.availableQualities = {};
+
+        for (var i=0; i < numStreams; i++){
+            if (dynamicStreams[i].bitrate !== undefined) {
+                // audio/video stream quality
+                if(dynamicStreams[i].height > 0){ 
+                    name = $p.utils.parseTemplate(this.pp.getConfig('dynamicStreamQualityKeyFormatAudioVideo') , {
+                                    height: dynamicStreams[i].height,
+                                    width: dynamicStreams[i].width,
+                                    bitrate: Math.floor(dynamicStreams[i].bitrate)
+                            });
+                }
+                // audio-only stream quality
+                else { 
+                        if(this.pp.getConfig('dynamicStreamShowAudioOnlyQualities')) {
+                        name = $p.utils.parseTemplate(this.pp.getConfig('dynamicStreamQualityKeyFormatAudioOnly') , {
+                                        bitrate: Math.floor(dynamicStreams[i].bitrate)
+                        });
+                    }
+                }
+                
+                this.availableQualities[name] = i;
+                qualityKeys.push(name);
             }
-            this.mediaElement.get(0).switchDynamicStreamIndex(index);
         }
+        
+        // always add auto
+        qualityKeys.push('auto');
+        
+        this._isDynamicStream = true; // important: set this before sending the update
+        
+        this.sendUpdate('availableQualitiesChange', qualityKeys);
+        return qualityKeys;
+    },
+    
+    /**
+     * Switch to a specific dynamic stream index.
+     * 
+     * @param {int} index - if < 0 then the automatic stream switch will be enabled, 
+     * otherwise if the index value is a valid stream index the manual switch will be performed
+     * 
+     * @returns {mixed} - if the requested index is invalid, is the same as current index or is out of valid range function returns false
+     * otherwise it returns requested index value. 
+     * Note: Always use strict comparison when using return value cause the lowes valid index could be 0.
+     * 
+     * Note:  If the media is paused, switching will not take place until after play resumes.
+     */
+    switchDynamicStreamIndex: function(index) {
+        // return if the index is NaN or is the current index or is out of range
+        if((isNaN(index) || (index < 0 && this.getAutoDynamicStreamSwitch()) || (index === this.getCurrentDynamicStreamIndex() && !this.getAutoDynamicStreamSwitch()) || index > this.getMaxAllowedDynamicStreamIndex())) return false;
+        
+        this._requestedDynamicStreamIndex = index;
+        
+        this.getDynamicStreamingStatus('before switch');
+        
+        // auto quality switching if requested index is < 0
+        if (index < 0) {
+           this.setAutoDynamicStreamSwitch(true);
+        }
+        // manual quality switching
+        else {
+            // auto dynamic stream switch must be set to false before any attempt of manual index switching
+            this.setAutoDynamicStreamSwitch(false);
+            
+            // if there is atempt to manual switch but after disabling auto switching current index is already the requested one (without that check the player tend to hang)
+            if(index !== this.getCurrentDynamicStreamIndex()){
+                this.mediaElement[0].switchDynamicStreamIndex(index);
+            }
+        }
+        
+        this.getDynamicStreamingStatus('after switchDynamicStreamIndexTo');
+        
+        return index;
+    },
+    
+    getStreamItems: function() {
+        return this.mediaElement[0].getStreamItems();
+    },
+    
+    getNumDynamicStreams: function() {
+        return this.mediaElement[0].getNumDynamicStreams();
+    },
+    
+    /**
+     * The maximum allowed index. This can be set at run-time to 
+     * provide a ceiling for the switching profile, for example,
+     * to keep from switching up to a higher quality stream when 
+     * the current video is too small to handle a higher quality stream.
+     * 
+     * The default is the highest stream index.
+     */
+    getMaxAllowedDynamicStreamIndex: function() {
+        return this.mediaElement[0].getMaxAllowedDynamicStreamIndex();
+    },
+    
+    setMaxAllowedDynamicStreamIndex: function(val){
+        if(!isNaN(val) && val !== this.getMaxAllowedDynamicStreamIndex() && val >= 0 && val < this.getNumDynamicStreams()){
+            this.mediaElement[0].setMaxAllowedDynamicStreamIndex(val);
+        }
+    },
+    
+    /**
+     * The index of the current dynamic stream. Uses a zero-based index.
+     */
+    getCurrentDynamicStreamIndex: function() {
+        return this.mediaElement[0].getCurrentDynamicStreamIndex();
+    }, 
+    
+    /**
+     * Defines whether or not the model should be in manual 
+     * or auto-switch mode. If in manual mode the switchDynamicStreamIndex
+     * method can be used to manually switch to a specific stream index.
+     */
+    getAutoDynamicStreamSwitch: function() {
+        return this.mediaElement[0].getAutoDynamicStreamSwitch();
+    },
+    
+    setAutoDynamicStreamSwitch: function(val) {
+        if(val){ // enable auto stream switching
+            this.mediaElement[0].setAutoDynamicStreamSwitch(true);
+        }
+        else { // disable auto stream switching
+            if(this.mediaElement[0].getAutoDynamicStreamSwitch()) { 
+                this.mediaElement[0].setAutoDynamicStreamSwitch(false);  
+            }
+        }
+    },
+    
+    /**
+     * Indicates whether or not a switch is currently in progress.
+     * This property will return true while a switch has been 
+     * requested and the switch has not yet been acknowledged and no switch failure 
+     * has occurred. Once the switch request has been acknowledged or a 
+     * failure occurs, the property will return false.
+     */
+    getDynamicStreamSwitching: function() {
+        return this.mediaElement[0].getDynamicStreamSwitching();
+    },
+    
+    getCanSeek: function() {
+        return this.mediaElement[0].getCanSeek();
+    },
+    
+    canSeekTo: function(val) {
+        return this.mediaElement[0].canSeekTo(val);
+    },
+    
+    /**
+     * Force-clearing the buffer after dynamic stream index (bitrate) change.
+     */
+    clearBuffer: function(){
+        var ref = this;
+        // always give it some delay to prevent multiple flushes in a short time
+        clearTimeout(this._cbTimeout);
+        
+        this._cbTimeout = setTimeout(function(){
+            // Perform a seek to the current time so we force an immediate quality switch
+            var currentTime = ref.mediaElement[0].getCurrentTime();
+
+            if(ref.getCanSeek() && ref.canSeekTo(currentTime)){
+                ref.mediaElement[0].seek(currentTime);
+            }
+            ref.getDynamicStreamingStatus('after clear buffer');
+        }, 200);
+    },
+    
+    getDynamicStreamingStatus: function(name){
+        console.log('| ' + name + ' | ' + arguments.callee.name + ' ===');
+        console.log(
+                       '| reqIdx: ', this._requestedDynamicStreamIndex ,
+                       ', current index: ', this.getCurrentDynamicStreamIndex(), 
+                       ', max allowed index: ', this.getMaxAllowedDynamicStreamIndex(), 
+                       ', num streams: ', this.getNumDynamicStreams(), 
+                       ', auto:', this.getAutoDynamicStreamSwitch(), 
+                       ', is switching:',  this.getDynamicStreamSwitching()
+                    );
+        var streams = this.getStreamItems();
+        for (var index in streams) {
+            if(streams.hasOwnProperty(index) && streams[index].bitrate !== undefined){
+                name = index + ' dimentions: ' + streams[index].width + "x" + streams[index].height + " | bitrate: " + streams[index].bitrate + ' | streamName: ' + streams[index].streamName;
+                console.log('| ' + name);
+            }
+        }
+        console.log('| ======================================');
     },
     
     errorListener: function() {
@@ -359,7 +595,10 @@ $p.newModel({
     },
     
     detachMedia: function() {        
-        try{this.mediaElement.get(0).remove();} catch(e){}           
+        try {
+            this.mediaElement[0].remove();
+        } 
+        catch(e){}           
     },
     
     volumeListener: function (volume) {
@@ -377,6 +616,7 @@ $p.newModel({
     /************************************************
      * setters
      ************************************************/
+    
     setSeek: function(newpos) {
         if (this.isPseudoStream) {
             this._setSeekState('seeking');
@@ -395,25 +635,27 @@ $p.newModel({
     },
     
     setVolume: function(newvol) {
-        if (this.mediaElement===null) 
+        if (this.mediaElement === null) {
             this.volumeListener(newvol);
-        else
-            this.mediaElement.get(0).setVolume(newvol);
-    },    
-    
-    setPause: function(event) {
-        this.mediaElement.get(0).pause();
-    },      
-    
-    setPlay: function(event) {     
-        this.mediaElement.get(0).play2();
+        }
+        else {
+            this.mediaElement[0].setVolume(newvol);
+        }
     },
     
-
+    setPause: function() {
+        this.mediaElement[0].pause();
+    },
+    
+    setPlay: function() {
+        this.mediaElement[0].play2();
+    },
+    
     setQuality: function (quality) {
         if (this._quality == quality) return;
         this._quality = quality;
         
+        // dynamic streams
         if (this._isDynamicStream === true) {
             this.switchDynamicStreamIndex( (quality=='auto') ? -1 : this.availableQualities[quality] );
             return;
@@ -423,7 +665,7 @@ $p.newModel({
         this.applySrc();
         this._qualitySwitching = false;
         this.qualityChangeListener();
-    },    
+    },
 
     /************************************************
      * getters
@@ -440,7 +682,7 @@ $p.newModel({
     
     getSrc: function () {
         try {
-            return this.mediaElement.get(0).getCurrentSrc();
+            return this.mediaElement[0].getCurrentSrc();
         } catch(e) {return null;}
     },
     
@@ -457,20 +699,6 @@ $p.newModel({
 
 $p.newModel({    
 
-    modelId: 'OSMFVIDEONA',
-    iLove: [
-        {ext:'flv', type:'video/flv', platform:'flashna', fixed: true, streamType: ['*']},
-        {ext:'mp4', type:'video/mp4', platform:'flashna', streamType: ['*']},
-        {ext:'f4v', type:'video/mp4', platform:'flashna', streamType: ['*']},
-        {ext:'mov', type:'video/quicktime', platform:'flashna', streamType: ['*']},
-        {ext:'m4v', type:'video/mp4', platform:'flashna', fixed: true, streamType: ['*']},
-        {ext:'f4m', type:'application/f4m+xml', platform:'flashna', fixed: true, streamType: ['*']}   
-    ],    
-    _hardwareAcceleration: false
-}, 'OSMFVIDEO');
-
-$p.newModel({    
-
     modelId: 'OSMFAUDIO',
     replace: 'AUDIOFLASH',
     
@@ -482,45 +710,48 @@ $p.newModel({
     ],
     
     applyMedia: function(destContainer) {
-        var ref = this; 
+        var ref = this,
+            ppId = ref.pp.getId(),
+            ppMediaId = ref.pp.getMediaId();
         
         $p.utils.blockSelection(destContainer);        
 
         // create image element
         this.imageElement = this.applyImage(this.getPoster('cover') || this.getPoster('poster'), destContainer);
             
-        var flashContainer = $('#'+this.pp.getMediaId()+'_flash_container');
+        var flashContainer = $('#' + ppMediaId + '_flash_container');
         
         if (flashContainer.length===0) {
             flashContainer = $(document.createElement('div'))
             .css({width: '1px', height: '1px'})
-            .attr('id', this.pp.getMediaId()+"_flash_container")
+            .attr('id', ppMediaId + "_flash_container")
             .prependTo( this.pp.getDC() );        
         }
         
-        window['projekktorOSMFReady'+this.pp.getId()] = function() {
-            projekktor(ref.pp.getId()).playerModel._OSMFListener(arguments);
-        };
+        window['projekktorOSMFReady' + ppId] = function() {
+            projekktor(ppId).playerModel._OSMFListener(arguments);
+        };   
         
         var domOptions = {
-            id: this.pp.getMediaId()+"_flash",
-            name: this.pp.getMediaId()+"_flash",
+            id: ppMediaId + "_flash",
+            name: ppMediaId + "_flash",
             src: this.pp.getConfig('playerFlashMP4'),
             width: '100%',
             height: '100%',
-            allowScriptAccess:"always",
-            quality:"height",
+            style: "position: absolute;",
+            allowScriptAccess: "always",
+            quality: "high", 
             menu: false,
             allowFullScreen: 'true',
-            wmode: 'opaque',
-            seamlesstabbing: 'false',
-            bgcolor: '#ccc',
-            FlashVars: $.extend({      
-                javascriptCallbackFunction: 'window.projekktorOSMFReady'+this.pp.getId()               
+            wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
+            SeamlessTabbing: 'false',
+            bgcolor: '#000000',
+            FlashVars: $.extend({
+                javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId               
             }, this.pp.getConfig('OSMFVars'))
-            };
-
+        };
         this.createFlash(domOptions, flashContainer, false); 
+        
     }
     
 }, 'OSMFVIDEO');

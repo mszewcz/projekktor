@@ -183,6 +183,29 @@ projekktorConfig.prototype = {
         {key: 'highres',  minHeight: 1081, minWidth: 0}  
     ],
     
+    /**
+     * Format of dynamic stream (HDS, HLS, MSS, etc.) audio/video quality keys in which they will be displayed in the settings menu
+     * 
+     * The available template values you can use:
+     * %{width} - width in px
+     * %{height} - height in px
+     * %{bitrate} - bitrate in kbps
+     */
+    dynamicStreamQualityKeyFormatAudioVideo: '%{height}p | %{bitrate}kbps',
+    
+    /**
+     * Format of dynamic stream (HDS, HLS, MSS, etc.) audio-only quality keys in which they will be displayed in the settings menu
+     * 
+     * The available template values you can use:
+     * %{bitrate} - bitrate in kbps
+     * 
+     * Note: the audio-only qualities will appear on the list only when the 'dynamicStreamShowAudioOnlyQualities' config option is set to true.
+     */
+    dynamicStreamQualityKeyFormatAudioOnly: 'audio | %{bitrate}kbps',
+
+    // if true, the player will add audio only streams to the list of available qualities
+    dynamicStreamShowAudioOnlyQualities: false,
+    
     /* if testcard is disabled, the player will force a filedowload in case no native- or flashplayer
     is available. oterhwise (enableTestcard=true) a testcard with an errormessage is shown in case of issues */
     enableTestcard:                 true,
