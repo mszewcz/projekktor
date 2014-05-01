@@ -338,6 +338,7 @@ $p.newModel({
     
     OSMF_isDynamicStreamChange: function(value) {
         this.getDynamicStreamingStatus('OSMF_isDynamicStreamChange');
+        this._quality = this._quality === 'default' ? 'auto' : this._quality;
         this._isDynamicStream = value;
     },
     
@@ -358,7 +359,9 @@ $p.newModel({
     
     OSMF_switchingChange: function(){
         this.getDynamicStreamingStatus('OSMF_switchingChange');
-       
+        
+        this.qualityChangeListener();
+        
         // Flush the buffer only when the switch to the requested index was succesfully performed, otherwise the Strobe Media Playback will hang
         // and stop reacting on manual quality switch requests. We never flush buffer if 'auto switch' (index < 0) was requested.
         if(this._requestedDynamicStreamIndex >= 0 && this.getCurrentDynamicStreamIndex() === this._requestedDynamicStreamIndex){
@@ -386,7 +389,11 @@ $p.newModel({
 
         var dynamicStreams = this.getStreamItems(),
             numStreams = dynamicStreams.length,
-            name = '',
+            keyName = '',
+            isAudioOnly = false,
+            showAudioOnly = this.pp.getConfig('dynamicStreamShowAudioOnlyQualities'),
+            avKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioVideo'),
+            aoKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioOnly'),
             qualityKeys = [];
     
         this.availableQualities = {};
@@ -394,24 +401,28 @@ $p.newModel({
         for (var i=0; i < numStreams; i++){
             if (dynamicStreams[i].bitrate !== undefined) {
                 // audio/video stream quality
-                if(dynamicStreams[i].height > 0){ 
-                    name = $p.utils.parseTemplate(this.pp.getConfig('dynamicStreamQualityKeyFormatAudioVideo') , {
+                if(dynamicStreams[i].height > 0){
+                    isAudioOnly = false;
+                    keyName = $p.utils.parseTemplate(avKeyFormat , {
                                     height: dynamicStreams[i].height,
                                     width: dynamicStreams[i].width,
                                     bitrate: Math.floor(dynamicStreams[i].bitrate)
                             });
                 }
                 // audio-only stream quality
-                else { 
-                        if(this.pp.getConfig('dynamicStreamShowAudioOnlyQualities')) {
-                        name = $p.utils.parseTemplate(this.pp.getConfig('dynamicStreamQualityKeyFormatAudioOnly') , {
+                else {
+                    isAudioOnly = true;
+                    if(showAudioOnly){
+                        keyName = $p.utils.parseTemplate(aoKeyFormat , {
                                         bitrate: Math.floor(dynamicStreams[i].bitrate)
                         });
                     }
                 }
                 
-                this.availableQualities[name] = i;
-                qualityKeys.push(name);
+                if(keyName.length && (isAudioOnly === showAudioOnly)){
+                    this.availableQualities[keyName] = i;
+                    qualityKeys.push(keyName);
+                }
             }
         }
         

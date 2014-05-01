@@ -235,7 +235,13 @@ projekktorSettings.prototype = {
     },
     
     availableQualitiesChangeHandler: function(qualities) {
-        this.qualitySet();
+        _createQualityList(qualities);
+        this.itemHandler();
+    },
+    
+    qualityChangeHandler: function (val) {
+        console.warn('> settings qualityChange', val);
+        this.qualitySet(val);
         this.itemHandler();
     },
     
@@ -462,6 +468,22 @@ projekktorSettings.prototype = {
         }
     
         return utftext;
+    },
+    
+    _createQualityList: function(qualities){
+        var qualityKeys = qualities || this.pp.getPlaybackQualities(),
+            qualityList = '<li class="first">%{quality}</li>',
+                    key = '';
+        
+        for(var i=0; i<qualityKeys.length; i++){
+            key = qualityKeys[i];
+            qualityList += '<li data-pp-settings-func="quality_' + key + '"  class="inactive">'+ key +'</li>';
+        }
+        
+        qualityList +=  '<li data-pp-settings-func="quality_auto"  class="auto inactive">%{automatic}</li>';
+        
+        
+        return this.i18n(qualityList);
     }
 };
 });
