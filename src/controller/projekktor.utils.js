@@ -498,7 +498,7 @@ jQuery(function ($) {
 			if (data === undefined || data.length == 0 || typeof data != 'object') return template;
 			
 			for (var i in data) {
-				template = template.replace(new RegExp('%{' + i + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
+				template = template.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
 			}
 			template = template.replace(/%{(.*?)}/gi, '');
 			return template;
@@ -543,6 +543,10 @@ jQuery(function ($) {
     
                 return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
             }
+        },
+        
+        regExpEsc: function(s){
+            return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         },
         
 		logging: false
