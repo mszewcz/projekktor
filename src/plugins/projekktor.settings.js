@@ -494,11 +494,11 @@ projekktorSettings.prototype = {
             val = qualityValues[i];
             
             if(val != 'auto' && val != 'default'){
-                qualityList += '<li data-pp-settings-func="quality_' + val + '"  class="inactive">%{'+ val +'}</li>';
+                qualityList += '<li data-'+ this.pp.getNS() +'-settings-func="quality_' + val + '"  class="inactive">%{'+ val +'}</li>';
             }
         }
         
-        qualityList +=  '<li data-pp-settings-func="quality_auto"  class="auto inactive">%{automatic}</li>';
+        qualityList +=  '<li data-'+ this.pp.getNS() +'-settings-func="quality_auto"  class="auto inactive">%{automatic}</li>';
         
         return this.i18n(qualityList);
     },
@@ -512,11 +512,11 @@ projekktorSettings.prototype = {
             val = platformValues[i];
             
             if(val != 'auto'){
-                platformList += '<li data-pp-settings-func="platform_' + val + '"  class="inactive">%{platform_'+ val +'}</li>';
+                platformList += '<li data-'+ this.pp.getNS() +'-settings-func="platform_' + val + '"  class="inactive">%{platform_'+ val +'}</li>';
             }
         }
         
-        platformList +=  '<li data-pp-settings-func="platform_auto"  class="auto inactive">%{automatic}</li>';
+        platformList +=  '<li data-'+ this.pp.getNS() +'-settings-func="platform_auto"  class="auto inactive">%{automatic}</li>';
         
         return this.i18n(platformList);
     },
