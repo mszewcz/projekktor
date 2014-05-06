@@ -22,25 +22,17 @@ projekktorSettings.prototype = {
         feedbackUrl: false,
         settingsMenu:
             '<ul id="tool" class="ppsettingslist active">' +
-                '<li class="first">%{help}</li>' +
+                '<li class="first label">%{help}</li>' +
                 '<li data-pp-settings-func="tool_help" class="inactive">%{keyboard controls}</li>' +
                 '<li data-pp-settings-func="tool_debug" class="inactive">%{debug}</li>' +
                 '<li data-pp-settings-func="tool_version" class="inactive">%{player info}</li>' +
                 '<li></li>' +
             '</ul>' +
             '<ul id="platform" class="ppsettingslist active">' +
-                '<li class="first">%{platform}</li>' +
-                '<li data-pp-settings-func="platform_flash" class="inactive">%{flash}</li>' +
-                '<li data-pp-settings-func="platform_native" class="inactive">%{html5}</li>' +
-                '<li data-pp-settings-func="platform_vlc" class="inactive">%{vlc}</li>' +
-                '<li data-pp-settings-func="platform_auto" class="auto inactive">%{automatic}</li>' +
+                '<li class="first label">%{platform}</li>' +
             '</ul>' +
             '<ul id="quality" class="ppsettingslist active">' +
-                '<li class="first">%{quality}</li>' +
-                '<li data-pp-settings-func="quality_l"  class="inactive">%{high}</li>' +
-                '<li data-pp-settings-func="quality_m"  class="inactive">%{medium}</li>' +
-                '<li data-pp-settings-func="quality_s"  class="inactive">%{low}</li>' +
-                '<li data-pp-settings-func="quality_auto"  class="auto inactive">%{automatic}</li>' +
+                '<li class="first label">%{quality}</li>' +
             '</ul>' +
             '<div class="ppclear"></div>',
             
@@ -165,12 +157,20 @@ projekktorSettings.prototype = {
         }
         // set automode: delete cookie
     },
-
+    
+    /*****************************************************
+     * Player Event Handlers
+     * **************************************************/ 
+    
     itemHandler: function() {
         var ref = this,
             pCount = 0,
             menuOptions = [];    
-
+        
+        // setup quality and platforms menu for current playlist item
+        this.setupQualityMenu();
+        this.setupPlatformMenu();
+        
         $.each(this.dest.find("[" + this.getDA('func') + "]"), function() {
             var func = $(this).attr(ref.getDA('func')).split('_');
 
@@ -225,22 +225,17 @@ projekktorSettings.prototype = {
         this.dest.addClass('column' + pCount);
 
     },
-
-    /*****************************************************
-     * Player Event Handlers
-     * **************************************************/     
+    
     plugin_controlbarHideHandler: function(controlBar) {
         this.setInactive();
         this.btn.addClass('off').removeClass('on');
     },
     
     availableQualitiesChangeHandler: function(qualities) {
-        _createQualityList(qualities);
         this.itemHandler();
     },
     
     qualityChangeHandler: function (val) {
-        console.warn('> settings qualityChange', val);
         this.qualitySet(val);
         this.itemHandler();
     },
@@ -362,12 +357,14 @@ projekktorSettings.prototype = {
 
         if (value=='auto' || !this.qualityCheck(value)) {
             this.cookie('quality', false, true);
-            this.pp.setPlaybackQuality(this.pp.getAppropriateQuality());
-            return true;
+            value = this.pp.getAppropriateQuality();
         }
 
         if (value!==null) {
             this.cookie('quality', value);
+        }
+        
+        if(this.pp.getPlaybackQuality() !== value){
             this.pp.setPlaybackQuality(value);
         }
 
@@ -470,20 +467,91 @@ projekktorSettings.prototype = {
         return utftext;
     },
     
-    _createQualityList: function(qualities){
-        var qualityKeys = qualities || this.pp.getPlaybackQualities(),
-            qualityList = '<li class="first">%{quality}</li>',
-                    key = '';
+    setupQualityMenu: function(){
+        // remove all the current quality menu items
+        this.removeMenuItems('quality');
         
-        for(var i=0; i<qualityKeys.length; i++){
-            key = qualityKeys[i];
-            qualityList += '<li data-pp-settings-func="quality_' + key + '"  class="inactive">'+ key +'</li>';
+        // add new items
+        this.addMenuItems('quality', this.createQualityList());
+    },
+    
+    setupPlatformMenu: function(){
+        // remove all the current quality menu items
+        this.removeMenuItems('platform');
+        
+        // add new items
+        this.addMenuItems('platform', this.createPlatformList());
+    },
+   
+    createQualityList: function(qualities){
+        var qualityValues = qualities || this.pp.getPlaybackQualities(),
+            qualityList = '',
+                    val = '';
+        
+        qualityValues.reverse();
+        
+        for(var i=0; i<qualityValues.length; i++){
+            val = qualityValues[i];
+            
+            if(val != 'auto' && val != 'default'){
+                qualityList += '<li data-pp-settings-func="quality_' + val + '"  class="inactive">%{'+ val +'}</li>';
+            }
         }
         
         qualityList +=  '<li data-pp-settings-func="quality_auto"  class="auto inactive">%{automatic}</li>';
         
-        
         return this.i18n(qualityList);
+    },
+    
+    createPlatformList: function(platforms){
+        var platformValues = platforms || this.pp.getPlatforms(),
+            platformList = '',
+            val = '';
+    
+        for(var i=0; i<platformValues.length; i++){
+            val = platformValues[i];
+            
+            if(val != 'auto'){
+                platformList += '<li data-pp-settings-func="platform_' + val + '"  class="inactive">%{platform_'+ val +'}</li>';
+            }
+        }
+        
+        platformList +=  '<li data-pp-settings-func="platform_auto"  class="auto inactive">%{automatic}</li>';
+        
+        return this.i18n(platformList);
+    },
+    
+    addMenuItems: function(menuId, content, prepend){
+        var id = menuId || false,
+            cont = content || false,
+            prep = prepend || false;
+    
+        if(!(id && cont)) return false;
+        
+        var menu = this.dest.find('#'+id);
+        
+        if(prep){
+            menu.children('.label').after(content);
+        }
+        else {
+            menu.append(content);
+        }
+        
+        return this.dest.find('#'+id);
+    },
+    
+    /**
+     * Removes all the menu items from the selected menu
+     * 
+     * @param {String} menuId - id of the menu
+     * @returns {jQuery} - jQuery object containing removed elements
+     */
+    removeMenuItems: function(menuId){
+        var id = menuId || false;
+        
+        if(!id) return false;
+
+        return this.dest.find('#'+id).children().not('.label').remove();
     }
 };
 });

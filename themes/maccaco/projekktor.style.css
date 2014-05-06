@@ -739,8 +739,8 @@ settings menu
     bottom: 40px;
     right:0;
     display: block;    
-    width: 184px;
-    height: 130px;
+/*    width: 184px;
+    height: 130px;*/
     padding: 0;
     /* margin: 0 0 -130px -184px; */
     text-align: center;
@@ -775,7 +775,7 @@ settings menu
 }
 
 .ppsettingsmenu.column3 {
-    width: 280px;   
+    width: 280px;
 }
 
 
@@ -798,10 +798,6 @@ settings menu
 .ppsettingsmenu ul#quality {
     float: left;
 }
-
-
-
-
 
 .ppsettingslist li.first {
     font-weight: bold;

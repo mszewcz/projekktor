@@ -40,7 +40,6 @@ $p.newModel({
     _isStream: false,
     _isDVR: false,
     _isMuted: false,
-    _isStarted: false,
     _qualitySwitching: false,
     _isDynamicStream: false,
     _requestedDynamicStreamIndex: -1, // inited with "auto switch" value to indicate that no index was manually requested
@@ -142,8 +141,11 @@ $p.newModel({
     applySrc: function() {
         var ref = this,
             sources = this.getSource();
-
-        this.mediaElement[0].setMediaResourceURL(sources[0].src);
+        
+        try {
+            this.mediaElement[0].setMediaResourceURL(sources[0].src);
+        }
+        catch(e){}
         
         this.streamType = sources[0].streamType || this.pp.getConfig('streamType') || 'http';
         
@@ -164,6 +166,8 @@ $p.newModel({
             this.allowRandomSeek = true;
             this.media.loadProgress = 100;
         }
+        
+        return true;
     }, 
 
     _OSMFListener: function() {
@@ -567,23 +571,25 @@ $p.newModel({
     },
     
     getDynamicStreamingStatus: function(name){
-        console.log('| ' + name + ' | ' + arguments.callee.name + ' ===');
-        console.log(
-                       '| reqIdx: ', this._requestedDynamicStreamIndex ,
-                       ', current index: ', this.getCurrentDynamicStreamIndex(), 
-                       ', max allowed index: ', this.getMaxAllowedDynamicStreamIndex(), 
-                       ', num streams: ', this.getNumDynamicStreams(), 
-                       ', auto:', this.getAutoDynamicStreamSwitch(), 
-                       ', is switching:',  this.getDynamicStreamSwitching()
-                    );
-        var streams = this.getStreamItems();
-        for (var index in streams) {
-            if(streams.hasOwnProperty(index) && streams[index].bitrate !== undefined){
-                name = index + ' dimentions: ' + streams[index].width + "x" + streams[index].height + " | bitrate: " + streams[index].bitrate + ' | streamName: ' + streams[index].streamName;
-                console.log('| ' + name);
+        if($p.utils.logging){
+            $p.utils.log('| ' + name + ' | ' + arguments.callee.name + ' ===');
+            $p.utils.log(
+                           '| reqIdx: ', this._requestedDynamicStreamIndex ,
+                           ', current index: ', this.getCurrentDynamicStreamIndex(), 
+                           ', max allowed index: ', this.getMaxAllowedDynamicStreamIndex(), 
+                           ', num streams: ', this.getNumDynamicStreams(), 
+                           ', auto:', this.getAutoDynamicStreamSwitch(), 
+                           ', is switching:',  this.getDynamicStreamSwitching()
+                        );
+            var streams = this.getStreamItems();
+            for (var index in streams) {
+                if(streams.hasOwnProperty(index) && streams[index].bitrate !== undefined){
+                    name = index + ' dimentions: ' + streams[index].width + "x" + streams[index].height + " | bitrate: " + streams[index].bitrate + ' | streamName: ' + streams[index].streamName;
+                    $p.utils.log('| ' + name);
+                }
             }
+            $p.utils.log('| ======================================');
         }
-        console.log('| ======================================');
     },
     
     errorListener: function() {

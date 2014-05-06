@@ -90,7 +90,7 @@ projekktorPluginInterface.prototype = {
 
         while(text = re.exec(str)) {
             msg = custom[text[1]] || ((projekktorMessages[text[1]]!=undefined) ? projekktorMessages[text[1]] : text[1]);
-            str = str.replace(new RegExp('%{' + text[1] + '}', 'gi'), msg);
+            str = str.replace(new RegExp('%{' + $p.utils.regExpEsc(text[1]) + '}', 'gi'), msg);
         }
 
         return str;

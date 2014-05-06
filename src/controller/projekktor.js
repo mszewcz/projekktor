@@ -466,9 +466,9 @@ projekktor = $p = function() {
                     data.file[index].src = $p.utils.toAbsoluteURL(data.file[index].src);
                 }
      
-                // set "default" quality
+                // set "auto" quality
                 if ( data.file[index].quality==null)
-                    data.file[index].quality = 'default';
+                    data.file[index].quality = 'auto';
                 
                 // add this files quality key to index
                 qualities.push(data.file[index].quality)
@@ -479,13 +479,13 @@ projekktor = $p = function() {
         }         
     
         if (mediaFiles.length===0) {
-            mediaFiles.push({src:null, quality:"default"});
+            mediaFiles.push({src:null, quality:"auto"});
         }
   
         // check quality index against configured index:
         var _setQual = [];
         $.each(this.getConfig('playbackQualities'), function() {
-            _setQual.push(this.key || 'default');
+            _setQual.push(this.key || 'auto');
         });
             
         result = {
@@ -1497,11 +1497,11 @@ projekktor = $p = function() {
     };
 
     this.getPlaybackQuality = function() {
-        var result = 'default';
-        try { result=this.playerModel.getPlaybackQuality();} catch(e) {}
-        if (result=='default') result = this.getConfig('playbackQuality');
-        if (result=='default' || $.inArray(result, this.getPlaybackQualities())==-1 ) result = this.getAppropriateQuality();
-        if ($.inArray(result, this.getPlaybackQualities())==-1) result = 'default';
+        var result = 'auto';
+        try { result = this.playerModel.getPlaybackQuality(); } catch(e) {}
+        if (result=='auto') result = this.getConfig('playbackQuality');
+        if (result=='auto' || $.inArray(result, this.getPlaybackQualities())==-1 ) result = this.getAppropriateQuality();
+        if ($.inArray(result, this.getPlaybackQualities())==-1) result = 'auto';
         return result;
     };
     
@@ -1810,7 +1810,7 @@ projekktor = $p = function() {
             return true;
         });
 
-        return ($.inArray('auto', this.getPlaybackQualities())>-1) ? 'auto' : temp.key || 'default';
+        return ($.inArray('auto', this.getPlaybackQualities())>-1) ? 'auto' : temp.key || 'auto';
     };
         
     /* asynchronously loads external XML and JSON data from server */

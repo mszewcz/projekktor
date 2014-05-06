@@ -21,7 +21,7 @@ jQuery(function ($) {
 
         _ap: false, // autoplay
         _volume: 0, // async
-        _quality: 'default',
+        _quality: 'auto',
 
         _displayReady: false,
         _isPlaying: false,
@@ -364,7 +364,7 @@ jQuery(function ($) {
         },
 
         getPlaybackQuality: function () {
-            return ($.inArray(this._quality, this.media.qualities) > -1) ? this._quality : 'default';
+            return ($.inArray(this._quality, this.media.qualities) > -1) ? this._quality : 'auto';
         },
 
         getInFullscreen: function () {
