@@ -221,6 +221,14 @@ projekktorSettings.prototype = {
         var classes = this.dest.attr("class").split(" ").filter(function(item) {
             return item.lastIndexOf("column", 0) !== 0;
         });
+        
+        if(pCount){
+            this.setActive(this.btn, true);
+        }
+        else {
+            this.setActive(this.btn, false);
+        }
+        
         this.dest.attr("class", classes.join(" "));        
         this.dest.addClass('column' + pCount);
 
