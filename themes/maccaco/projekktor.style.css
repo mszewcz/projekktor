@@ -404,7 +404,7 @@ background: url("maccaco.png") no-repeat -91px top transparent;
 
 /* Settings Button */
 .ppsettingsbtn {
-    background: url("maccaco.png") no-repeat -60px -72px transparent;
+    background: url("maccaco.png") no-repeat -196px -71px transparent;
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -413,12 +413,12 @@ background: url("maccaco.png") no-repeat -91px top transparent;
 }
 
 .ppsettingsbtn:hover {
-    background: url("maccaco.png") no-repeat -32px -106px transparent;
+    background: url("maccaco.png") no-repeat -196px -106px transparent;
 }
 
 
 .ppsettingsbtn:active {
-    background: url("maccaco.png") no-repeat -32px -105px transparent;
+    background: url("maccaco.png") no-repeat -196px -106px transparent;
 }
 
 
@@ -470,6 +470,24 @@ background: url("maccaco.png") no-repeat -91px top transparent;
 
 .pploop.off {
     color: #ccc;
+}
+
+/* golive */
+.pplive .ppgolive {
+    background: url("maccaco.png") no-repeat -148px -71px transparent;
+    width: 45px;
+    height: 30px;
+    cursor: pointer;
+    border-left: 1px solid #413e3e;
+    border-right: 1px solid #000;
+}
+
+.pplive .ppgolive:hover {
+    background: url("maccaco.png") no-repeat -148px -106px transparent;
+}
+
+.pplive .ppgolive:active {
+    background: url("maccaco.png") no-repeat -148px -106px transparent;
 }
 
 /* Scrubber, Playhead and fluff */
