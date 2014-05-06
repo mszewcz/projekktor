@@ -2,7 +2,7 @@
  * Projekktor II Plugin: Controlbar
  * 
  * DESC: Adds a fully features cb element to the player
- * Copyright 2010-2013 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
+ * Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
  *
  * under GNU General Public License
  * http://www.projekktor.com/license/
@@ -256,13 +256,12 @@ jQuery(function ($) {
         config: {
             /* Plugin: cb - enable/disable fade away of overlayed controls */
             toggleMute: false,
-            
             fadeDelay: 2500,
             showOnStart: false,
             showOnIdle: false,
             
             /* cuepoints */
-            showCuePoints: false,
+            showCuePoints: true,
             showCuePointsImmediately: true, // should the cuepoint be displayed immediately after curent playlist item duration is known or only if the relevant part of the playlist item is buffered and ready to be played
             showCuePointGroups: [],
             minCuePointSize: '2px', // minimal cuepoint size
@@ -281,7 +280,7 @@ jQuery(function ($) {
             ],
 
             /* Default layout */
-            controlsTemplate: '<ul class="left"><li><div %{play}></div><div %{pause}></div></li></ul><ul class="right"><li><div %{fsexit}></div><div %{fsenter}></div></li><li><div %{loquality}></div><div %{hiquality}></div></li><li><div %{tracksbtn}></div></li><li><div %{vmax}></div></li><li><div %{vslider}><div %{vmarker}></div><div %{vknob}></div></div></li><li><div %{mute}></div></li><li><div %{timeleft}>%{hr_elp}:%{min_elp}:%{sec_elp} | %{hr_dur}:%{min_dur}:%{sec_dur}</div></li><li><div %{next}></div></li><li><div %{prev}></div></li></ul><ul class="bottom"><li><div %{scrubber}><div %{loaded}></div><div %{playhead}></div><div %{scrubberknob}></div><div %{scrubberdrag}></div></div></li></ul><div %{scrubbertip}>%{hr_tip}:%{min_tip}:%{sec_tip}</div>'
+            controlsTemplate: '<ul class="left"><li><div %{play}></div><div %{pause}></div></li></ul><ul class="right"><li><div %{fsexit}></div><div %{fsenter}></div></li><li><div %{settingsbtn}></div></li><li><div %{tracksbtn}></div></li><li><div %{vmax}></div></li><li><div %{vslider}><div %{vmarker}></div><div %{vknob}></div></div></li><li><div %{mute}></div></li><li><div %{timeleft}>%{hr_elp}:%{min_elp}:%{sec_elp} | %{hr_dur}:%{min_dur}:%{sec_dur}</div></li><li><div %{next}></div></li><li><div %{prev}></div></li></ul><ul class="bottom"><li><div %{scrubber}><div %{loaded}></div><div %{playhead}></div><div %{scrubberknob}></div><div %{scrubberdrag}></div></div></li></ul><div %{scrubbertip}>%{hr_tip}:%{min_tip}:%{sec_tip}</div>'
         },
 
         initialize: function () {
@@ -320,7 +319,8 @@ jQuery(function ($) {
         /* parse and apply controls dom-template */
         applyTemplate: function (dest, templateString) {
             var ref = this,
-                classPrefix = this.pp.getNS();
+                classPrefix = this.pp.getNS()
+                label = '';
 
             // apply template string if required:
             if (templateString) {
@@ -333,11 +333,11 @@ jQuery(function ($) {
                             // replace with span markup
                             templateString = templateString.replace(value, '<span class="' + classPrefix + cn + '"></span>');
                         } else {
-                            // replace with className
-                            templateString = templateString.replace(value, 'class="' + classPrefix + cn + '"');
+                            templateString = templateString.replace(value, 'class="' + classPrefix + cn + '"' + ref.i18n(' aria-label="%{' + cn + '}" title="%{' + cn + '}" ') );
                         }
                     });
                 }
+
                 dest.html(templateString);
             }
         },
@@ -357,20 +357,12 @@ jQuery(function ($) {
             }
 
             // prev / next button
-            if (this.pp.getItemCount() < 2 || this.getConfig('disallowSkip')) {
+            if (this.getConfig('disallowSkip')) {
                 this._active('prev', false);
                 this._active('next', false);
             } else {
-                this._active('prev', true);
-                this._active('next', true);
-            }
-
-            if (this.pp.getItemIdx() < 1) {
-                this._active('prev', false);
-            }
-
-            if (this.pp.getItemIdx() >= this.pp.getItemCount() - 1) {
-                this._active('next', false);
+                this._active('prev', this.pp.getPreviousItem()!==false);
+                this._active('next', this.pp.getNextItem()!==false);
             }
 
             // play / pause button
@@ -421,6 +413,17 @@ jQuery(function ($) {
             // init volume display
             this.displayVolume(this._getVolume());
         },
+        
+        deconstruct: function() {
+            this.pluginReady = false;
+            $.each(this.controlElements, function () {
+                $(this).unbind(); 
+            });
+            $.each(this._appliedDOMObj, function() {
+                $(this).unbind(); 
+            });            
+        },
+                
 
         /* assign listener methods to controlbar elements */
         addGuiListeners: function () {
@@ -514,8 +517,10 @@ jQuery(function ($) {
                 return;
             }
                         
-            if (this.getConfig('showOnIdle') && this.pp.getState('IDLE'))
+            if (this.getConfig('showOnIdle') && this.pp.getState('IDLE')) {
+                this.showcb(true);
                 return;
+            }
 
             if (instant)
                 this._noHide = false;
@@ -561,11 +566,12 @@ jQuery(function ($) {
                 function() {
                     ref.hidecb();
                 }, this.getConfig('fadeDelay')
-            );            
+            );
+            
+            this.displayProgress();
         },
-
+        
         displayTime: function (pct, dur, pos) {
-
             if (this.pp.getHasGUI()) return;
 
             var percent = ((pct || this.pp.getLoadPlaybackProgress() || 0) * 10) / 10,
@@ -606,9 +612,8 @@ jQuery(function ($) {
 
         displayProgress: function () {
             var percent = Math.round(this.pp.getLoadProgress() * 10) / 10;
-
             // limit updates
-            if (this.controlElements['loaded'].data('pct') != percent) {
+            if (this.controlElements['loaded'].data('pct') == undefined || this.controlElements['loaded'].data('pct') != percent) {                
                 this.controlElements['loaded'].data('pct', percent).css("width", percent + "%");
             };
         },

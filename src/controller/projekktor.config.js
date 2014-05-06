@@ -26,7 +26,7 @@ projekktorConfig.prototype = {
     The order how the plugins are set here is important because they are added from z-index 0 to n one by one to the player DOM.
     As such it is usefull to add the "Display" plugin always first.
     */
-    _plugins:                       ['display', 'controlbar', 'contextmenu'],
+    _plugins:                       ['display', 'controlbar', 'contextmenu', 'settings'],
     
     /* Add one plugin or more plugins to the player. Alternative to "plugins" above. Will be merged with it. */
     _addplugins:                    [], 
@@ -56,7 +56,7 @@ projekktorConfig.prototype = {
     _continuous:                    true,
     
     /* "true" will stop all other player instances but the one the user clicked play on. */
-    _thereCanBeOnlyOne:             true,
+    _thereCanBeOnlyOne:             true, 
     
     /* on "true" try to leave fullscreen on player "complete" - does not seem to work properly in Firefox... yeah! */
     _leaveFullscreen:               true,
@@ -68,37 +68,10 @@ projekktorConfig.prototype = {
     
     /*'http://www.projekktorxl.com/themegen/api/themes/live/format/jsonp/id/%{id}/version/%{ver}',*/ 
     _themeRepo:                     false, 
-    
-    /* all error messages waiting for your translation */
-    _messages:  {
-        /* flash & native: */
-        0: '#0 An (unknown) error occurred.',
-        1: '#1 You aborted the media playback. ',
-        2: '#2 A network error caused the media download to fail part-way. ',
-        3: '#3 The media playback was aborted due to a corruption problem. ',
-        4: '#4 The media (%{title}) could not be loaded because the server or network failed.',
-        5: '#5 Sorry, your browser does not support the media format of the requested file.',
-        6: '#6 Your client is in lack of the Flash Plugin V%{flashver} or higher.',
-        7: '#7 No media scheduled.',
-        8: '#8 ! Invalid media model configured !',
-        9: '#9 File (%{file}) not found.',
-        10: '#10 Invalid or missing quality settings for %{title}.',
-        11: '#11 Invalid streamType and/or streamServer settings for %{title}.',
-        12: '#12 Invalid or inconsistent quality setup for %{title}.',
-        80: '#80 The requested file does not exist or is delivered with an invalid content-type.',
-        97: 'No media scheduled.',
-        98: 'Invalid or malformed playlist data!',
-        99: 'Click display to proceed. ',
-        100: 'Keyboard Shortcuts',
-            
-        /* youtube errors: */
-        500: 'This Youtube video has been removed or set to private',
-        501: 'The Youtube user owning this video disabled embedding.',
-        502: 'Invalid Youtube Video-Id specified.'
-    },
-    
+        
     /* debug on / off */
     _debug:                         false,
+    debugLevel:                     'plugins,events,',
     
     /* the width of the player - >0= overwrite destNodes width, 0= keep dest node width, false=maintain ratio */
     _width:                         null,
@@ -210,6 +183,29 @@ projekktorConfig.prototype = {
         {key: 'highres',  minHeight: 1081, minWidth: 0}  
     ],
     
+    /**
+     * Format of dynamic stream (HDS, HLS, MSS, etc.) audio/video quality keys in which they will be displayed in the settings menu
+     * 
+     * The available template values you can use:
+     * %{width} - width in px
+     * %{height} - height in px
+     * %{bitrate} - bitrate in kbps
+     */
+    dynamicStreamQualityKeyFormatAudioVideo: '%{height}p | %{bitrate}kbps',
+    
+    /**
+     * Format of dynamic stream (HDS, HLS, MSS, etc.) audio-only quality keys in which they will be displayed in the settings menu
+     * 
+     * The available template values you can use:
+     * %{bitrate} - bitrate in kbps
+     * 
+     * Note: the audio-only qualities will appear on the list only when the 'dynamicStreamShowAudioOnlyQualities' config option is set to true.
+     */
+    dynamicStreamQualityKeyFormatAudioOnly: 'audio | %{bitrate}kbps',
+
+    // if true, the player will add audio only streams to the list of available qualities
+    dynamicStreamShowAudioOnlyQualities: false,
+    
     /* if testcard is disabled, the player will force a filedowload in case no native- or flashplayer
     is available. oterhwise (enableTestcard=true) a testcard with an errormessage is shown in case of issues */
     enableTestcard:                 true,
@@ -218,7 +214,7 @@ projekktorConfig.prototype = {
     the player will proceed to the next item without showing a testcard */
     skipTestcard:                   false,  
         
-    /* sets the duration for media items without a duration (images & html pages) */
+    /* (pre-) sets the media-duration / will be overwritten once META data is available */
     duration:                       0,
     
     /* add this CSS classes on startup */

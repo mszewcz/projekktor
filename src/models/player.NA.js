@@ -11,7 +11,7 @@ jQuery(function($) {
 $p.newModel({
     modelId: 'NA',
     iLove: [
-        {ext:'NaN', type:'none/none', platform:'browser'}
+        {ext:'NaN', type:'none/none', platform: 'browser'}
     ],    
     hasGUI: true,
     
@@ -19,32 +19,13 @@ $p.newModel({
         var ref = this;
 
         destContainer.html('');
-
-        var mouseClick = function(evt, player){
-            if (!player.getState('AWAKENING')) {
-                ref.pp.removeListener('mousedown', arguments.callee);
-                ref._setState('completed');
-            }
-        };
-        
         this.displayReady();
 
-        if (this.pp.getConfig('enableTestcard') && !this.pp.getIsMobileClient()) {
-            this.pp.addListener('mousedown', mouseClick);
-            this._setState('error');
-            this.setTestcard( (this.media.file[0].src!=null && this.media.errorCode===7) ? 5 : this.media.errorCode);            
-        } else {
-            // this.applyImage(this.media.config.poster, destContainer);
-            this.applyCommand ('stop');
-            window.location.href = this.media.file[0].src;            
+        this.sendUpdate( 'error', (this.media.file[0].src!=null && this.media.errorCode===7) ? 5 : this.media.errorCode );
+        
+        if (!this.pp.getConfig('enableTestcard')) {
+            window.location.href = this.media.file[0].src;      
         }
-
-    },
-    
-    detachMedia: function() {
-        this.pp.removeListener('leftclick', this.mouseClick);      
     }
-    
-
 });
 });

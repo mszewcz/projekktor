@@ -19,12 +19,13 @@ jQuery(function ($) {
         _currentBufferState: null,
         _currentSeekState: null,        
 
-        _ap: false, // autday
+        _ap: false, // autoplay
         _volume: 0, // async
-        _quality: 'default',
+        _quality: 'auto',
 
         _displayReady: false,
         _isPlaying: false,
+        _isReady: false,
 
         _id: null,
 
@@ -62,6 +63,7 @@ jQuery(function ($) {
         _init: function (params) {
             this.pp = params.pp || null;
             this.media = $.extend(true, {}, this.media, params.media);
+            this.mediaId = params.media.ID;
             this._ap = params.autoplay;
             this._isFullscreen = params.fullscreen;
             this._id = $p.utils.randomId(8);
@@ -77,15 +79,17 @@ jQuery(function ($) {
 
         ready: function () {
             this.sendUpdate('modelReady');
+            this._isReady = true;
             if (this._ap) {
                 this.sendUpdate('autostart', true);
                 this._setState('awakening');
-            } else this.displayItem(false);
+            } else {
+                this.displayItem(false);
+            }
         },
 
         /* apply poster while sleeping or get ready for true multi media action */
         displayItem: function (showMedia) {
-
             // reset
             this._displayReady = false;
             this._isPoster = false;
@@ -104,10 +108,6 @@ jQuery(function ($) {
 
             // media
             $('#' + this.pp.getMediaId() + "_image").remove();
-
-            // remove testcard (if any)
-            $("#" + this.pp.getId() + '_testcard_media').remove();
-
             // apply media
             this.applyMedia(this.pp.getMediaContainer());
         },
@@ -115,13 +115,13 @@ jQuery(function ($) {
         applyMedia: function () {},
 
         sendUpdate: function (type, value) {
-            if(this._currentState == 'ERROR') {
-                return;
-            }                
-            if (type=='error') {
-                this._setState('error');                                
-            }
+            // type = type.toLowerCase();
             this.pp._modelUpdateListener(type, value);
+            if (type=='error') {
+                this.removeListeners();
+                this.detachMedia();                            
+                this._setState('error');
+            }
         },
 
         /* wait for the playback element to initialize */
@@ -132,19 +132,19 @@ jQuery(function ($) {
 
         start: function () {
             var ref = this;
-
             if (this.mediaElement == null && this.modelId != 'PLAYLIST') return;
             if (this.getState('STARTING')) return;
 
             this._setState('STARTING');
 
-            if (!this.getState('STOPPED'))
+            if (!this.getState('STOPPED')) {
                 this.addListeners();
+            }
 
             if (this.pp.getIsMobileClient('ANDROID') && !this.getState('PLAYING')) {
                 setTimeout(function () {
                    ref.setPlay();
-                }, 500);
+                }, 50);
             }
             this.setPlay();
         },
@@ -160,6 +160,7 @@ jQuery(function ($) {
         detachMedia: function () {},
 
         destroy: function (silent) {
+            
             this.removeListeners();
 
             if (!this.getState('IDLE'))
@@ -208,7 +209,7 @@ jQuery(function ($) {
                     break;
                 case 'error':
                     this._setState('error');
-                    this.setTestcard(value);
+                    this.pp._modelUpdateListener('error', value);
                     break;
                 case 'play':
                     if (this.getState('ERROR')) break;
@@ -244,11 +245,17 @@ jQuery(function ($) {
                     this.setSeek(value);
                     break;
                 case 'fullscreen':
-                    if (value == this._isFullscreen) break;
-                    this._isFullscreen = value;
-                    this.sendUpdate('fullscreen', this._isFullscreen);
-                    this.reInit();
-                    this.setFullscreen();
+                    /* 
+                    * It is vital to first tell the controller what happened in order to have an already altered DOM
+                    * before processing further scaling processes.
+                    * This is a break in the logic but seems to work.
+                    */                    
+                    if (value != this._isFullscreen) {
+                        this._isFullscreen = value;                    
+                        this.sendUpdate('fullscreen', this._isFullscreen);
+                        this.reInit();
+                        this.setFullscreen();
+                    }                    
                     break;
                 case 'resize':
                     this.setResize();
@@ -274,15 +281,24 @@ jQuery(function ($) {
         setStop: function () {
             this.detachMedia();
             this._setState('stopped');
+            // this._ap=false;
             this.displayItem(false);
+            
         },
 
         setVolume: function (volume) {},
 
-        setFullscreen: function (inFullscreen) {
-            this.setResize();
+        setFullscreen: function(inFullscreen) {
+            if (this.element=='audio') return;
+            this._scaleVideo();
+        }, 
+
+        setResize: function() {
+            if (this.element=='audio') return;
+            this._scaleVideo(false);
         },
 
+        /*
         setResize: function () {
             var destContainer = this.pp.getMediaContainer();
             this.sendUpdate('scaled', {
@@ -292,7 +308,7 @@ jQuery(function ($) {
                 displayHeight: destContainer.height()
             });
         },
-
+*/
         setPosterLive: function () {},
 
         setQuality: function (quality) {
@@ -307,6 +323,10 @@ jQuery(function ($) {
         /*******************************
             ELEMENT GETTERS 
         *******************************/
+        getId: function() {
+            return this.mediaId;    
+        },
+        
         getQuality: function () {
             return this._quality;
         },
@@ -336,7 +356,7 @@ jQuery(function ($) {
         },
 
         getDuration: function () {
-            return this.media.duration || 0;
+            return this.media.duration || this.pp.getConfig('duration') || 0;
         },
 
         getMaxPosition: function () {
@@ -344,7 +364,7 @@ jQuery(function ($) {
         },
 
         getPlaybackQuality: function () {
-            return ($.inArray(this._quality, this.media.qualities) > -1) ? this._quality : 'default';
+            return ($.inArray(this._quality, this.media.qualities) > -1) ? this._quality : 'auto';
         },
 
         getInFullscreen: function () {
@@ -395,7 +415,7 @@ jQuery(function ($) {
         },
 
         getIsReady: function () {
-            return this._displayReady;
+            return this._isReady;
         },
 
         getPoster: function () {      
@@ -415,13 +435,12 @@ jQuery(function ($) {
             }
 
             qual = this.pp.getAppropriateQuality(quals);
-            
+          
             for (var j in cfg) {            
-                if (cfg[j].quality == qual || result == "" || qual == "default") {
+                if (cfg[j].src != undefined && (cfg[j].quality == qual || result == "" || qual == "default"))  {
                     result = cfg[j].src;                  
                 }
             }
-
             return result;
         },
 
@@ -640,8 +659,8 @@ jQuery(function ($) {
             this._setState('paused');
         },
 
-        seekedListener: function (obj) {
-            this._setSeekState('SEEKED', this.media.position);
+        seekedListener: function (value) {          
+            this._setSeekState('SEEKED', value || this.media.position);
         },
 
         volumeListener: function (obj) {
@@ -662,100 +681,52 @@ jQuery(function ($) {
             this._scaleVideo();
         },
 
-        setTestcard: function (no, txt) {
-            var destContainer = this.pp.getMediaContainer().html('').css({
-                    width: '100%',
-                    height: '100%'
-                }),
-                messages = $.extend(this.pp.getConfig('messages'), this.pp.getConfig('msg')),
-                code = (messages[no]==null) ? 0 : no,
-                msgTxt = (txt !== undefined && txt !== '') ? txt : messages[code];
-            
-            this.removeListeners();
-            this.detachMedia();            
-
-            if (this.pp.getItemCount() > 1) {
-                // "press next to continue"
-                msgTxt += ' ' + messages[99];
-            }
-
-            if (msgTxt.length < 3) {
-                msgTxt = 'ERROR';
-            }
-
-            if (code == 100) {
-                msgTxt = txt;
-            }
-
-            msgTxt = $p.utils.parseTemplate(msgTxt, $.extend({}, this.media, {
-                title: this.pp.getConfig('title')
-            }));
-
-            this.mediaElement = $('<div/>')
-                .addClass(this.pp.getNS() + 'testcard')
-                .attr('id', this.pp.getId() + '_testcard_media')
-                .html('<p>' + msgTxt + '</p>')
-                .appendTo(destContainer);
-                
-            if (this.pp.getConfig('msg')[code]!=null) {
-                this.mediaElement.addClass(this.pp.getNS() + 'customtestcard');
-            }
-        },
-
         applySrc: function () {},
         
         applyImage: function (url, destObj) {
 
             var imageObj = $('<img/>').hide(),
+                currentImageObj = $("." + this.pp.getMediaId() + "_image"); // select by class to workaround timing issues causing multiple <img> of the same ID being present in the DOM
                 ref = this;
 
             $p.utils.blockSelection(imageObj);
-
+                       
             // empty URL... apply placeholder
             if (url == null || url === false) {
-                return $('<span/>').attr({
-                    "id": this.pp.getMediaId() + "_image"
+                currentImageObj.remove();
+                return $('<img/>').attr({
+                    "id": this.pp.getMediaId() + "_image",
+                    "src": $p.utils.imageDummy()
                 }).appendTo(destObj);
             }
 
-            imageObj.html('').appendTo(destObj).attr({
-                "id": this.pp.getMediaId() + "_image",
-                "alt": this.pp.getConfig('title') || ''
-            }).css({
-                position: 'absolute'
-            });
-
-            imageObj.error(function (event) {
-                $(this).remove();
-            });
+            // no changes
+            if ($(currentImageObj[0]).attr('src')==url) {
+                if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), $(currentImageObj[0]), destObj.width(), destObj.height())) {
+                    try {
+                        ref.sendUpdate('scaled', {
+                            realWidth: currentImageObj._originalDimensions.width,
+                            realHeight: currentImageObj._originalDimensions.height,
+                            displayWidth: ref.mediaElement.width(),
+                            displayHeight: ref.mediaElement.height()
+                        });
+                    } catch (e) {}
+                }
+                return $(currentImageObj[0]);
+            }
 
             imageObj.load(function (event) {
-                var dest = event.currentTarget;
-                if (!imageObj.data('od')) {
-                    imageObj.data('od', {
-                        width: dest.naturalWidth,
-                        height: dest.naturalHeight
-                    });
-                }
+                var target = $(event.currentTarget);
+
+                if (!imageObj.attr("data-od-width")) imageObj.attr("data-od-width", target.naturalWidth);
+                if (!imageObj.attr("data-od-height")) imageObj.attr("data-od-height", target.naturalHeight);
+                
+                currentImageObj.remove();
+                
+                imageObj.attr('id', ref.pp.getMediaId() + "_image");
                 imageObj.show();
-                $p.utils.stretch(ref.pp.getConfig('imageScaling'), imageObj, destObj.width(), destObj.height());
-            });
 
-            // IE<9 trap:
-            imageObj.attr('src', url);
-
-            var onReFull = function (imgObj, destObj) {
-
-                if (destObj.is(':visible') === false) {
-                    ref.pp.removeListener('fullscreen', arguments.callee);
-                }
-
-                var tw = destObj.width(),
-                    th = destObj.height(),
-                    wid = imgObj.width(),
-                    hei = imgObj.height();
-
-                if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), imgObj, destObj.width(), destObj.height())) {
+                if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), target, destObj.width(), destObj.height())) {
                     try {
                         ref.sendUpdate('scaled', {
                             realWidth: imgObj._originalDimensions.width,
@@ -765,19 +736,35 @@ jQuery(function ($) {
                         });
                     } catch (e) {}
                 }
+            });
 
-                if (imgObj.attr('src') != ref.getPoster()) {
-                    imgObj.attr('src', ref.getPoster());
-                }
-            };
+            imageObj.removeData('od');
+            
+            this.pp.removeListener('fullscreen.poster');
+            this.pp.removeListener('resize.poster');
 
             this.pp.addListener('fullscreen.poster', function () {
-                onReFull(imageObj, destObj);
+                ref.applyImage(ref.getPoster(), destObj);  
             });
+            
             this.pp.addListener('resize.poster', function () {
-                onReFull(imageObj, destObj);
-            });
+                ref.applyImage(ref.getPoster(), destObj);  
+            });            
+            
+            imageObj.appendTo(destObj).attr({
+                "alt": this.pp.getConfig('title') || ''
+            }).css({
+                position: 'absolute'
+            }).addClass(this.pp.getMediaId() + "_image");            
+            
+            // IE<9 trap:
+            imageObj.attr('src', url);
 
+            imageObj.error(function (event) {
+                $(this).remove();
+                currentImageObj.show();
+            });
+            
             return imageObj;
         },
 
@@ -812,12 +799,10 @@ jQuery(function ($) {
                 }
 
                 dest = ref.mediaElement;
-
-                try {
-                    if ($(dest).attr('id').indexOf('testcard') > -1) {
-                        return;
-                    }
-                } catch (e) {console.log(e);}
+    
+                if (ref.getState('ERROR')) {
+                    return;
+                }
 
                 counter++;
                 try {
@@ -844,15 +829,18 @@ jQuery(function ($) {
 
         _setState: function (state) {
             var ref = this;
-            state = state.toUpperCase();
+                state = state.toUpperCase(),
+                old = this._currentState;
 
-            if (this._currentState != state && this._currentState != 'ERROR') {
-                if (this._currentState == 'PAUSED' && state == 'PLAYING') {
+            this._currentState = state.toUpperCase();                
+
+            if (old != state && old != 'ERROR') {
+                if (old == 'PAUSED' && state == 'PLAYING') {
                     this.sendUpdate('resume', this.media);
                     this._isPlaying = true;
                 }
 
-                if ((this._currentState == 'IDLE' || this._currentState == 'STARTING') && state == 'PLAYING') {
+                if ((old== 'IDLE' || old == 'STARTING') && state == 'PLAYING') {                
                     this.sendUpdate('start', this.media);
                     this._isPlaying = true;
                 }
@@ -865,7 +853,7 @@ jQuery(function ($) {
                         ref.sendUpdate('start');
                     };
                 }
-                this._currentState = state.toUpperCase();
+
                 this.sendUpdate('state', this._currentState);
             }
         },
@@ -880,20 +868,26 @@ jQuery(function ($) {
         _setSeekState: function (state, value) {
             if (this._currentSeekState != state.toUpperCase()) {
                 this._currentSeekState = state.toUpperCase();
-                this.sendUpdate('seek', this._currentSeekState);
+                this.sendUpdate('seek', this._currentSeekState, value);
             }
         },        
 
         _scaleVideo: function (promote) {
             var destContainer = this.pp.getMediaContainer();
+
             if (this.pp.getIsMobileClient()) return;
+        
             try {
                 var wid = destContainer.width(),
                     hei = destContainer.height(),
                     tw = this.media.videoWidth,
                     th = this.media.videoHeight;
 
-                if ($p.utils.stretch(this.pp.getConfig('videoScaling'), this.mediaElement, wid, hei, tw, th)) {
+                if (!this.mediaElement.attr("data-od-width")) this.mediaElement.attr("data-od-width", this.media.videoWidth);
+    		if (!this.mediaElement.attr("data-od-height")) this.mediaElement.attr("data-od-height", this.media.videoHeight);                    
+
+                // if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), imageObj, destObj.width(), destObj.height())) {
+                if ($p.utils.stretch(this.pp.getConfig('videoScaling'), this.mediaElement, wid, hei)) {
                     this.sendUpdate('scaled', {
                         realWidth: tw,
                         realHeight: th,

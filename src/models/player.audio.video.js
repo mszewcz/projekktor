@@ -48,7 +48,7 @@ $p.newModel({
     wasPersistent: true,
     isPseudoStream: false,
     
-    init: function() {                 
+    init: function() {
         var ua = navigator.userAgent; // TODO: global platform and feature detection
         if( ua.indexOf("Android") >= 0 ) {
             this.isAndroid = true;
@@ -56,7 +56,8 @@ $p.newModel({
             this.isGingerbread = true;
           }
         }
-        this.ready();
+        
+        this.ready();    
     },
         
     applyMedia: function(destContainer) { 
@@ -338,16 +339,6 @@ $p.newModel({
             }
         
         })();
-    },           
-
-    setFullscreen: function(inFullscreen) {
-        if (this.element=='audio') return;
-        this._scaleVideo();
-    }, 
-
-    setResize: function() {
-        if (this.element=='audio') return;
-        this._scaleVideo(false);
     }
     
 });
@@ -369,13 +360,9 @@ $p.newModel({
 
         $p.utils.blockSelection(destContainer);
     
-        // create cover image
-        this.imageElement = this.applyImage(this.getPoster('cover') || this.getPoster('poster'), destContainer);
-        this.imageElement.css({border: '0px'});
-        
         if ($('#'+this.pp.getMediaId()+"_html").length===0) {
             this.wasPersistent = false;
-            destContainer.html('').append(
+            destContainer.append(
                 $((this.isGingerbread) ? '<video/>' : '<audio/>')
                 .attr({
                     "id": this.pp.getMediaId()+"_html",         
@@ -396,7 +383,10 @@ $p.newModel({
                 })
             );
         }
-
+        // create cover image
+        this.imageElement = this.applyImage(this.getPoster('cover') || this.getPoster('poster'), destContainer);
+        this.imageElement.css({border: '0px'});
+        
         this.mediaElement = $('#'+this.pp.getMediaId()+"_html");
         this.applySrc();        
     },    

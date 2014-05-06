@@ -1,7 +1,7 @@
 /*
  * this file is part of: 
  * projekktor zwei
- * http://www.projekktor.com
+ * http://www.projekktor.com 
  *
  * Copyright 2010-2013 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
  * under GNU General Public License
@@ -36,7 +36,7 @@ projekktorPluginInterface.prototype = {
     
     getConfig: function(idx, defaultValue) {	
         var result = null,
-                def = defaultValue || null;
+            def = defaultValue || null;
     
         if (this.pp.getConfig('plugin_'+this.name)!=null) {
             result = this.pp.getConfig('plugin_'+this.name)[idx];
@@ -52,10 +52,13 @@ projekktorPluginInterface.prototype = {
     
         if (typeof result == 'object' && result.length === null)
             result = $.extend(true, {}, result, this.config[idx]);
-            else if (typeof result == 'object') {
+        else if (typeof result == 'object') {
             result = $.extend(true, [], this.config[idx] || [], result || [] );
-            }
-            
+        }
+        
+        if (idx==undefined) {
+            return this.pp.getConfig();
+        }
         return (result==null) ? def : result;
     },
     
@@ -76,6 +79,21 @@ projekktorPluginInterface.prototype = {
         $.each(this._appliedDOMObj, function() {
             $(this).unbind(); 
         });
+    },
+    
+    i18n: function(str) {
+        var results = [],
+            re = /%{([^}]+)}/g,
+            text,
+            custom = $.extend(true, {}, this.getConfig('messages') || {}, {title: this.getConfig('title'), version: this.pp.getVersion()}),
+            msg = ''; 
+
+        while(text = re.exec(str)) {
+            msg = custom[text[1]] || ((projekktorMessages[text[1]]!=undefined) ? projekktorMessages[text[1]] : text[1]);
+            str = str.replace(new RegExp('%{' + $p.utils.regExpEsc(text[1]) + '}', 'gi'), msg);
+        }
+
+        return str;
     },
     
     /**
@@ -196,6 +214,15 @@ projekktorPluginInterface.prototype = {
         return false;    
     },
     
+    /**
+    * set and get cookie-values for this specific plugin
+    * 
+    * @public
+    * @key (String) variable name / key
+    * @value (Mixed) Value to store
+    * @ttl (Mixed) Time to live in seconds or "false" for instant deletion
+    * @return (Object) the element
+    */    
     cookie: function (key, value, ttl) {
         if (document.cookie===undefined || document.cookie===false) return null;
         if (key==null && value!=null) return null;
@@ -252,6 +279,6 @@ projekktorPluginInterface.prototype = {
     },
     
     // important
-    eventHandler: function() {}
+    eventHandler: function() {}  
 }
 });

@@ -49,7 +49,6 @@ projekktorDisplay.prototype = {
     
     /* triggered on plugin-instanciation */
     initialize: function() {
-    
         // create the display container itself
         this.display = this.applyToPlayer($('<div/>'));
         
@@ -58,9 +57,7 @@ projekktorDisplay.prototype = {
     
         // create buffericon
         this.buffIcn = this.applyToPlayer( $('<div/>').addClass('buffering'), 'buffericn');
-        
-        this.imaContainer = this.applyToPlayer( $('<div/>').addClass('ima'), 'ima');
-        
+
         this.setActive();
 
         // add spritelayer to buffericon (if required)
@@ -91,23 +88,21 @@ projekktorDisplay.prototype = {
     /*****************************************
         EVENT HANDLERS
     *****************************************/
-    displayReadyHandler: function() {
+    synchronizingHandler: function() {        
         var ref = this;
-        this.hideStartButton();    
-        
+        this.hideStartButton();
+        this.showBufferIcon();
         // the startbutton
         this.startButton.unbind().click(function(){
             ref.pp.setPlay();           
         });
     },
 
-    syncingHandler: function() {
-        this.showBufferIcon();
-        if (this.pp.getState('IDLE')) {
-            this.hideStartButton();        
-        }
+    synchronizedHandler: function() {
+        this.readyHandler();  
     },
     
+        
     readyHandler: function() {
         this.hideBufferIcon();
         if (this.pp.getState('IDLE')) {
@@ -137,6 +132,7 @@ projekktorDisplay.prototype = {
             
             case 'IDLE':
                 this.showStartButton();
+                this.hideBufferIcon();
                 break;
             
             case 'STARTING':
@@ -154,9 +150,13 @@ projekktorDisplay.prototype = {
         }
     },
     
-    errorHandler: function() {
+    errorHandler: function(errorCode) {
         this.hideBufferIcon();
-        this.hideStartButton();    
+        this.hideStartButton();
+        if (!this.getConfig('skipTestcard')) {
+            this.testCard(errorCode);
+        }
+       
     },
     
     startHandler: function() {
@@ -207,8 +207,8 @@ projekktorDisplay.prototype = {
     
     mousedownHandler: function(evt) {
         var ref = this;     
-                
-        if( ($(evt.target).attr('id') || '').indexOf('_media')==-1)
+
+        if( ($(evt.target).attr('id') || '').indexOf('_media')==-1 && !$(evt.target).hasClass(this.pp.getNS() + 'testcard') )
             return;
     
         clearTimeout(this._cursorTimer);
@@ -221,6 +221,7 @@ projekktorDisplay.prototype = {
             case 'ERROR':
                 this.pp.setConfig({disallowSkip: false});
                 this.pp.setActiveItem('next');
+                this.display.html('').removeClass(this.pp.getNS() + 'testcard');
                 return;
             case 'IDLE':
                 this.pp.setPlay();
@@ -273,13 +274,14 @@ projekktorDisplay.prototype = {
         this.buffIcn.addClass('inactive').removeClass('active');
     },
         
-    showBufferIcon: function(instant) {                        
+    showBufferIcon: function(instant) {
         var ref=this;
 
         clearTimeout(this.bufferDelayTimer);
 
-        if (this.pp.getHasGUI())
+        if (this.pp.getHasGUI() || this.pp.getState('IDLE')) {
             return;
+        }
     
         if ( (this.pp.getModel()==='YTAUDIO' || this.pp.getModel()==='YTVIDEO') && !this.pp.getState('IDLE'))
             instant=true;
@@ -312,7 +314,28 @@ projekktorDisplay.prototype = {
     
             setTimeout(arguments.callee,60);
         })(); 
+    },
+    
+    testCard: function(errorCode) {
+        
+        messages = $.extend(this.getConfig('messages'), this.pp.getConfig('msg')),
+        msgTxt = this.i18n("%{error"+errorCode+"}");
 
+        if (this.pp.getItemCount() > 1) {
+            // "press next to continue"
+            msgTxt += ' ' + this.i18n("%{error99}");
+        }
+
+        if (msgTxt.length < 3) {
+            msgTxt = 'ERROR #' + errorCode;
+        }
+
+        this.display
+            .html('')
+            .addClass(this.pp.getNS() + 'testcard')
+            .html('<p>' + msgTxt + '</p>');
     }
+    
+
 };
 });
