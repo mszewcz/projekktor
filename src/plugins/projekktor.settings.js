@@ -498,7 +498,7 @@ projekktorSettings.prototype = {
             }
         }
         
-        qualityList +=  '<li data-'+ this.pp.getNS() +'-settings-func="quality_auto"  class="auto inactive">%{automatic}</li>';
+        qualityList +=  '<li data-'+ this.pp.getNS() +'-settings-func="quality_auto"  class="auto inactive">%{auto}</li>';
         
         return this.i18n(qualityList);
     },
@@ -516,7 +516,7 @@ projekktorSettings.prototype = {
             }
         }
         
-        platformList +=  '<li data-'+ this.pp.getNS() +'-settings-func="platform_auto"  class="auto inactive">%{automatic}</li>';
+        platformList +=  '<li data-'+ this.pp.getNS() +'-settings-func="platform_auto"  class="auto inactive">%{auto}</li>';
         
         return this.i18n(platformList);
     },
