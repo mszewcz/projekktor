@@ -520,9 +520,10 @@ jQuery(function ($) {
             // remember values & concider pseudo stream position offset, bypass some strange position hopping effects during pseudostream:
             if (position==this.media.position) return;
             
-            if (this.isPseudoStream && Math.round(position * 100) / 100==Math.round(this.media.offset * 100) / 100) {
-                this.media.position = this.media.offset;                
-            } else {              
+            if (this.isPseudoStream && Math.round(position * 100) / 100 == Math.round(this.media.offset * 100) / 100) {
+                this.media.position = this.media.offset;
+            }
+            else {              
                 this.media.position = this.media.offset + position;
             }
            
@@ -901,5 +902,6 @@ jQuery(function ($) {
         _isFF: function () {
             return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         }
+        
     };
 });
