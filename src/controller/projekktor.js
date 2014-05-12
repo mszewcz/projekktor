@@ -1975,6 +1975,10 @@ projekktor = $p = function() {
             this.getDC().addClass(this.getNS() + this.getConfig('className'))
         }
         this.getDC().addClass(this.getNS() + (this.getConfig('streamType') || 'http') );
+        
+        if(this.getConfig('streamType').indexOf('dvr')>-1){
+            this.getDC().addClass(this.getNS() + 'live');
+        }
             
         if (!$p.utils.cssTransitions()) this.getDC().addClass('notransitions')
         if (this.getIsMobileClient()) this.getDC().addClass('mobile')        

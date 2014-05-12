@@ -147,8 +147,20 @@ projekktorConfig.prototype = {
     */
     streamType:                     'http',
     
-    /* it streamType is 'rtmp' you have to provide the serverURL here. */
+    /* *** DEPRECATED with OSMF model ***
+     *
+     *  if streamType is 'rtmp' you have to provide the serverURL here. */
     streamServer:   '',
+    
+    /*
+     * Indicates, for RTMP streaming URLs, whether the URL includes the application instance or not. 
+     * If true, then the second part of the URL path is considered the instance name, 
+     * such as rtmp://host/app/foo/bar/stream. In this case the instance name would be 'foo' and the stream 
+     * would be 'bar/stream'. If false, then the second part of the URL path is considered to be the stream name, 
+     * such as rtmp://host/app/foo/bar/stream. In this case there is no instance name and the stream would be 'foo/bar/stream'.
+     *
+     */
+    rtmpUrlIncludesApplicationInstance: false, 
         
     startParameter:                 'start',
         

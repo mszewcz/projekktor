@@ -128,8 +128,11 @@ $p.newModel({
      */
     _streamTypeMap: {
         '*': 'liveOrRecorded',
+        'rtmp': 'liveOrRecorded',
         'live': 'live',
         'httpLive': 'live',
+        'httpVideoLive': 'live',
+        'httpAudioLive': 'live',
         'http' : 'recorded',
         'httpVideo': 'recorded',
         'httpAudio': 'recorded',
@@ -172,8 +175,10 @@ $p.newModel({
             SeamlessTabbing: 'false',
             bgcolor: '#000000',
             FlashVars: $.extend({
-                streamType: this.pp.getConfig('streamType', ''),
+                mimeType: this.getSource()[0].originalType,
+                streamType: this._streamTypeMap[this.pp.getConfig('streamType')],
                 scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
+                urlIncludesFMSApplicationInstance: this.pp.getConfig('rtmpUrlIncludesApplicationInstance'),
                 enableStageVideo: this._hardwareAcceleration,
                 disableHardwareAcceleration: !this._hardwareAcceleration,
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId
