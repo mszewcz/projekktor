@@ -44,44 +44,99 @@ $p.newModel({
     _isDynamicStream: false,
     _requestedDynamicStreamIndex: -1, // inited with "auto switch" value to indicate that no index was manually requested
     _volume: 0,
-    _cbTimeout: null,
+    _bufferTime: 0,
+    _cbTimeout: null, // clear buffer timeout id
 
     _eventMap: {
-        //  mediaPlayerStateChange: "OSMF_playerStateChange", obsolete
-        mediaPlayerCapabilityChange: "OSMF_PlayerCapabilityChange",
+        // org.osmf.events.AudioEvent, org.osmf.traits.AudioTrait
+        volumeChange: "volumeListener",
+        
+        // org.osmf.events.BufferEvent, org.osmf.traits.BufferTrait
+        bufferingChange: "OSMF_bufferingChange",
+        bufferTimeChange: "OSMF_bufferTimeChange",
+        
+        // org.osmf.events.DisplayObjectEvent, org.osmf.traits.DisplayObjectTrait
+        mediaSizeChange: "OSMF_mediaSizeChange",
+        
+        // org.osmf.events.LoadEvent, org.osmf.traits.LoadTrait, org.osmf.traits.LoadState
+        loadStateChange: "OSMF_loadStateChange",
+        bytesLoadedChange: "OSMF_bytesLoadedChange",
+        
+        // org.osmf.events.MediaErrorEvent, org.osmf.events.MediaErrorCodes
+        mediaError: "errorListener",
+        
+        // org.osmf.events.MediaPlayerCapabilityChangeEvent, org.osmf.media.MediaPlayer
+        canSeekChange: "OSMF_canSeekChange",
+        canPlayChange: "OSMF_seekingChange", 
+        
+        // org.osmf.events.PlayEvent, org.osmf.traits.PlayTrait, org.osmf.traits.PlayState
+        playStateChange: "OSMF_playStateChange",
+        
+        // org.osmf.events.SeekEvent, org.osmf.traits.SeekTrait
+        seekingChange: "OSMF_seekingChange",
+
+        // org.osmf.events.TimeEvent, org.osmf.traits.TimeTrait
         durationChange: "OSMF_durationChange",
         currentTimeChange: "OSMF_currentTimeChange",
-        loadStateChange: "OSMF_loadStateChange",
-        bufferingChange: "OSMF_bufferingChange",
-        bytesLoadedChange: "OSMF_bytesLoadedChange",
-        playStateChange: "OSMF_playerStateChange",
-        seekingChange: "OSMF_seekingChange",
-        canPlayChange: "OSMF_seekingChange",
-        canSeekChange: "OSMF_canSeekChange",
-        
-        isRecordingChange: "OSMF_isRecordingChange",
         complete: "endedListener",
-        volumeChange: "volumeListener",
-        mediaError: "errorListener",
-        MBRItemChange: "OSMF_universal",
-        
-        // Dynamic Streams
-        
+
+        /**
+         * Dynamic Streams / quality switching
+         */ 
+            // org.osmf.events.MediaPlayerCapabilityChangeEvent
         isDynamicStreamChange: "OSMF_isDynamicStreamChange",
-        
-        // org.osmf.traits.DynamicStreamTrait
+
+            // org.osmf.traits.DynamicStreamTrait
         autoSwitchChange: "OSMF_autoSwitchChange", // Dispatched when the autoSwitch property changed.
         numDynamicStreamsChange: "OSMF_numDynamicStreamsChange", // Dispatched when the number of dynamic streams has changed.
         switchingChange: "OSMF_switchingChange" // Dispatched when a stream switch is requested, completed, or failed.
-        
-        
-        
     },    
     
+    /**
+     * org.osmf.display.ScaleMode
+     * 
+     * none - implies that the media size is set to match its intrinsic size
+     * 
+     * letterbox - sets the width and height of the content as close to the container width and height
+     * as possible while maintaining aspect ratio.  The content is stretched to a maximum of the container bounds, 
+     * with spacing added inside the container to maintain the aspect ratio if necessary.
+     * 
+     * zoom - is similar to letterbox, except that zoom stretches the
+     * content past the bounds of the container, to remove the spacing required to maintain aspect ratio.
+     * This has the effect of using the entire bounds of the container, but also possibly cropping some content.
+     * 
+     * stretch - (unused) sets the width and the height of the content to the
+     * container width and height, possibly changing the content aspect ratio.
+     */
     _scalingMap: {
         none: 'none',
         fill: 'zoom',
         aspectratio: 'letterbox'
+    },
+    
+    /**
+     * org.osmf.net.StreamType
+     * 
+     * Maps projekktor internal streamType values to the OSMF's ones.
+     * 
+     * live - represents a live stream
+     * recorded - represents a recorded stream
+     * liveOrRecorded - represents a live or a recorded stream
+     * dvr - represents a possibly server side recording live stream
+     * 
+     */
+    _streamTypeMap: {
+        '*': 'liveOrRecorded',
+        'rtmp': 'liveOrRecorded',
+        'live': 'live',
+        'httpLive': 'live',
+        'httpVideoLive': 'live',
+        'httpAudioLive': 'live',
+        'http' : 'recorded',
+        'httpVideo': 'recorded',
+        'httpAudio': 'recorded',
+        'pseudo': 'recorded',
+        'dvr': 'dvr'
     },
     
     applyMedia: function(destContainer) {
@@ -119,8 +174,10 @@ $p.newModel({
             SeamlessTabbing: 'false',
             bgcolor: '#000000',
             FlashVars: $.extend({
-                // streamType: this.pp.getConfig('streamType', ''), // "dvr", //  "live" "recorded", "dvr"
+                mimeType: this.getSource()[0].originalType,
+                streamType: this._streamTypeMap[this.pp.getConfig('streamType')],
                 scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
+                urlIncludesFMSApplicationInstance: this.pp.getConfig('rtmpUrlIncludesApplicationInstance'),
                 enableStageVideo: this._hardwareAcceleration,
                 disableHardwareAcceleration: !this._hardwareAcceleration,
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId
@@ -132,8 +189,13 @@ $p.newModel({
     
     flashReadyListener: function() {},
 
-    // disable default addListener & removeListeners methods
-    addListeners: function() {},
+    addListeners: function() {
+        var ref = this;
+        $.each(this._eventMap, function(key, value){
+            ref.mediaElement[0].addEventListener(key, "projekktor('" + ref.pp.getId() + "').playerModel." + value);
+        });
+    },
+    
     removeListeners: function() {},
     
     loadProgressUpdate: function () {},
@@ -184,79 +246,28 @@ $p.newModel({
             case 'onJavaScriptBridgeCreated':
                 if (this.mediaElement !== null && (this.getState('AWAKENING') || this.getState('STARTING'))) {
                     // add OSMF event listeners
-                    $.each(this._eventMap, function(key, value){
-                        ref.mediaElement[0].addEventListener(key, "projekktor('"+ref.pp.getId()+"').playerModel." + value);
-                    });
-                    
+                    this.addListeners();
                     this.applySrc();
                     this.displayReady();
-                    
                 }
             break;
-            
-            // ther is no public event-hook for this:
-            case 'loadedmetadata':
-                this.metaDataListener(value);
-                break;
-                
-            case 'progress':
-                this.progressListener({
-                    loaded: value.buffered._end,
-                    total: this.media.duration
-                });
-            break;
-            
-            // other possible events
-            case "emptied":
-            case "loadstart":
-            case "play":
-            case "pause":
-            case "waiting": // buffering
-            case "loadedmetadata":
-            case "seeking":
-            case "seeked":
-            case "volumechange":
-            case "durationchange":
-            case "timeupdate":
-            case "complete":
-
-            default:
-            // console.log(event, obj);
-            break;
-        }           
+        }
     },
-    
-    OSMF_universal: function() {},
-    
-    OSMF_isRecordingChange: function() {},
-    
-    OSMF_PlayerCapabilityChange: function(state) {},
- 
-    OSMF_bytesLoadedChange: function() {
-        var me = this.mediaElement[0],
-            progress = 0;
-            
-        progress = me.getBytesLoaded() * 100 / me.getBytesTotal();
 
-        if (this.media.loadProgress > progress) return;
-
-        this.media.loadProgress = (this.allowRandomSeek === true) ? 100 : -1;
-        this.media.loadProgress = (this.media.loadProgress < 100 || this.media.loadProgress === undefined) ? progress : 100;
-
-        this.sendUpdate('progress', this.media.loadProgress);
+    OSMF_bytesLoadedChange: function(value) {
+        this.progressListener({loaded:this.getBytesLoaded(), total:this.getBytesTotal()});
     },
         
     OSMF_durationChange: function(value) {
-        if (isNaN(value)) return;
-        this.timeListener({position: this.media.position, duration: value || 0 });
+        var duration = isNaN(value) ? 0 : value;
+        this.timeListener({position: this.media.position, duration: duration || 0 });
         this.seekedListener();
     },
     
     OSMF_currentTimeChange: function(value) {
-        if (this._isDVR) {
-            this.sendUpdate('isLive', (value+20 >= this.media.duration)); // 20 => default dvr buffer of SMP
-        }
-        this.timeListener({position: value, duration: this.media.duration || 0 });
+        var time = isNaN(value) ? 0 : value;
+
+        this.timeListener({position: time, duration: this.media.duration || 0 });
     },
     
     OSMF_seekingChange: function(value) {
@@ -280,11 +291,40 @@ $p.newModel({
             this.canplayListener();
     },    
     
+    OSMF_bufferTimeChange: function(value) {
+        if (isNaN(value)){
+            this._bufferTime = 0;
+        }
+        else {
+            this._bufferTime = value;
+        }
+    },
+    
+    OSMF_mediaSizeChange: function(newWidth, newHeight) {
+        if (isNaN(newWidth) || isNaN(newHeight)) return;
+        
+        this.metaDataListener({videoWidth:newWidth, videoHeight:newHeight});
+    },
+    
+    /**
+     * Listen to the org.osmf.events.LoadEvent.LOAD_STATE_CHANGE events
+     * dispatched when the properties of a org.osmf.traits.LoadTrait change.
+     * 
+     * @param {string} state - one of the LoadState values defined in defined in org.osmf.traits.LoadState:
+     *                         "uninitialized" - the LoadTrait has been constructed, but either has not yet started loading or has been unloaded.
+     *                         "loading" - the LoadTrait has begun loading.
+     *                         "unloading" - the LoadTrait has begun unloading.
+     *                         "ready" - the LoadTrait is ready for playback.
+     *                         "loadError" - the LoadTrait has failed to load.
+     *                 
+     */
     OSMF_loadStateChange: function(state) {
+        
         switch (state) {
             case 'loading':        
                 this.waitListener();
                 break;
+                
             case 'ready':
                 if (this.getState('awakening')) {
                     // this.displayReady();
@@ -297,15 +337,21 @@ $p.newModel({
                     this.media.loadProgress = 100;
                 }                        
                 break;
+
             case 'loadError':
-                // causes false positive in case of dynamically loaded plugins
-                // this.errorListener(80);
+                //TODO: prevent false positives in the case of dynamically loaded plugins
+                this.errorListener(80);
             break;            
         }
     },
     
-    /* catching playStateChange and playerStateChange and playerStateChange aaaand... and playerStateChange */
-    OSMF_playerStateChange: function(state) {
+    /**
+     * Listen to the org.osmf.events.PlayEvent.PLAY_STATE_CHANGE events
+     * dispatched when the properties of a org.osmf.traits.PlayTrait change.
+     * 
+     * @param {string} state - one of the state values defined in org.osmf.traits.PlayState: playing, paused, stopped
+     */
+    OSMF_playStateChange: function(state) {
         var ref = this;
         
         // getIsDVR & getIsDVRLive seem to be broken - workaround:
@@ -313,7 +359,7 @@ $p.newModel({
             this._isDVR = true;
             this.sendUpdate('streamTypeChange', 'dvr');
         }
-
+        
         switch(state) {
             case 'playing':
                 this.playingListener();
@@ -342,15 +388,11 @@ $p.newModel({
     
     OSMF_isDynamicStreamChange: function(value) {
         this.getDynamicStreamingStatus('OSMF_isDynamicStreamChange');
-        this._quality = this._quality === 'default' ? 'auto' : this._quality;
         this._isDynamicStream = value;
     },
     
     OSMF_autoSwitchChange: function() {
          this.getDynamicStreamingStatus('OSMF_autoSwitchChange');
-         if(this._requestedDynamicStreamIndex < 0){
-            this.clearBuffer();
-         }
     },
     
     OSMF_numDynamicStreamsChange: function(){
@@ -547,8 +589,17 @@ $p.newModel({
         return this.mediaElement[0].getCanSeek();
     },
     
-    canSeekTo: function(val) {
-        return this.mediaElement[0].canSeekTo(val);
+    canSeekTo: function(value) {
+        return this.mediaElement[0].canSeekTo(value);
+    },
+    
+    goToLive: function() {
+        
+    },
+    
+    getLivePosition: function() {
+        var smp = this.mediaElement[0];
+        return Math.max(smp);
     },
     
     /**
@@ -584,7 +635,7 @@ $p.newModel({
             var streams = this.getStreamItems();
             for (var index in streams) {
                 if(streams.hasOwnProperty(index) && streams[index].bitrate !== undefined){
-                    name = index + ' dimentions: ' + streams[index].width + "x" + streams[index].height + " | bitrate: " + streams[index].bitrate + ' | streamName: ' + streams[index].streamName;
+                    name = index + ' dimensions: ' + streams[index].width + "x" + streams[index].height + " | bitrate: " + streams[index].bitrate + ' | streamName: ' + streams[index].streamName;
                     $p.utils.log('| ' + name);
                 }
             }
@@ -705,7 +756,26 @@ $p.newModel({
     
     getQuality: function () {
         return this._quality;
-    }    
+    },
+    
+    // org.osmf.media.MediaPlayer
+    getBytesLoaded: function() {
+        if (this.mediaElement!==null){
+            return this.mediaElement[0].getBytesLoaded();
+        }
+        else {
+            return 0;
+        }
+    },
+    
+    getBytesTotal: function() {
+        if (this.mediaElement!==null){
+            return this.mediaElement[0].getBytesTotal();
+        }
+        else {
+            return 0;
+        }
+    }
     
     /************************************************
      * disablers
