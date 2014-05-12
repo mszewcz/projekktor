@@ -23,9 +23,9 @@ $p.newModel({
         {ext:'mov', type:'video/quicktime', platform:'flash', streamType: ['*']},
         {ext:'m4v', type:'video/mp4', platform:'flash', fixed: true, streamType: ['*']},
         {ext:'f4m', type:'application/f4m+xml', platform:'flash', fixed: true, streamType: ['*']},
-        /*{ext:'m3u8', type:'application/mpegURL', platform:'flash', fixed: true, streamType: ['*']},
+        {ext:'m3u8', type:'application/mpegURL', platform:'flash', fixed: true, streamType: ['*']},
         {ext:'m3u8', type:'application/x-mpegURL', platform:'flash', fixed: true, streamType: ['*']},
-        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform:'flash', fixed: true, streamType: ['*']},*/
+        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform:'flash', fixed: true, streamType: ['*']},
         {ext:'manifest', type:'application/vnd.ms-ss', platform:'flash', fixed: true, streamType: ['*']}
     ],
 
@@ -440,19 +440,32 @@ $p.newModel({
             showAudioOnly = this.pp.getConfig('dynamicStreamShowAudioOnlyQualities'),
             avKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioVideo'),
             aoKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioOnly'),
+            bitrate = 0,
+            bitrateKbps = 0,
+            bitrateMbps = 0,
+            bitrateUnit = 'kbps',
             qualityKeys = [];
     
         this.availableQualities = {};
 
         for (var i=0; i < numStreams; i++){
             if (dynamicStreams[i].bitrate !== undefined) {
+                
+                bitrateKbps = Math.floor(dynamicStreams[i].bitrate);
+                bitrateMbps = Math.round(bitrateKbps/1000);
+                bitrate = bitrateKbps < 1000 ? bitrateKbps : bitrateMbps;
+                bitrateUnit = bitrateKbps < 1000 ? 'kbps' : 'Mbps';
+                
                 // audio/video stream quality
                 if(dynamicStreams[i].height > 0){
                     isAudioOnly = false;
                     keyName = $p.utils.parseTemplate(avKeyFormat , {
                                     height: dynamicStreams[i].height,
                                     width: dynamicStreams[i].width,
-                                    bitrate: Math.floor(dynamicStreams[i].bitrate)
+                                    bitrate: bitrate,
+                                    bitrateunit: bitrateUnit,
+                                    bitratekbps: bitrateKbps,
+                                    bitratembps: bitrateMbps
                             });
                 }
                 // audio-only stream quality
@@ -460,7 +473,10 @@ $p.newModel({
                     isAudioOnly = true;
                     if(showAudioOnly){
                         keyName = $p.utils.parseTemplate(aoKeyFormat , {
-                                        bitrate: Math.floor(dynamicStreams[i].bitrate)
+                                    bitrate: bitrate,
+                                    bitrateunit: bitrateUnit,
+                                    bitratekbps: bitrateKbps,
+                                    bitratembps: bitrateMbps
                         });
                     }
                 }

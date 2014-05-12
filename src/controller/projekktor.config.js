@@ -201,19 +201,26 @@ projekktorConfig.prototype = {
      * The available template values you can use:
      * %{width} - width in px
      * %{height} - height in px
-     * %{bitrate} - bitrate in kbps
+     * 
+     * %{bitrate} - bitrate in kbps or Mbps
+     * %{bitrateunit} - kbps or Mbps
+     * %{bitratekbps} - bitrate in kbps
+     * %{bitratembps} - bitrate in Mbps
      */
-    dynamicStreamQualityKeyFormatAudioVideo: '%{height}p | %{bitrate}kbps',
+    dynamicStreamQualityKeyFormatAudioVideo: '%{height}p | %{bitrate}%{bitrateunit}',
     
     /**
      * Format of dynamic stream (HDS, HLS, MSS, etc.) audio-only quality keys in which they will be displayed in the settings menu
      * 
      * The available template values you can use:
-     * %{bitrate} - bitrate in kbps
+     * %{bitrate} - bitrate in kbps or Mbps
+     * %{bitrateunit} - kbps or Mbps
+     * %{bitratekbps} - bitrate in kbps
+     * %{bitratembps} - bitrate in Mbps
      * 
      * Note: the audio-only qualities will appear on the list only when the 'dynamicStreamShowAudioOnlyQualities' config option is set to true.
      */
-    dynamicStreamQualityKeyFormatAudioOnly: 'audio | %{bitrate}kbps',
+    dynamicStreamQualityKeyFormatAudioOnly: 'audio | %{bitrate}%{bitrateunit}',
 
     // if true, the player will add audio only streams to the list of available qualities
     dynamicStreamShowAudioOnlyQualities: false,
