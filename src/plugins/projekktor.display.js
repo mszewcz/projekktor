@@ -23,7 +23,9 @@ projekktorDisplay.prototype = {
     
     buffIcn: null,
     buffIcnSprite: null,
+    buffIcnHangWatcher: null,
     bufferDelayTimer: null,
+    
     
     _controlsDims: null,
     
@@ -36,6 +38,8 @@ projekktorDisplay.prototype = {
         
         /* time to delay buffering-icon-overlay once "waiting" event has been triggered */
         bufferIconDelay:    1000,
+        
+        bufferIconHangWatcherInterval: 5000,
             
         /* if set the indicator animation is tinkered from a cssprite - must be horizontal */
         spriteUrl:          '',
@@ -111,10 +115,12 @@ projekktorDisplay.prototype = {
     },    
     
     bufferHandler: function(state) {
-        if (!this.pp.getState('PLAYING') && !this.pp.getState('AWAKENING'))
-            return;
-        if (state=='EMPTY') this.showBufferIcon();
-        else this.hideBufferIcon();
+        if (state=='EMPTY') {
+            this.showBufferIcon();
+        }
+        else { 
+            this.hideBufferIcon();
+        }
     },    
     
     stateHandler: function(state) {
@@ -271,6 +277,7 @@ projekktorDisplay.prototype = {
     *****************************************/       
     hideBufferIcon: function() {
         clearTimeout(this.bufferDelayTimer);
+        clearInterval(this.buffIcnHangWatcher);
         this.buffIcn.addClass('inactive').removeClass('active');
     },
         
@@ -278,7 +285,17 @@ projekktorDisplay.prototype = {
         var ref=this;
 
         clearTimeout(this.bufferDelayTimer);
-
+        
+        /* setup buffer icon hang watcher */
+        clearInterval(this.buffIcnHangWatcher);
+        if(this.getConfig('bufferIconHangWatcherInterval')){
+            this.buffIcnHangWatcher = setInterval(function(){
+                if(ref.pp.playerModel.getBufferState()!='EMPTY'){
+                    ref.hideBufferIcon();
+                }
+            }, this.getConfig('bufferIconHangWatcherInterval'));
+        }
+        
         if (this.pp.getHasGUI() || this.pp.getState('IDLE')) {
             return;
         }
