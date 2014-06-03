@@ -702,7 +702,12 @@ projekktor = $p = function() {
                 ref._promote('pluginsReady', {callee: callee, data: data});                        
             } catch(e) {}
         };
-        setTimeout(sync, 50);
+        if(this.getIsMobileClient()){
+            sync();
+        }
+        else {
+            setTimeout(sync, 50);
+        }
     };
 
     this._MD = function(event) {
