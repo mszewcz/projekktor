@@ -189,12 +189,14 @@ $p.newModel({
     
     flashReadyListener: function() {},
 
-    addListeners: function() {
+    addOSMFEventListeners: function() {
         var ref = this;
         $.each(this._eventMap, function(key, value){
             ref.mediaElement[0].addEventListener(key, "projekktor('" + ref.pp.getId() + "').playerModel." + value);
         });
     },
+    
+    addListeners: function() {}, 
     
     removeListeners: function() {},
     
@@ -246,7 +248,7 @@ $p.newModel({
             case 'onJavaScriptBridgeCreated':
                 if (this.mediaElement !== null && (this.getState('AWAKENING') || this.getState('STARTING'))) {
                     // add OSMF event listeners
-                    this.addListeners();
+                    this.addOSMFEventListeners();
                     this.applySrc();
                     this.displayReady();
                 }
