@@ -1689,7 +1689,7 @@ projekktor = $p = function() {
                 case 'webkit':
                     return dest.webkitIsFullScreen;
                 case 'ms':
-                    return (document.msFullscreenElement!=null);
+                    return (dest.msFullscreenElement!=null);
                 default:                  
                     return dest[this.prefix + 'FullScreen'];
             }
