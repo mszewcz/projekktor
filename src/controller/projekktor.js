@@ -545,7 +545,6 @@ projekktor = $p = function() {
                 }
                 if (!this._isReady) {
                     this._promote('ready');
-                    this._isReady = true;
                 }                
                 break;
             
@@ -557,9 +556,21 @@ projekktor = $p = function() {
         }
     };
     
+    this.synchronizedHandler = function(forceAutoplay) {
+        if (this._isReady) {
+            if(this.playerModel.init && (this.playerModel._ap === true || forceAutoplay === true)){
+                    this.setPlay();
+            }
+        }
+    };
+    
     this.readyHandler = function() {
+	this._isReady = true;
         if (typeof onReady==='function') {
             onReady(this);
+        }
+        if(!this.getIsMobileClient()){
+                this.synchronizedHandler(this.getConfig('autoplay'));
         }
     };
     
@@ -694,7 +705,7 @@ projekktor = $p = function() {
                 if (ref._plugins.length>0) {
                     for(var i=0; i<ref._plugins.length; i++) {
                         if (!ref._plugins[i].isReady()) {
-                            setTimeout(arguments.callee,50);
+                            setTimeout(sync,50);
                             return;
                         }
                     }
@@ -702,12 +713,8 @@ projekktor = $p = function() {
                 ref._promote('pluginsReady', {callee: callee, data: data});                        
             } catch(e) {}
         };
-        if(this.getIsMobileClient()){
-            sync();
-        }
-        else {
-            setTimeout(sync, 50);
-        }
+        
+        setTimeout(sync, 50);
     };
 
     this._MD = function(event) {
@@ -864,11 +871,6 @@ projekktor = $p = function() {
             $p.utils.log("Event: ["+event+"]", value, this.listeners);
         }
 
-        // fire on self:
-        if (this[evt + 'Handler']) {
-            this[evt + 'Handler'](value);
-        }
-
         // fire on plugins
         if (this._pluginCache[event+"Handler"] && this._pluginCache[event+"Handler"].length>0) {
             for (var i = 0; i < this._pluginCache[event+"Handler"].length; i++) {
@@ -901,6 +903,11 @@ projekktor = $p = function() {
                     }
                 }
             }
+        }
+        
+        // fire on self:
+        if (this[evt + 'Handler']) {
+            this[evt + 'Handler'](value);
         }
     };
 
@@ -1921,12 +1928,7 @@ projekktor = $p = function() {
     /*******************************
     public (API) methods SETTERS
     *******************************/
-/*
-    this.setActiveItem = function(mixedData) {
-        var ref = this;
-        this._enqueue(function() { try {ref._setActiveItem(mixedData);} catch(e) {} } );    
-    };
-*/
+
     this.setActiveItem = function(mixedData, autoplay) {        
         var lastItem = this.getItem(),
             newItem = null,
@@ -1960,7 +1962,6 @@ projekktor = $p = function() {
         // item change requested...
         if (newItem!=lastItem) {
             // and denied... gnehe
-            ap = true;
             if ( this.getConfig('disallowSkip')==true && (!this.getState('COMPLETED') && !this.getState('IDLE')) ) {
                 return this;
             }
@@ -1997,7 +1998,7 @@ projekktor = $p = function() {
         this.syncCuePoints();
         // this._enqueue(function() { try {ref._applyCuePoints();} catch(e) {} } );
 
-        this.playerModel._init({
+		this.initPlayerModel({
             media: $.extend(true, {}, newItem),
             model: newModel,
             pp: this,
@@ -2007,24 +2008,27 @@ projekktor = $p = function() {
             fullscreen: this.getInFullscreen()
             // persistent: (ap || this.config._continuous) && (newModel==nextUp)
         });
-    
+		
+        return this;
+    };    
+	
+    this.initPlayerModel = function(cfg){
+        this.playerModel._init(cfg);
+
         // apply item specific class(es) to player
         if (this.getConfig('className', null)!=null) {
-            this.getDC().addClass(this.getNS() + this.getConfig('className'))
+            this.getDC().addClass(this.getNS() + this.getConfig('className'));
         }
         this.getDC().addClass(this.getNS() + (this.getConfig('streamType') || 'http') );
-        
+
         if(this.getConfig('streamType').indexOf('dvr')>-1){
             this.getDC().addClass(this.getNS() + 'live');
         }
-            
-        if (!$p.utils.cssTransitions()) this.getDC().addClass('notransitions')
-        if (this.getIsMobileClient()) this.getDC().addClass('mobile')        
 
-        return this;
-    };    
-    
-    
+        if (!$p.utils.cssTransitions()) this.getDC().addClass('notransitions');
+        if (this.getIsMobileClient()) this.getDC().addClass('mobile');        
+    };
+        
     /* queue ready */
     this.setPlay = function() {        
         var ref = this;            
@@ -2344,29 +2348,29 @@ projekktor = $p = function() {
         // arg0 -> item obj
         // arg1 -> position (int)
         // arg2 -> replace (bool)
-
-        var itemData = (arguments[0]) ? this._prepareMedia({file:arguments[0], config:arguments[0].config || {}}) : false,
-            affectedIdx = 0;
-            
-        if (itemData===false) {
-            return false;
-        }
         
-        if (itemData.mediaModel=='NA') {
-            return false;
-        }
-                    
-        this._clearqueue();
-   
-        if (itemData==null) {
-            // remove item
+        // remove item
+        if (arguments[0]===null) {
             affectedIdx = this._removeItem(arguments[1]);
             if (affectedIdx===this.getItemIdx()) {
                 this.setActiveItem('previous');
             }
         }
+        // add item
         else {
-            // add/set item
+            var itemData = (arguments[0]) ? this._prepareMedia({file:arguments[0], config:arguments[0].config || {}}) : false,
+            affectedIdx = 0;
+
+            if (itemData===false) {
+                    return false;
+            }
+
+            if (itemData.mediaModel=='NA') {
+                    return false;
+            }
+
+            this._clearqueue();
+			
             affectedIdx = this._addItem( itemData, arguments[1], arguments[2]);
             if (affectedIdx<=this.getItemIdx()) {
                 this.setActiveItem(affectedIdx);

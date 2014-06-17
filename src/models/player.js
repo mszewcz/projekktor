@@ -80,12 +80,12 @@ jQuery(function ($) {
         ready: function () {
             this.sendUpdate('modelReady');
             this._isReady = true;
-            if (this._ap) {
-                this.sendUpdate('autostart', true);
-                this._setState('awakening');
-            } else {
-                this.displayItem(false);
-            }
+                if(!this._ap){
+                    this.displayItem(false);
+                }
+                else {
+                     this.displayReady();
+                }
         },
 
         /* apply poster while sleeping or get ready for true multi media action */
