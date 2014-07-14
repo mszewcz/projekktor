@@ -19,7 +19,6 @@ $p.newModel({
         {ext:'m3u8', type:'application/x-mpegurl', platform: ['ios', 'android', 'native'], streamType: ['http','httpVideo', 'httpVideoLive']},
         {ext:'m3u', type:'application/x-mpegurl', platform: ['ios', 'android', 'native'], streamType: ['http', 'httpVideo', 'httpVideoLive']}    
     ]
-    
 }, 'VIDEO');
 
 $p.newModel({    
@@ -36,7 +35,6 @@ $p.newModel({
         {ext:'m3u8', type:'audio/x-mpegurl', platform: ['ios', 'android', 'native'], streamType: ['http','httpAudio', 'httpAudioLive']},
         {ext:'m3u', type:'audio/x-mpegurl', platform: ['ios', 'android', 'native'], streamType: ['http', 'httpAudio', 'httpAudioLive']}
     ]
-    
 }, 'AUDIO');
 
 });

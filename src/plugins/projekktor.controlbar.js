@@ -23,6 +23,7 @@ jQuery(function ($) {
 
         controlElements: {},
         controlElementsConfig: {
+            'timeleft':null,
             'sec_dur': null,
             'min_dur': null,
             'sec_abs_dur': null,
@@ -632,6 +633,16 @@ jQuery(function ($) {
             // limit updates to one per second
             if (Math.abs(this._lastPos - position) >= 1) {
                 
+                // check if there is anything to display
+                if(duration === 0){ // hide time display elements e.g. live streams on Android
+                    this._active('scrubber', false);
+                    this._active('timeleft', false);
+                }
+                else { // show time display elements
+                    this._active('scrubber', true);
+                    this._active('timeleft', true);
+                }
+                
                 times = $.extend({}, this._clockDigits(duration, 'dur'), this._clockDigits(position, 'elp'), this._clockDigits(duration - position, 'rem'));
                 
                 // update scrubber:
@@ -947,9 +958,13 @@ jQuery(function ($) {
         },
         
         streamTypeChangeHandler: function (streamType) {
-            if (streamType=='dvr') {
+            if (streamType==='dvr') {
                 this._isDVR = true;
                 this.setActive(this.controlElements['golive'], true);
+            }
+            else {
+                this._isDVR = false;
+                this.setActive(this.controlElements['golive'], false);
             }
         },
         
@@ -1114,12 +1129,12 @@ jQuery(function ($) {
         openCloseClk: function (evt) {
             var ref = this;
             $($(evt.currentTarget).attr('class').split(/\s+/)).each(function (key, value) {
-                if (value.indexOf('toggle') == -1) return;
+                if (value.indexOf('toggle') === -1) return;
                 ref.playerDom.find('.' + value.substring(6)).slideToggle('slow', function () {
                     ref.pp.setSize();
                 });
                 ref.controlElements['open'].toggle();
-                ref.controlElements['close'].toggle()
+                ref.controlElements['close'].toggle();
             });
         },
         
@@ -1130,7 +1145,7 @@ jQuery(function ($) {
                     if(logoConfig.link && logoConfig.link.url){
                         window.open(logoConfig.link.url,logoConfig.link.target);
                     }
-                    else if(typeof logoConfig.callback == 'function'){
+                    else if(typeof logoConfig.callback === 'function'){
                         logoConfig.callback(this.pp, evt);
                     }
                 }
@@ -1419,8 +1434,12 @@ jQuery(function ($) {
         
         _active: function (elmName, on) {
             var dest = this.controlElements[elmName];
-            if (on == true) dest.addClass('active').removeClass('inactive');
-            else dest.addClass('inactive').removeClass('active');
+            if (on == true) {
+                dest.addClass('active').removeClass('inactive');
+            }
+            else {
+                dest.addClass('inactive').removeClass('active');
+            }
             return dest;
         },
 

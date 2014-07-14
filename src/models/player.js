@@ -26,6 +26,7 @@ jQuery(function ($) {
         _displayReady: false,
         _isPlaying: false,
         _isReady: false,
+        _isDVR: false,
 
         _id: null,
 
@@ -502,25 +503,69 @@ jQuery(function ($) {
          *      ELEMENT LISTENERS
          *******************************/
         timeListener: function (obj) {
-            if (obj == null) return;            
-
+            if (typeof obj !== 'object' || obj === null) {
+                return;
+            }            
+            
             var position = parseFloat((obj.position || obj.currentTime || this.media.position || 0).toFixed(2)),
-                duration = parseFloat((obj.duration || 0).toFixed(2));
-
+                duration = null;
+            
+            /*
+             * When the duration is POSITIVE_INFINITY then we're dealing with a native live stream (e.g. HLS)
+             */
+            if(obj.duration === Number.POSITIVE_INFINITY && obj.seekable && obj.seekable.length){
+                // set DVR flag to true and propagate streamTypeChange event (mainly to the controlbar plugin)
+                if (!this._isDVR) {
+                    this._isDVR = true;
+                    this.sendUpdate('streamTypeChange', 'dvr');
+                }
+                /*
+                 * When seekable.start(0) is >0 the seekable.start is probably set properly (e.g. Safari 7.0.5 on OS X 10.9.4) 
+                 * so we could use it to derermine DVR window duration 
+                 */
+                if(obj.seekable.start(0) > 0){
+                    duration = parseFloat((obj.seekable.end(0)-obj.seekable.start(0)).toFixed(2));
+                }
+                /*
+                 * When seekable.start(0) == 0 then the only way to determine DVR window is to get the first known seekable.end(0) 
+                 * value and store it for the whole live session (e.g. Safari 7.0 on iOS 7.1.2).
+                 * It's not 100% reliable method, but it's the best estimation we could possibly get.
+                 */
+                else {
+                    if(obj.seekable.end(0)>0 && this.media.duration === 0){
+                        duration = parseFloat(obj.seekable.end(0).toFixed(2));
+                    }
+                    else {
+                        duration = this.media.duration;
+                    }
+                }
+                position = (duration - (obj.seekable.end(0) - obj.currentTime));
+                position = position < 0 ? 0 : parseFloat(position.toFixed(2));
+            }
+            /*
+             * If duration is a number
+             */
+            else if (!isNaN(obj.duration)){
+                duration = obj.duration > position ? parseFloat((obj.duration || 0).toFixed(2)) : 0; // Android native browsers tend to report bad duration (1-100s)
+            }
+            
             // bypass strange IE flash bug	
-            if (isNaN(duration + position)) return;
+            if (isNaN(duration + position)) {
+                return;
+            }
 
             // duration has changed:	
-            if (duration != 0 && (duration != this.media.duration && !this.isPseudoStream) || (this.isPseudoStream && this.media.duration == 0)) {
-
+            if (duration !== null && ((duration !== this.media.duration && !this.isPseudoStream) || (this.isPseudoStream && this.media.duration === 0))) {
                 this.media.duration = duration;
                 this.sendUpdate('durationChange', duration);
             }
       
             // remember values & concider pseudo stream position offset, bypass some strange position hopping effects during pseudostream:
-            if (position==this.media.position) return;
+            if (position === this.media.position) {
+                return;
+            }
             
-            if (this.isPseudoStream && Math.round(position * 100) / 100 == Math.round(this.media.offset * 100) / 100) {
+            if (this.isPseudoStream && Math.round(position * 100) / 100 === Math.round(this.media.offset * 100) / 100) {
                 this.media.position = this.media.offset;
             }
             else {              
@@ -541,18 +586,28 @@ jQuery(function ($) {
             var me = this.mediaElement.get(0),
                 progress = 0;
           
-            if (this.media.duration===0) return;
-            if (typeof me.buffered!=='object') return;
-            if (me.buffered.length===0 &&  me.seekable.length===0) return;
-            if (this.media.loadProgress==100) return;
+            if(this.media.duration === 0){
+                return;
+            }
+            if(typeof me.buffered!=='object'){
+                return;
+            }
+            if(me.buffered.length === 0 && me.seekable.length === 0) {
+                return;
+            }
+            if(this.media.loadProgress === 100) {
+                return;
+            }
 
-            if (me.seekable && me.seekable.length > 0) {
+            if(me.seekable && me.seekable.length > 0) {
                 progress = Math.round(me.seekable.end(0) * 100 / this.media.duration);
             } else {
                 progress = Math.round(me.buffered.end(me.buffered.length - 1) * 100) / this.media.duration;
             }
 
-            if (this.media.loadProgress > progress) return;
+            if (this.media.loadProgress > progress) {
+                return;
+            }
 
             this.media.loadProgress = (this.allowRandomSeek === true) ? 100 : -1;
             this.media.loadProgress = (this.media.loadProgress < 100 || this.media.loadProgress === undefined) ? progress : 100;

@@ -36,8 +36,6 @@ $p.newModel({
     availableQualities: {},
     
     _hardwareAcceleration: true,
-    _isStream: false,
-    _isDVR: false,
     _isMuted: false,
     _qualitySwitching: false,
     _isDynamicStream: false,
