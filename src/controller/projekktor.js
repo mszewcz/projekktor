@@ -288,20 +288,24 @@ projekktor = $p = function() {
             modelSets = [],
             result = {},
             extRegEx = [],
-            bestMatch = 0;
+            bestMatch = 0,
+            currentMediaPlatforms = [],
+            modelPlatforms = [],
+            platformsConfig = this.getConfig('platforms'),
+            supportedPlatforms = this._testMediaSupport(true);
 
-        // build regex string and filter dublicate extensions and more ...        
+        // build regex string and filter duplicate extensions and more ...        
         for(var mmapIndex in $p.mmap ) {
             if ($p.mmap.hasOwnProperty(mmapIndex)) {
-                platforms = (typeof $p.mmap[mmapIndex].platform=='object') ? $p.mmap[mmapIndex].platform : [ $p.mmap[mmapIndex].platform ];
-                $.each(platforms, function(_na, platform) {
+                modelPlatforms = (typeof $p.mmap[mmapIndex].platform === 'object') ? $p.mmap[mmapIndex].platform : [ $p.mmap[mmapIndex].platform ];
+                $.each(modelPlatforms, function(_na, platform) {
                     var k = 0,
                         streamType = 'http';
               
                     for (var j in data.file) {
                         if (data.file.hasOwnProperty(j)) {
                             if (j==='config') continue;
-                            streamType = data.file[j].streamType || ref.getConfig('streamType') || 'http';
+                            streamType = data.file[j].streamType || data.config.streamType || 'http';
 
                             if ( ref._canPlay($p.mmap[mmapIndex].type, platform, streamType) ) {
                                 k++;
@@ -311,9 +315,9 @@ projekktor = $p = function() {
                             if (k===0) {
                                 continue;
                             }
-
+                            
                             // set priority level
-                            $p.mmap[mmapIndex].level = $.inArray(platform, ref.config._platforms);
+                            $p.mmap[mmapIndex].level = $.inArray(platform, platformsConfig);
                             $p.mmap[mmapIndex].level = ($p.mmap[mmapIndex].level<0) ? 100 : $p.mmap[mmapIndex].level;
                         
                             // upcoming fun:
@@ -412,7 +416,7 @@ projekktor = $p = function() {
                         return a.level - b.level;
                     });
                
-                    modelSets.push(typesModels[data.file[index].type] [0]);
+                    modelSets.push(typesModels[data.file[index].type][0]);
                 }
             }
         }
@@ -466,14 +470,25 @@ projekktor = $p = function() {
                 }
      
                 // set "auto" quality
-                if ( data.file[index].quality==null)
+                if ( data.file[index].quality==null) {
                     data.file[index].quality = 'auto';
+                }
                 
                 // add this files quality key to index
-                qualities.push(data.file[index].quality)
+                qualities.push(data.file[index].quality);
+                
+                // add platforms
+                for(var j=0, l=supportedPlatforms.length; j<l; j++){
+                    if (this._canPlay(data.file[index].type, supportedPlatforms[j].toLowerCase(), data.file[index].streamType || data.config.streamType || 'http') ) {
+                        if ($.inArray(supportedPlatforms[j].toLowerCase(), currentMediaPlatforms) === -1) {
+                            currentMediaPlatforms.push(supportedPlatforms[j].toLowerCase());
+                        }
+                    }
+                }
+                
                 
                 // add media variant
-                mediaFiles.push(data.file[index])        
+                mediaFiles.push(data.file[index]);
             }
         }         
     
@@ -486,14 +501,19 @@ projekktor = $p = function() {
         $.each(this.getConfig('playbackQualities'), function() {
             _setQual.push(this.key || 'auto');
         });
-            
+        
+        // sort platforms by priority
+        currentMediaPlatforms.sort(function(a, b) {
+            return $.inArray(a, platformsConfig) - $.inArray(b, platformsConfig);
+        });
+        
         result = {
             ID: data.config.id || $p.utils.randomId(8),
             cat: data.config.cat || 'clip',
             file: mediaFiles,
             availableFiles: data.availableFiles,
             platform: modelSet.platform,
-            platforms: platforms,
+            platforms: currentMediaPlatforms,
             qualities: $p.utils.intersect($p.utils.unique(_setQual), $p.utils.unique(qualities)),
             mediaModel: modelSet.model || 'NA', 
             errorCode: modelSet.errorCode || data.errorCode || 7,
@@ -1589,15 +1609,16 @@ projekktor = $p = function() {
             platforms = this._testMediaSupport(true),
             item = this.getItem(),
             cfg = this.getConfig('platforms'),
-            tmp = [],
-            result = [];
+            result = [],
+            streamType = 'http';
 
         try {
-            for (var i in this.media[this._currentItem].file) {
-                if (this.media[this._currentItem].file.hasOwnProperty(i)) {
-                    for (var j in platforms) {
-                        if (this._canPlay(this.media[this._currentItem].file[i].type, platforms[j].toLowerCase(), this.getConfig('streamType')) ) {
-                            if ($.inArray(platforms[j].toLowerCase(), result)==-1) {
+            for (var i in item.availableFiles) {
+                if (item.availableFiles.hasOwnProperty(i)) {
+                    for(var j=0, l=platforms.length; j<l; j++){
+                        streamType = item.availableFiles[i].streamType || item.availableFiles.config.streamType || streamType;
+                        if (this._canPlay(item.availableFiles[i].type, platforms[j].toLowerCase(), streamType) ) {
+                            if ($.inArray(platforms[j].toLowerCase(), result) === -1) {
                                 result.push(platforms[j].toLowerCase());
                             }
                         }
@@ -3052,6 +3073,7 @@ projekktor = $p = function() {
     this._testMediaSupport = function(getPlatforms) {
         var result = {},
             resultPlatforms = [],
+            platforms = [],
             streamType = '',
             ref = this;
 
@@ -3067,26 +3089,30 @@ projekktor = $p = function() {
         
         for (var i=0; i < $p.mmap.length; i++ ) {
             if ($p.mmap.hasOwnProperty(i)) {
-                platforms = (typeof $p.mmap[i]['platform']=='object') ? $p.mmap[i]['platform'] : [ $p.mmap[i]['platform'] ];
+                platforms = (typeof $p.mmap[i]['platform'] === 'object') ? $p.mmap[i]['platform'] : [ $p.mmap[i]['platform'] ];
                 
                 $.each(platforms, function(_na, platform) {
         
-                    if (platform==null)
+                    if (platform===null){
                         return true;
+                    }
     
                     streamType = $p.mmap[i]['streamType'] || ['http'];
     
                     $.each(streamType, function(key, st) {
     
-                        if (result[st]==null)
-                            result[st] = {};        
+                        if (st in result === false){
+                            result[st] = {};  
+                        }
                         
-                        if (result[st][platform]==null)
+                        if (platform in result[st] === false){
                             result[st][platform] = [];
+                        }
                     
                         // avoid dupes
-                        if ( $.inArray($p.mmap[i]['type'], result[st][platform] )>-1 )
+                        if ( $.inArray($p.mmap[i]['type'], result[st][platform] )>-1 ){
                             return true;
+                        }
                         
                         
                         var reqPlatformVersion = ($p.models[ $p.mmap[i]['model'].toUpperCase() ].prototype[(platform.toLowerCase()) + 'Version'] || "1").toString();
