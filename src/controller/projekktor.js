@@ -292,22 +292,27 @@ projekktor = $p = function() {
             currentMediaPlatforms = [],
             modelPlatforms = [],
             platformsConfig = this.getConfig('platforms'),
-            supportedPlatforms = this._testMediaSupport(true);
+            supportedPlatforms = this._testMediaSupport(true),
+            mmapIndex;
 
         // build regex string and filter duplicate extensions and more ...        
-        for(var mmapIndex in $p.mmap ) {
+        for ( mmapIndex in $p.mmap ) {
+            
             if ($p.mmap.hasOwnProperty(mmapIndex)) {
-                modelPlatforms = (typeof $p.mmap[mmapIndex].platform === 'object') ? $p.mmap[mmapIndex].platform : [ $p.mmap[mmapIndex].platform ];
+                modelPlatforms = (typeof $p.mmap[mmapIndex].platform === 'object') ? $p.mmap[mmapIndex].platform : [$p.mmap[mmapIndex].platform];
+                
                 $.each(modelPlatforms, function(_na, platform) {
                     var k = 0,
                         streamType = 'http';
               
                     for (var j in data.file) {
                         if (data.file.hasOwnProperty(j)) {
-                            if (j==='config') continue;
+                            if (j==='config') {
+                                continue;
+                            }
                             streamType = data.file[j].streamType || data.config.streamType || 'http';
 
-                            if ( ref._canPlay($p.mmap[mmapIndex].type, platform, streamType) ) {
+                            if (ref._canPlay($p.mmap[mmapIndex].type, platform, streamType)) {
                                 k++;
                             }
                             
@@ -324,66 +329,67 @@ projekktor = $p = function() {
                             extRegEx.push( '.'+$p.mmap[mmapIndex].ext );
                             
                             // build extension2filetype map
-                            if (!extTypes[$p.mmap[mmapIndex].ext]) {
+                            if (!extTypes.hasOwnProperty($p.mmap[mmapIndex].ext)) {
                                 extTypes[$p.mmap[mmapIndex].ext] = [];
                             }                            
-                            extTypes[$p.mmap[mmapIndex].ext].push( $p.mmap[mmapIndex] );
+                            extTypes[$p.mmap[mmapIndex].ext].push($p.mmap[mmapIndex]);
                             
-                            if ($p.mmap[mmapIndex].streamType===null || $p.mmap[mmapIndex].streamType=='*' || $.inArray(streamType  || [], $p.mmap[mmapIndex].streamType || '')>-1) {
+                            // check stream type
+                            if (!$p.mmap[mmapIndex].hasOwnProperty('streamType') || $p.mmap[mmapIndex].streamType.toString() === '*' || $.inArray(streamType, $p.mmap[mmapIndex].streamType || '')>-1) {
 
-                                if (!typesModels[$p.mmap[mmapIndex].type]) {
+                                if (!typesModels.hasOwnProperty($p.mmap[mmapIndex].type)) {
                                     typesModels[$p.mmap[mmapIndex].type] = [];
                                 }
-
                                 k = -1;
+                                
                                 for(var ci = 0, len = typesModels[$p.mmap[mmapIndex].type].length; ci < len; ci++) {                           
-                                    if (typesModels[$p.mmap[mmapIndex].type][ci].model == $p.mmap[mmapIndex].model) {
+                                    if (typesModels[$p.mmap[mmapIndex].type][ci].model === $p.mmap[mmapIndex].model) {
                                        k = ci;
                                        break;
                                     }
                                 }                                
 
                                 if (k===-1) {
-                                    typesModels[$p.mmap[mmapIndex].type].push( $p.mmap[mmapIndex] );                        
+                                    typesModels[$p.mmap[mmapIndex].type].push($p.mmap[mmapIndex]);                        
                                 }
-                                
                             }
-                            continue;
                         }
                     }
                     return true;
                 });                
             }
-           
         }
         extRegEx = '^.*\.(' + extRegEx.join('|') + ")$";
 
         // incoming file is a string only, no array
-        if (typeof data.file=='string') {
-            data.file = [{'src':data.file}];
-            if (typeof data.type=='string') {
-                data.file = [{'src':data.file, 'type':data.type}];
+        if (typeof data.file === 'string') {
+            data.file = [{src:data.file}];
+            
+            if (typeof data.type === 'string') {
+                data.file = [{src:data.file, type:data.type}];
             }
         }
 
         // incoming file is ... bullshit
         if ($.isEmptyObject(data) || data.file===false || data.file === null) {
-            data.file = [{'src':null}];
+            data.file = [{src:null}];
         }
 
         for(var index in data.file) {
             if (data.file.hasOwnProperty(index)) {
 
                 // meeeep
-                if (index=='config') continue;
+                if (index === 'config') {
+                    continue;
+                }
         
                 // just a filename _> go object
-                if (typeof data.file[index]=='string') {
-                    data.file[index] = {'src':data.file[index]};
+                if (typeof data.file[index] === 'string') {
+                    data.file[index] = {src:data.file[index]};
                 }
 
                 // nothing to do, next one
-                if (data.file[index].src==null) {
+                if (data.file[index].src == null) {
                     continue;
                 }
         
@@ -396,32 +402,35 @@ projekktor = $p = function() {
                 */
 
                 // if type is set, get rid of the codec mess
-                if ( data.file[index].type!=null && data.file[index].type!=='') {
+                if (data.file[index].hasOwnProperty('type') && typeof data.file[index].type === 'string' && data.file[index].type !== '') {
                     try {
                         var codecMatch = data.file[index].type.split(' ').join('').split(/[\;]codecs=.([a-zA-Z0-9\,]*)[\'|\"]/i);
-                        if (codecMatch[1]!=null) {
+                        if (codecMatch.hasOwnProperty(1)) {
                             data.file[index].codec = codecMatch[1];                
                         }
                         data.file[index].type = codecMatch[0].toLowerCase(); // mimeTypes are case insensitive
-                        data.file[index].originalType = codecMatch[0].toLowerCase();
+                        data.file[index].originalType = data.file[index].type;
                     } catch(e){}
                 }
+                // if type is not set try to get it from file extension
                 else {
                     data.file[index].type = this._getTypeFromFileExtension( data.file[index].src );
                 }
-        
-                if (typesModels[data.file[index].type] && typesModels[data.file[index].type].length>0) {
-                      
+                
+                //
+                if (typesModels.hasOwnProperty(data.file[index].type) && typesModels[data.file[index].type].length > 0) {
+                    
+                    // sort models by their priorities
                     typesModels[data.file[index].type].sort(function(a, b) {
                         return a.level - b.level;
                     });
-               
                     modelSets.push(typesModels[data.file[index].type][0]);
                 }
             }
         }
-
-        if (modelSets.length===0) {
+        
+        // if no model is able to play this media
+        if (modelSets.length === 0) {
             modelSets = typesModels['none/none'];
         }
         else {
@@ -434,7 +443,7 @@ projekktor = $p = function() {
             bestMatch = modelSets[0].level;
             
             modelSets = $.grep(modelSets, function(value) {
-                return value.level == bestMatch;
+                return value.level === bestMatch;
             });
         }
 
@@ -444,37 +453,38 @@ projekktor = $p = function() {
         });
             
 
-        var modelSet = (modelSets && modelSets.length>0) ? modelSets[0] : {type:'none/none', model: 'NA', errorCode: data.errorCode || 11, config: data.config};
+        var modelSet = (modelSets && modelSets.length > 0) ? modelSets[0] : {type:'none/none', model: 'NA', errorCode: data.errorCode || 11, config: data.config};
 
         types = $p.utils.unique(types);
 
         for (index in data.file) {
+            
             if (data.file.hasOwnProperty(index)) {
             
-                if (!data.availableFiles) {
+                if (!data.hasOwnProperty('availableFiles')) {
                     data.availableFiles = data.file;
                 }
                
-            
                 // discard files not matching the selected model
-                if (data.file[index].type==null)
+                if (data.file[index].type == null) {
                     continue;
+                }
                 
-                if ( ($.inArray(data.file[index].type, types) < 0) && modelSet.type != 'none/none') {
+                if (($.inArray(data.file[index].type, types) < 0) && modelSet.type !== 'none/none') {
                     continue;
                 }
                 
                 // make srcURL absolute for non-RTMP files
-                if ($.isEmptyObject(data.config) || data.config.streamType==null || data.config.streamType.indexOf('rtmp')==-1) {
+                if ($.isEmptyObject(data.config) || !data.config.hasOwnProperty('streamType') || data.config.streamType.indexOf('rtmp') === -1) {
                     data.file[index].src = $p.utils.toAbsoluteURL(data.file[index].src);
                 }
      
                 // set "auto" quality
-                if ( data.file[index].quality==null) {
+                if (!data.file[index].hasOwnProperty('quality')) {
                     data.file[index].quality = 'auto';
                 }
                 
-                // add this files quality key to index
+                // add this file quality key to index
                 qualities.push(data.file[index].quality);
                 
                 // add platforms
@@ -486,13 +496,12 @@ projekktor = $p = function() {
                     }
                 }
                 
-                
                 // add media variant
                 mediaFiles.push(data.file[index]);
             }
         }         
     
-        if (mediaFiles.length===0) {
+        if (mediaFiles.length === 0) {
             mediaFiles.push({src:null, quality:"auto"});
         }
   
@@ -519,7 +528,7 @@ projekktor = $p = function() {
             errorCode: modelSet.errorCode || data.errorCode || 7,
             viewcount: 0,
             config:  data.config || {}                   
-        } 
+        };
 
         return result;
     };
