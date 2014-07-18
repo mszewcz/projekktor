@@ -63,15 +63,15 @@ window.projekktor = window.$p = function() {
 
     // get instances
     // projekktor(idx:number);
-    if (typeof arg == 'number') {
+    if (typeof arg === 'number') {
         return projekktors[arg];
     }
 
     // by string selection unqiue "id" or "*"
-    if (typeof arg == 'string') {
+    if (typeof arg === 'string') {
 
         // get all instances
-        if (arg == '*') {
+        if (arg === '*') {
             return new Iterator(projekktors);
         }
 
@@ -85,7 +85,7 @@ window.projekktor = window.$p = function() {
             } catch(e){}
             try {
                 for (var j=0; j<$(arg).length; j++) {
-                    if (projekktors[i].env.playerDom.get(0)==$(arg).get(j)) { instances.push(projekktors[i]); continue; }
+                    if (projekktors[i].env.playerDom.get(0) == $(arg).get(j)) { instances.push(projekktors[i]); continue; }
                 }
             } catch(e){}
             try {
@@ -108,13 +108,13 @@ window.projekktor = window.$p = function() {
     }
 
     // build instances
-    if (instances.length===0) {
+    if (instances.length === 0) {
         var cfg = arguments[1] || {},
             callback = arguments[2] || {},
             count=0,
             playerA;
 
-        if (typeof arg == 'string') {
+        if (typeof arg === 'string') {
             $.each($(arg), function() {
                 playerA = new PPlayer($(this), cfg, callback);
                 projekktors.push(playerA);
@@ -194,11 +194,83 @@ window.projekktor = window.$p = function() {
                     this.setActiveItem(0);
                 }
             }
-
+            
             this._promote('scheduleModified', this.getItemCount());
             return resultIdx;
         };
-
+        /**
+         * Add items to the playlist on provided index
+         * 
+         * @param {array} items - playlist items to add
+         * @param {number} index - index on which the items should be added
+         * @param {boolean} replace - should the items on specyfied index be replaced
+         * @returns {object} object with affected index, added and replaced (removed) items. 
+         * For example when nothing was added the object will look like: {added: [], removed: [], index: -1}
+         */
+        this.addItems = function(items, index, replace) {
+            
+            var result = {
+                    added: [],
+                    removed: [],
+                    index: -1
+                },
+                i, l,
+                item;
+            
+            replace = !!replace || false; // default is false
+            
+            // constrain index to the range
+            index = (index === undefined || index > this.media.length) ? this.media.length : index;
+            index = (index < 0) ? 0 : index;
+            
+            // check if there is data to add
+            if ($.isEmptyObject(items)) {
+                return result;
+            }
+            
+            // chcek if items are not the reference to the actual media array (for example when result of getPlaylist() is passed)
+            if(items === this.media) {
+                items = items.slice(); // clone 
+            }
+            
+            // check if items is an array and if it's not push it to the array
+            if (!$.isArray(items)) {
+                items = [items];
+            }
+            
+            // be sure that items are unique and processed
+            for (i = 0, l = items.length; i < l; i++) {
+                item = items[i];
+                
+                // item is not processed by _prepareMedia yet
+                if (item.processed !== true) {
+                    item = this._prepareMedia({file:item, config:item.config || {}, errorCode: this.errorCode || 0});
+                }
+                
+                // item is already on the playlist, so provide unique copy of it
+                if (this.getItemById(item.ID)) {
+                    item = $.extend(true, {}, item);
+                    item.ID = $p.utils.randomId(8);
+                }
+                
+                // set cuepoints there are some
+                if(item.hasOwnProperty('cuepoints')){
+                    this.setCuePoints(item.cuepoints, item.ID);
+                }
+                
+                items[i] = item;
+            }
+            
+            // add item
+            result.added = items;
+            result.removed = Array.prototype.splice.apply(this.media, [index, (replace === true ? items.length : 0)].concat(items));
+            result.index = index;
+            
+            this._promote('scheduleModified', result);
+            
+            return result;
+        };
+        
         this._removeItem = function(idx) {
 
             var resultIdx = 0;
@@ -226,6 +298,93 @@ window.projekktor = window.$p = function() {
             this._promote('scheduleModified', this.getItemCount(), this.getPlaylist());
 
             return resultIdx;
+        };
+        
+        /**
+         * Remove item from playlist
+         * 
+         * @param {number=this.media.length-1} index - index of item to remove. Default is the last one on the playlist.
+         * @param {boolean=false} stopPropagation - prevent the removeItems event propagation
+         * @returns {object} - object with affected index, removed item  e.g. {added: [], removed: [], index: -1} 
+         */
+        this.removeItem = function(index, stopPropagation) {
+            
+            var result = {
+                added: [],
+                removed: [],
+                index: -1
+            };
+            
+            // constrain index to the range
+            index = (index === undefined || index > this.media.length-1) ? this.media.length-1 : index;
+            index = (index < 0) ? 0 : index;
+            
+            stopPropagation = !!stopPropagation || false;
+            
+            // check if there anything to remove
+            if (this.media.length === 0) {
+                return result;
+            }
+            
+            // remove item
+            result.removed = this.media.splice(index, 1);
+            result.index = index;
+            
+            if(!stopPropagation){
+                this._promote('scheduleModified', result);
+            }
+            
+            return result;
+        };
+        
+        this.removeItems = function(indexes) {
+            
+            var result = {
+                    added: [],
+                    removed: [],
+                    index: null
+                },
+                r,
+                i, l;
+            
+            if(!$.isArray(indexes)){
+                if($.isNumeric(indexes)){
+                    indexes = [indexes];
+                }
+                else {
+                    indexes = [];
+                }
+            }
+            
+            // check if there anything to remove
+            if (this.media.length === 0 || indexes.length === 0) {
+                return result;
+            }
+            
+            // remove items
+            for(i = 0, l = indexes.length; i < l; i++){
+                r = this.removeItem(indexes[i], true);
+                
+                if (r.index > -1) {
+                    result.removed.push(r.removed[0]);
+                }
+            }
+            
+            this._promote('scheduleModified', result);
+            
+            return result;
+        };
+        
+        this.getItemById = function(itemId) {
+            return $.grep(this.media, function(item){ 
+                        return (itemId === item.ID); 
+                    })[0] || null;
+        };
+        
+        this.getItemsByCatName = function(catName) {
+            return $.grep(this.media, function(item){ 
+                        return (catName === item.cat); 
+                    })[0] || [];
         };
 
         this._canPlay = function(mediaType, platform, streamType) {
@@ -537,9 +696,9 @@ window.projekktor = window.$p = function() {
             currentMediaPlatforms.sort(function(a, b) {
                 return $.inArray(a, platformsConfig) - $.inArray(b, platformsConfig);
             });
-
+            
             result = {
-                ID: data.config.id || $p.utils.randomId(8),
+                ID: !this.getItemById(data.config.id) ? data.config.id : $p.utils.randomId(8),
                 cat: data.config.cat || 'clip',
                 file: mediaFiles,
                 availableFiles: data.availableFiles,
@@ -549,7 +708,9 @@ window.projekktor = window.$p = function() {
                 mediaModel: modelSet.model || 'NA',
                 errorCode: modelSet.errorCode || data.errorCode || 7,
                 viewcount: 0,
-                config:  data.config || {}
+                processed: true,
+                config:  data.config || {},
+                cuepoints: data.file.cuepoints
             };
 
             return result;
@@ -683,6 +844,20 @@ window.projekktor = window.$p = function() {
 
         this.playlistHandler = function(value) {
             this.setFile(value.file, value.type);
+        };
+        
+        /*this.playlistLoadedHandler = function(value) {
+            this.removeListener('*.cuepointsystem');
+            this.addListener('cuepointsAdd.cuepointsystem', this._cuepointsChangeEventHandler);
+            this.addListener('cuepointsRemove.cuepointsystem', this._cuepointsChangeEventHandler);
+        };*/
+        
+        this.cuepointsAddHandler = function(value) {
+            this._cuepointsChangeEventHandler(value);
+        };
+        
+        this.cuepointsRemoveHandler = function(value) {
+            this._cuepointsChangeEventHandler(value);
         };
 
         this.scheduleLoadedHandler = function(xmlDocument) {
@@ -1558,10 +1733,12 @@ window.projekktor = window.$p = function() {
 
         this.getItemIdx = function(itm) {
 
-            var ref = this,
-                item = itm || {ID: false};
-
-            return $.inArray($.grep(this.media, function(e){ return (item.ID === e.ID || ref.getItemId() === e.ID); })[0], this.media );
+            var item = itm || {ID: false},
+                  id = item.ID || this.getItemId();
+            
+            return $.inArray($.grep(this.media, function(e){ 
+                        return (e.ID === id); 
+                    })[0], this.media);
         };
 
         this.getCurrentItem = function() {
@@ -2760,7 +2937,7 @@ window.projekktor = window.$p = function() {
 
             // remove item
             if (arguments[0] === null) {
-                affectedIdx = this._removeItem(arguments[1]);
+                affectedIdx = this.removeItem(arguments[1]).index;
 
                 if (affectedIdx === this.getItemIdx()) {
                     this.setActiveItem('previous');
@@ -2837,7 +3014,7 @@ window.projekktor = window.$p = function() {
                 itemIdx = null,
                 itemId = null,
                 itemData = null,
-                data = obj || [{file:{src:'', type:'nane/none'}}],
+                data = obj || [{file:{src:'', type:'none/none'}}],
                 files = data.playlist || data;
 
             this.media = [];
@@ -2864,7 +3041,8 @@ window.projekktor = window.$p = function() {
             } catch(e) {}
 
             // add media items
-            $.each(files, function() {
+            this.addItems(files, 0, true);
+            /*$.each(files, function() {
 
                 // using try-catch here is not accurate enough but the easiest way to handle parsing issues so far.
                 try {
@@ -2878,17 +3056,16 @@ window.projekktor = window.$p = function() {
                 }
 
                 return true;
-            });
+            });*/
 
-            this.removeListener('*.cuepointsystem');
-            this.addListener('cuepointsAdd.cuepointsystem', this._cuepointsChangeEventHandler);
-            this.addListener('cuepointsRemove.cuepointsystem', this._cuepointsChangeEventHandler);
-
-            if (itemIdx === null) {
+            /*if (itemIdx === null) {
                 this._addItem(this._prepareMedia({file:'', config:{}, errorCode: 97}));
-            }
+            }*/
 
             this._syncPlugins('reelupdate');
+            //if(this._isReady) {
+            this._promote('playlistLoaded', this.getPlaylist());
+            //}
         };
 
         this.setPlaybackQuality = function(quality) {
@@ -3363,11 +3540,11 @@ window.projekktor = window.$p = function() {
             return this;
         },
 
-        this._cuepointsChangeEventHandler = function(cuepoints, player) {
+        this._cuepointsChangeEventHandler = function(cuepoints) {
             
-            var ref = player;
+            var ref = this;
             
-            ref._enqueue(function() { 
+            this._enqueue(function() { 
                 try {
                     ref._applyCuePoints();
                 } catch(e) {} 
