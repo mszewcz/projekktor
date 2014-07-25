@@ -249,7 +249,7 @@ projekktorSettings.prototype = {
     },
     
     errorHandler: function(code) {
-        var msg = this.pp.getConfig('messages')[code];
+        var msg = this.i18n("%{error"+code+"}");
         this.toolSet('error', 1, msg);
     },
 
