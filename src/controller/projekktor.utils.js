@@ -136,15 +136,28 @@ jQuery(function ($) {
 
 			return parseFloat(s);
 		},
-
-		toTimeString: function (secs, noSecs) {
-			var hours = Math.floor(secs / (60 * 60)),
+        
+        toTimeObject: function (secs) {
+            var hours = Math.floor(secs / (60 * 60)),
 				divisor_for_minutes = secs % (60 * 60),
 				minutes = Math.floor(divisor_for_minutes / 60),
 				divisor_for_seconds = divisor_for_minutes % 60,
 				seconds = Math.floor(divisor_for_seconds);
 
-			if (hours < 10) {
+			return {
+                h: hours,
+                m: minutes,
+                s: seconds
+            };
+        },
+        
+		toTimeString: function (secs, noSecs) {
+			var time = this.toTimeObject(secs),
+                hours = time.h,
+                minutes = time.m,
+                seconds = time.s;
+            
+            if (hours < 10) {
 				hours = "0" + hours;
 			}
 			if (minutes < 10) {
@@ -153,7 +166,6 @@ jQuery(function ($) {
 			if (seconds < 10) {
 				seconds = "0" + seconds;
 			}
-
 			return (noSecs === true) ? hours + ':' + minutes : hours + ':' + minutes + ':' + seconds;
 		},
 
