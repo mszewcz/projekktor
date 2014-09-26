@@ -28,7 +28,7 @@ $p.newModel({
         play:           "playingListener",
         volumechange:   "volumeListener",
         progress:       "progressListener",
-        timeupdate:     "timeListener",
+        timeupdate:     "_timeupdate",
         ended:          "_ended",
         waiting:        "waitingListener",
         canplaythrough: "canplayListener",
@@ -47,6 +47,7 @@ $p.newModel({
     videoHeight: 0,
     wasPersistent: true,
     isPseudoStream: false,
+    endedTimeout: 0,
     
     init: function() {
         var ua = navigator.userAgent; // TODO: global platform and feature detection
@@ -219,7 +220,26 @@ $p.newModel({
         });              
     },
     
+    // Workaround for problems with firing ended event in Chromium based browsers 
+    // e.g. Samsung Galaxy S4 on Android 4.4.2 KitKat native Internet Browser 1.5.28 1528 based on Chrome 28.0.1500.94
+    // More info about the issues with ended event here: https://code.google.com/p/chromium/issues/detail?id=349543
+    _timeupdate: function(video, event) {
+        var ref = this;
+        if(video.duration - video.currentTime < 1) {
+            this.endedTimeout = setTimeout(function(){
+                clearTimeout(ref.endedTimeout);
+                if(!video.paused && Math.round(video.duration - video.currentTime) === 0){
+                    $p.utils.log('VIDEO model: ended event forced');
+                    ref._ended();
+                }
+            }, 1000);
+        }
+        this.timeListener.apply(this, arguments);
+    },
+    
     _ended: function() {
+        clearTimeout(this.endedTimeout);
+        
         var dur = this.mediaElement[0].duration, // strange android behavior workaround
             complete = (Math.round(this.media.position) === Math.round(dur)),
             fixedEnd = ( (dur-this.media.maxpos) < 2 ) && (this.media.position===0) || false;
