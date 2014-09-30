@@ -245,10 +245,6 @@ jQuery(function ($) {
                 on: ['touchend'],
                 call: 'touchEnd'
             }],
-            'draghandle': {
-                on: ['mousedown'],
-                call: 'handleStartDragListener'
-            },
 
             'controls': null,
             'title': null,
@@ -1002,7 +998,7 @@ jQuery(function ($) {
                 this.hidecb(true);
         },        
         
-	durationChangeHandler: function () {
+        durationChangeHandler: function () {
             if(this.pp.getDuration() != 0){
                 this.displayCuePoints( this.getConfig('showCuePointsImmediately') );
             }
@@ -1368,53 +1364,6 @@ jQuery(function ($) {
                 $(window).mousemove(mouseMove);
                 $(window).mouseup(mouseUp);
             }
-        },
-
-        handleStartDragListener: function (evt, domObj) {
-
-            var ref = this,
-                dx = Math.abs(parseInt(this.cb.position().left) - evt.clientX),
-                dy = Math.abs(parseInt(this.cb.position().top) - evt.clientY);
-
-            /*
-    this._initalPosition = {
-        top: this.cb.css('top'),
-        bottom: this.cb.css('bottom'),
-        left: this.cb.css('left'),
-        right: this.cb.css('right')
-        
-    };
-    */
-            // this._initalPosition = $.extend({}, this.cb.attr('style'), this.cb.css());
-
-
-            var mouseUp = function (evt) {
-                evt.stopPropagation();
-                evt.preventDefault();
-                ref.playerDom.unbind('mouseup', mouseUp);
-                ref.playerDom.unbind('mouseout', mouseUp);
-                ref.playerDom.unbind('mousemove', mouseMove);
-                return false;
-            }
-
-            var mouseMove = function (evt) {
-                evt.stopPropagation();
-                evt.preventDefault();
-                clearTimeout(ref._cTimer);
-                var newXPos = (evt.clientX - dx);
-                newXPos = (newXPos > ref.playerDom.width() - ref.cb.width()) ? ref.playerDom.width() - ref.cb.width() : newXPos;
-                newXPos = (newXPos < 0) ? 0 : newXPos;
-                ref.cb.css('left', newXPos + 'px');
-                var newYPos = (evt.clientY - dy);
-                newYPos = (newYPos > ref.playerDom.height() - ref.cb.height()) ? ref.playerDom.height() - ref.cb.height() : newYPos;
-                newYPos = (newYPos < 0) ? 0 : newYPos;
-                ref.cb.css('top', newYPos + 'px');
-                return false;
-            }
-
-            this.playerDom.mousemove(mouseMove);
-            this.playerDom.mouseup(mouseUp);
-            // this.playerDom.mouseout(mouseUp);
         },
 
         /*******************************
