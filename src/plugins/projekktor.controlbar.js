@@ -63,16 +63,16 @@ jQuery(function ($) {
             'scrubbertip': null,
             'scrubberknob': null,
             'scrubberdrag': [{
-                on: ['mouseenter'],
+                on: ['mouseenter', 'touchstart'],
                 call: 'scrubberShowTooltip'
             }, {
-                on: ['mouseout'],
+                on: ['mouseout', 'touchend'],
                 call: 'scrubberHideTooltip'
             }, {
-                on: ['mousemove'],
+                on: ['mousemove', 'touchmove'],
                 call: 'scrubberdragTooltip'
             }, {
-                on: ['mousedown'],
+                on: ['mousedown', 'touchstart'],
                 call: 'scrubberdragStartDragListener'
             }],
 
