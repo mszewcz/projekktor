@@ -1845,22 +1845,21 @@ jQuery(function ($) {
             };
 
             this.getItemCount = function () {
-
                 // ignore NA dummy
                 return (this.media.length === 1 && this.media[0].mediaModel === 'na') ? 0 : this.media.length;
             };
 
             this.getItemId = function (idx) {
-
+                
                 try {
                     return this.playerModel.getId();
                 } catch (e) {
-                    return this.getItemAtIdx().id;
+                    return this.getItemAtIdx(idx).id;
                 }
             };
-
+            
             this.getItemIdx = function (itm) {
-
+                
                 var item = itm || {
                     id: false
                 },

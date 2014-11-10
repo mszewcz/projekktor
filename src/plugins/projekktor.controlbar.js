@@ -17,6 +17,7 @@ jQuery(function ($) {
         _lastPos: -1,
         _isDVR: false,
         _noHide: false,
+        _sSliderAct: false,
         _vSliderAct: false,
         
         cb: null,
@@ -1237,14 +1238,16 @@ jQuery(function ($) {
 
         scrubberdragStartDragListener: function (event) {
 
-            if (this.getConfig('disallowSkip') == true) return;
+            if (this.getConfig('disallowSkip') === true) {
+                return;
+            }
+            
             this._sSliderAct = true;
 
             var ref = this,
-                slider = $(this.controlElements['scrubberdrag'][0]),
-                loaded = $(this.controlElements['loaded'][0]),
+                slider = ref.controlElements['scrubberdrag'],
+                loaded = ref.controlElements['loaded'],
                 second = 0,
-                dx = Math.abs(parseInt(slider.offset().left) - event.clientX),
 
                 applyValue = function (event) {
 
