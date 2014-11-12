@@ -170,7 +170,7 @@ jQuery(function ($) {
 		},
 
 		/* X-Browser flash embedd mess */
-		embeddFlash: function (destObj, domOptions, shield, shrinkShield) {
+		embedFlash: function (destObj, domOptions, shield, shrinkShield) {
 
 			var flashVars = domOptions.FlashVars || {},
 				result = '',
@@ -181,10 +181,12 @@ jQuery(function ($) {
 				id = '';
 
 			// add flashVars
-			if (domOptions.src.indexOf('?') == -1)
+			if (domOptions.src.indexOf('?') == -1) {
 				domOptions.src += "?";
-			else
+            }
+			else {
 				domOptions.src += "&";
+            }
 
 
 
@@ -224,8 +226,9 @@ jQuery(function ($) {
 				result = htmlEmbed;
 			}
 
-			if (dest === null)
+			if (dest === null) {
 				return result;
+            }
 
 			// jquerx 1.4.2 IE flash <object> issue workaround:
 			// this does not work in IE: destObj.append(result);
@@ -248,8 +251,116 @@ jQuery(function ($) {
 
 			return $('#' + domOptions.id);
 		},
+        
+		embedPlugin: function (pluginName, destObj, config, shield, shrinkShield) {
 
-		ieVersion: function () {
+			var src = config.src || '',
+                attributes = config.attributes || {},
+                parameters = config.parameters || {},
+                initVars = config.initVars ||  {},
+                initVarsArray = [],
+				result = '',
+                htmlAttributes = '',
+				htmlObject = '',
+                htmlObjectParams = '',
+				htmlEmbed = '',
+                htmlEmbedParams = '',
+				dest = destObj,
+                key;
+            
+            // generate attributes for <embed> and <object> elements
+            for (key in attributes) {
+                if(attributes.hasOwnProperty(key)){
+                    htmlAttributes += key + '="' + attributes[key] + '" ';
+                }
+            }
+            
+            // generate <param> elements for <object> embed & attributes for <embed> from parameters
+            for (key in parameters) {
+                if(parameters.hasOwnProperty(key)){
+                    htmlObjectParams += '<param name="' + key + '" value="' + parameters[key] + '" />';
+                    htmlEmbedParams += key + '="' + parameters[key] + '" ';
+                }
+            }
+            
+            // create array of initVars name=value pairs
+            for (key in initVars) {
+                if(initVars.hasOwnProperty(key)){
+                    initVarsArray.push(key + '=' + encodeURIComponent(initVars[key]));
+                }
+			}
+            
+            switch(pluginName) {
+                
+                case 'flash':
+                    // <object> 
+                    htmlObject = 
+                    '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" ' +
+                    htmlAttributes + '>' +
+                    '<param name="movie" value="' + src + '" />' +
+                    '<param name="flashvars" value="' + initVarsArray.join('&amp;') + '" />' +
+                    htmlObjectParams;
+
+                    // <embed>
+                    htmlEmbed = 
+                    '<embed type="application/x-shockwave-flash" pluginspage="//www.macromedia.com/go/getflashplayer" ' +
+                    htmlAttributes + 
+                    htmlEmbedParams +
+                    'src="' + config.src + '" ' +
+                    'flashvars="' + initVarsArray.join('&') + '" ' +
+                    '></embed>';
+                    
+                    result = htmlObject + htmlEmbed;
+                    result += '</object>';
+                    
+                    break;
+                
+                case 'silverlight':
+                    htmlObject = 
+                    '<object data="data:application/x-silverlight-2," type="application/x-silverlight-2" ' +
+                    htmlAttributes + '>' +
+                    '<param name="source" value="' + src + '" />' +
+                    '<param name="initParams" value="' + initVarsArray.join(',') + '" />' +
+                    htmlObjectParams + 
+                    '</object>';
+                
+                    result = htmlObject;
+                    break;
+            }
+
+			
+
+			if (!document.all || window.opera) {
+				result = htmlEmbed;
+			}
+
+			if (dest === null) {
+				return result;
+            }
+
+			// jquerx 1.4.2 IE flash <object> issue workaround:
+			// this does not work in IE: destObj.append(result);
+			dest.get(0).innerHTML = result;
+
+			if (shield !== false) {
+				dest.append(
+					$('<div/>').attr('id', attributes.id + '_cc')
+					.css({
+						width: (shrinkShield) ? '1px' : '100%',
+						height: (shrinkShield) ? '1px' : '100%',
+						backgroundColor: ($p.utils.ieVersion() < 9) ? '#000' : 'transparent',
+						filter: 'alpha(opacity = 0.1)',
+						position: 'absolute',
+						top: 0,
+						left: 0
+					})
+				);
+			}
+
+			return $('#' + attributes.id);
+		},
+
+		ieVersion: function () {    
 			var v = 3,
 				div = document.createElement('div'),
 				all = div.getElementsByTagName('i');

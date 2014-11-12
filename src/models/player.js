@@ -826,9 +826,9 @@ jQuery(function ($) {
 
 
 
-        /* X-Browser flash embedd mess */
-        createFlash: function (domOptions, destObj, shield) {
-            this.mediaElement = $p.utils.embeddFlash(destObj.html(''), domOptions, shield, true);
+        /* flash embed */
+        createFlash: function (config, destObj, shield) {
+            this.mediaElement = $p.utils.embedPlugin('flash', destObj.html(''), config, shield, true);
             this._waitforPlayer();
         },
 
