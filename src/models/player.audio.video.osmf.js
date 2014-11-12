@@ -156,21 +156,26 @@ $p.newModel({
                 'left': 0
             });
         
-        var domOptions = {
-            id: ppMediaId + "_flash",
-            name: ppMediaId + "_flash",
+        var config = {
             src: this.pp.getConfig('playerFlashMP4'),
-            width: '100%',
-            height: '100%',
-            style: "position: absolute;",
-            allowScriptAccess: "always",
-            quality: "high", 
-            menu: false,
-            allowFullScreen: 'true',
-            wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
-            SeamlessTabbing: 'false',
-            bgcolor: '#000000',
-            FlashVars: $.extend({
+            attributes: {
+                id: ppMediaId + "_flash",
+                name: ppMediaId + "_flash",
+                width: '100%',
+                height: '100%',
+                style: "position: absolute;"
+            },
+            parameters: {
+                allowScriptAccess: "always",
+                quality: "high", 
+                menu: false,
+                allowFullScreen: "true",
+                wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
+                seamlessTabbing: 'false',
+                bgcolor: '#000000'
+            },
+            // FlashVars
+            initVars: $.extend({
                 mimeType: this.getSource()[0].originalType,
                 streamType: this._streamTypeMap[this.pp.getConfig('streamType')],
                 scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
@@ -181,7 +186,7 @@ $p.newModel({
             }, this.pp.getConfig('OSMFVars'))
         };
     
-        this.createFlash(domOptions, destContainer);
+        this.createFlash(config, destContainer);
     },
     
     flashReadyListener: function() {},
@@ -842,26 +847,29 @@ $p.newModel({
             projekktor(ppId).playerModel._OSMFListener(arguments);
         };   
         
-        var domOptions = {
-            id: ppMediaId + "_flash",
-            name: ppMediaId + "_flash",
+        var config = {
             src: this.pp.getConfig('playerFlashMP4'),
-            width: '100%',
-            height: '100%',
-            style: "position: absolute;",
-            allowScriptAccess: "always",
-            quality: "high", 
-            menu: false,
-            allowFullScreen: 'true',
-            wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
-            SeamlessTabbing: 'false',
-            bgcolor: '#000000',
-            FlashVars: $.extend({
+            attributes: {
+                id: ppMediaId + "_flash",
+                name: ppMediaId + "_flash",
+                width: '100%',
+                height: '100%',
+                style: "position: absolute;"
+            },
+            parameters: {
+                allowScriptAccess: "always",
+                quality: "high", 
+                menu: false,
+                allowFullScreen: "true",
+                wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
+                seamlessTabbing: 'false',
+                bgcolor: '#000000'
+            },
+            initVars: $.extend({
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId               
             }, this.pp.getConfig('OSMFVars'))
         };
-        this.createFlash(domOptions, flashContainer, false); 
-        
+        this.createFlash(config, flashContainer, false); 
     }
     
 }, 'OSMFVIDEO');
