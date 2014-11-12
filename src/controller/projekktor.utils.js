@@ -498,6 +498,39 @@ jQuery(function ($) {
     
             return true;
         },
+        
+        // detectPlugin function adopted from MediaElement.js
+        // 
+        // get the version number from the mimetype (all but IE) or ActiveX (IE)
+        detectPlugin: function(pluginName, mimeType, activeX, axDetect) {
+
+            var nav = window.navigator,
+                version = [0,0,0],
+                description,
+                i,
+                ax;
+
+            // Firefox, Webkit, Opera
+            if (typeof(nav.plugins) != 'undefined' && typeof nav.plugins[pluginName] == 'object') {
+                description = nav.plugins[pluginName].description;
+                if (description && !(typeof nav.mimeTypes != 'undefined' && nav.mimeTypes[mimeType] && !nav.mimeTypes[mimeType].enabledPlugin)) {
+                    version = description.replace(pluginName, '').replace(/^\s+/,'').replace(/\sr/gi,'.').split('.');
+                    for (i=0; i<version.length; i++) {
+                        version[i] = parseInt(version[i].match(/\d+/), 10);
+                    }
+                }
+            // Internet Explorer / ActiveX
+            } else {
+                try {
+                    ax = new ActiveXObject(activeX);
+                    if (ax) {
+                        version = axDetect(ax);
+                    }
+                }
+                catch (e) { }
+            }
+            return version;
+        },
 
 		/**
 		* replaces {}-tags with parameter equialents
@@ -571,58 +604,71 @@ jQuery(function ($) {
 	$p.platforms = {
 
         VLC: function() {
-            if (navigator.plugins && (navigator.plugins.length > 0)) {
-                for(var i=0;i<navigator.plugins.length;++i) {
-                    if (navigator.plugins[i].name.indexOf("VLC") != -1) {
-                        if (navigator.plugins[i].version!=null)
-                            return navigator.plugins[i].version || "0";
-                        if (navigator.plugins[i].description!=null)
-                            if (navigator.plugins[i].description.match(/\d{1,}\.\d{1,}\.\d{1,}/i)[0])
-                                return navigator.plugins[i].description.match(/\d{1,}\.\d{1,}\.\d{1,}/i)[0];
-                    }
+            // we are interested in VLC Web Plugin v2
+            var result = $p.utils.detectPlugin('"VLC Web Plugin"', 'application/x-vlc-plugin', 'VideoLAN.VLCPlugin.2', function(ax) {
+                var version = [],
+                    d = ax['VersionInfo'] || ax.versionInfo || false;
+                if (d) {
+                    d = d.split(" ")[0].split(".");
+                    version = [parseInt(d[0], 10), parseInt(d[1], 10), parseInt(d[2], 10)];
                 }
-            }
-            else {
-                try {
-                    new ActiveXObject("VideoLAN.VLCPlugin.2");
-                    return "0"; // no, please, no
-                } catch (err) {}
-            }        
-            return "0";
+                return version;
+            });
+			
+            return result.join(".");
         },
 
-		/* returns the version of the flash player installed on client. returns 0 on none. */
-		FLASH: function (typ) {
-			try {
-				try {
-					// avoid fp6 minor version lookup issues
-					// see: http://blog.deconcept.com/2006/01/11/getvariable-setvariable-crash-internet-explorer-flash-6/
-					var axo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash.6');
-					try {
-						axo.AllowScriptAccess = 'always';
-					} catch (e) {
-						return '6.0.0';
-					}
-				} catch (e) {}
-				return (new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version').replace(/\D+/g, ',').match(/^,?(.+),?$/)[1].match(/\d+/g)[0]).toString();
-			} catch (e) {
-				try {
-					if (navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin) {
-						return ((navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]).description.replace(/\D+/g, ",").match(/^,?(.+),?$/)[1].match(/\d+/g)[0] ).toString()
-					}
-				} catch (e) {}
-			}
-			return "0";
+		/* returns the version of the flash player */
+		FLASH: function () {
+			var result = $p.utils.detectPlugin('Shockwave Flash','application/x-shockwave-flash','ShockwaveFlash.ShockwaveFlash', function(ax) {
+                // adapted from SWFObject
+                var version = [],
+                    d = ax.GetVariable("$version");
+                if (d) {
+                    d = d.split(" ")[1].split(",");
+                    version = [parseInt(d[0], 10), parseInt(d[1], 10), parseInt(d[2], 10)];
+                }
+                return version;
+            });
+			
+            return result.join(".");
 		},
+        
+        SILVERLIGHT: function() {
+            var result = $p.utils.detectPlugin('Silverlight Plug-In','application/x-silverlight-2','AgControl.AgControl', function (ax) {
+                // Silverlight cannot report its version number to IE
+                // but it does have a isVersionSupported function, so we have to loop through it to get a version number.
+                // adapted from http://www.silverlightversion.com/
+                var v = [0,0,0,0],
+                    loopMatch = function(ax, v, i, n) {
+                        while(ax.isVersionSupported(v[0]+ "."+ v[1] + "." + v[2] + "." + v[3])){
+                            v[i]+=n;
+                        }
+                        v[i] -= n;
+                    };
+                loopMatch(ax, v, 0, 1);
+                loopMatch(ax, v, 1, 1);
+                loopMatch(ax, v, 2, 10000); // the third place in the version number is usually 5 digits (4.0.xxxxx)
+                loopMatch(ax, v, 2, 1000);
+                loopMatch(ax, v, 2, 100);
+                loopMatch(ax, v, 2, 10);
+                loopMatch(ax, v, 2, 1);
+                loopMatch(ax, v, 3, 1);
+
+                return v;
+            });
+			
+            return result.join(".");
+        },
 		
-		ANDROID: function (type) {
+		ANDROID: function () {
 			try {
 				return (navigator.userAgent.toLowerCase().match(/android\s+(([\d\.]+))?/)[1]).toString();
 			} catch (e) {}
             return "0";
 		},
 
-		IOS: function (type) {
+		IOS: function () {
 			var agent = navigator.userAgent.toLowerCase(),
 				start = agent.indexOf('os ');
 			if ((agent.indexOf('iphone') > -1 || agent.indexOf('ipad') > -1) && start > -1) {
@@ -652,8 +698,8 @@ jQuery(function ($) {
             return "0";
 		},
 
-		BROWSER: function (type) {
+		BROWSER: function () {
 			return "1";
 		}
-	}
+	};
 });
