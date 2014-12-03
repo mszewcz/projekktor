@@ -169,89 +169,6 @@ jQuery(function ($) {
 			return (noSecs === true) ? hours + ':' + minutes : hours + ':' + minutes + ':' + seconds;
 		},
 
-		/* X-Browser flash embedd mess */
-		embedFlash: function (destObj, domOptions, shield, shrinkShield) {
-
-			var flashVars = domOptions.FlashVars || {},
-				result = '',
-				htmlEmbedObj = '',
-				htmlEmbed = '',
-				tmpStr = '',
-				dest = destObj,
-				id = '';
-
-			// add flashVars
-			if (domOptions.src.indexOf('?') == -1) {
-				domOptions.src += "?";
-            }
-			else {
-				domOptions.src += "&";
-            }
-
-
-
-			for (var key in flashVars) {
-				if (typeof flashVars[key] != 'function') {
-					tmpStr = flashVars[key];
-
-					/*
-			    // support "{tags}" to add media properties
-			    for(var i in this.media) {
-				if (typeof tmpStr != 'string') continue;	    
-				tmpStr = tmpStr.replace('{'+i+'}', this.media[i]);
-			    }
-			    */
-					domOptions.src += key + '=' + encodeURIComponent(tmpStr) + '&';
-				}
-			}
-			domOptions.src.replace(/&$/, '');
-
-			// <object> bullshit with redundant "ID" IE extrawurst
-			htmlEmbedObj = '<object id="' + domOptions.id + '" codebase="https://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0"  name="' + domOptions.name + '" width="' + domOptions.width + '" height="' + domOptions.height + '" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">' + '<param name="movie" value="' + domOptions.src + '"></param>' + '<param name="allowScriptAccess" value="' + domOptions.allowScriptAccess + '"></param>' + '<param name="allowFullScreen" value="' + domOptions.allowFullScreen + '"></param>' + '<param name="wmode" value="' + domOptions.wmode + '"></param>';
-
-
-			// <embed> tag
-			htmlEmbed = '<embed ';
-			for (var key in domOptions) {
-				if (key.toUpperCase() === 'FLASHVARS') continue;
-				if (typeof domOptions[key] != 'function') htmlEmbed += key + '="' + domOptions[key] + '" ';
-			}
-			htmlEmbed += ' pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash"></embed>';
-
-
-			result = htmlEmbedObj + htmlEmbed;
-			result += '</object>';
-
-			if (!document.all || window.opera) {
-				result = htmlEmbed;
-			}
-
-			if (dest === null) {
-				return result;
-            }
-
-			// jquerx 1.4.2 IE flash <object> issue workaround:
-			// this does not work in IE: destObj.append(result);
-			dest.get(0).innerHTML = result;
-
-			if (shield !== false) {
-				dest.append(
-					$('<div/>').attr('id', domOptions.id + '_cc')
-					.css({
-						width: (shrinkShield) ? '1px' : '100%',
-						height: (shrinkShield) ? '1px' : '100%',
-						backgroundColor: ($p.utils.ieVersion() < 9) ? '#000' : 'transparent',
-						filter: 'alpha(opacity = 0.1)',
-						position: 'absolute',
-						top: 0,
-						left: 0
-					})
-				);
-			}
-
-			return $('#' + domOptions.id);
-		},
-        
 		embedPlugin: function (pluginName, destObj, config, shield, shrinkShield) {
 
 			var src = config.src || '',
@@ -310,8 +227,13 @@ jQuery(function ($) {
                     'flashvars="' + initVarsArray.join('&') + '" ' +
                     '></embed>';
                     
-                    result = htmlObject + htmlEmbed;
-                    result += '</object>';
+                    if (!document.all || window.opera) {
+                        result = htmlEmbed;
+                    }
+                    else {
+                        result = htmlObject + htmlEmbed;
+                        result += '</object>';
+                    }
                     
                     break;
                 
@@ -328,19 +250,13 @@ jQuery(function ($) {
                     break;
             }
 
-			
-
-			if (!document.all || window.opera) {
-				result = htmlEmbed;
-			}
-
 			if (dest === null) {
 				return result;
             }
 
 			// jquerx 1.4.2 IE flash <object> issue workaround:
 			// this does not work in IE: destObj.append(result);
-			dest.get(0).innerHTML = result;
+			dest[0].innerHTML = result;
 
 			if (shield !== false) {
 				dest.append(
