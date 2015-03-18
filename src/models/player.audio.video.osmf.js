@@ -13,7 +13,6 @@ jQuery(function($) {
 $p.newModel({
 
     modelId: 'OSMFVIDEO',
-    replace: 'VIDEOFLASH',
     
     flashVersion: '11.4',
     
@@ -810,7 +809,6 @@ $p.newModel({
 $p.newModel({    
 
     modelId: 'OSMFAUDIO',
-    replace: 'AUDIOFLASH',
     
     hasGUI: false,
     iLove: [
