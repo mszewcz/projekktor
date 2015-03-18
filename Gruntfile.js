@@ -158,7 +158,7 @@ module.exports = function (grunt) {
           {expand: true, src: ['swf/**'], dest: dest},       
           {expand: true, src: ['themes/**'], dest: dest},
           {expand: true, src: ['readme.html'], dest: dest},
-          {expand: true, flatten: true, src: ['libs/jquery-1.9.1.min.js'], dest: dest}
+          {expand: true, flatten: true, src: ['lib/jQuery/1.11.2/**'], dest: dest, filter: 'isFile'}
           // makes all src relative to cwd
           // {expand: true, cwd: 'path/', src: ['**'], dest: 'dest/'},
           // flattens results to a single level
