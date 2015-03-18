@@ -22,3 +22,4 @@ dist/*.map
 nonpublic
 
 npm-debug.log
+/nbproject/
