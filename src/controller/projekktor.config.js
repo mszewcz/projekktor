@@ -38,7 +38,19 @@ projekktorConfig.prototype = {
     _ns:                            'pp',
     
     /* a priorised array of available platforms */
-    _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'vlc'],
+    _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'silverlight', 'vlc'],
+    
+    /* additional platforms config */
+    _platformsConfig: {
+        flash: {
+            src: ''
+            // minPlatformVersion: '' // optional minimal flash plugin version rewrite
+        },
+        silverlight: {
+            src: ''
+            // minPlatformVersion: '' // optional minimal silverlight plugin version rewrite
+        }
+    },
     
     /* if set to true, projekktor assumes to live within an iframe and will act accordingly (used for embedding) */
     _iframe:                        false,
@@ -95,7 +107,7 @@ projekktorConfig.prototype = {
     ***************************************************************/
     
     /* unique itemID for the item currently played - dynamically generated if not provided via config */
-    id:                             0,
+    id:                             null,
     
     /* a title is a title is a title */ 
     title:                          null,
@@ -134,12 +146,6 @@ projekktorConfig.prototype = {
     
     /* scaling used for videos (flash and native, not youtube) "fill", "aspectratio" or "none" */
     videoScaling:                   'aspectratio',
-        
-    /* path to the MP4 Flash-player fallback component */
-    playerFlashMP4:                 '',
-        
-    /* path to the MP3 Flash-player fallback component */
-    playerFlashMP3:                 '',  
             
     /* defines the streamtype of the current item.
         'http':  http  streaming
