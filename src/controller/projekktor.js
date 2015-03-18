@@ -1128,13 +1128,13 @@ jQuery(function ($) {
                     pluginName = "projekktor" + plugins[i].charAt(0).toUpperCase() + plugins[i].slice(1);
 
                     try {
-                        typeof eval(pluginName);
+                        typeof window[pluginName];
                     } catch (e) {
                         alert("Projekktor Error: Plugin '" + plugins[i] + "' malicious or not available.");
                         continue;
                     }
 
-                    pluginObj = $.extend(true, {}, new projekktorPluginInterface(), eval(pluginName).prototype);
+                    pluginObj = $.extend(true, {}, new projekktorPluginInterface(), window[pluginName].prototype);
                     pluginObj.name = plugins[i].toLowerCase();
                     pluginObj.pp = this;
                     pluginObj.playerDom = this.env.playerDom;
