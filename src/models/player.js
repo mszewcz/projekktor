@@ -733,6 +733,8 @@ jQuery(function ($) {
             this._scaleVideo();
         },
         
+        nullListener: function(obj) {},
+
         applySrc: function () {},
         
         applyImage: function (url, destObj) {
