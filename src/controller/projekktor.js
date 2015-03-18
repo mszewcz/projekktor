@@ -1011,7 +1011,7 @@ jQuery(function ($) {
                 // prevent player-hangup in sitiations where
                 // playlist becomes virtually empty by applied filter rules (e.g. maxviews)
                 if (!this.getNextItem()) {
-                    this.reset();
+                    //this.reset();
                 }
             };
 
