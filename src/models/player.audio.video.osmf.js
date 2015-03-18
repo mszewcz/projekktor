@@ -13,8 +13,7 @@ $p.newModel({
     modelId: 'OSMFVIDEO',
     replace: 'VIDEOFLASH',
     
-    flashVersion: "10.2",
-    flashVerifyMethod: 'addEventListener',
+    flashVersion: '11.4',
     
     iLove: [
         {ext:'flv', type:'video/flv', platform:'flash', fixed: true, streamType: ['*']},
