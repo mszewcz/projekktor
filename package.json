@@ -2,12 +2,19 @@
   "name": "projekktor",
   "title": "Projekktor",
   "description": "Video (and audio) player for the web, written in JavaScript",
-  "version": "1.2.37",
+  "version": "1.4.00",
   "homepage": "http://www.projekktor.com",
   "author": {
     "name": "Sascha Kluger, Spinning Airwhale Media",
     "url": "http://www.spinningairwhale.com"
   },
+  "contributors": [
+    {
+      "name": "Radosław Włodkowski",
+      "email": "radoslaw@wlodkowski.net",
+      "url": "http://www.wlodkowski.net"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/frankyghost/projekktor.git"
