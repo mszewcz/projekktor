@@ -4,6 +4,7 @@
  * http://www.projekktor.com
  *
  * Copyright 2010-2014, Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
+ * Copyright 2015 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  *
  * under GNU General Public License
  * http://www.projekktor.com/license/
@@ -3896,6 +3897,7 @@ jQuery(function ($) {
                 var result = {},
                     resultPlatforms = [],
                     platforms = [],
+                    platformsConfig = this.getConfig('platformsConfig') || {},
                     streamType = '',
                     ref = this;
 
@@ -3925,6 +3927,9 @@ jQuery(function ($) {
                             streamType = $p.mmap[i]['streamType'] || ['http'];
 
                             $.each(streamType, function (key, st) {
+                                
+                                var configPlatformVersion,
+                                    reqPlatformVersion;
 
                                 if (st in result === false) {
                                     result[st] = {};
@@ -3938,8 +3943,13 @@ jQuery(function ($) {
                                 if ($.inArray($p.mmap[i]['type'], result[st][platform]) > -1) {
                                     return true;
                                 }
-
-                                var reqPlatformVersion = ($p.models[ $p.mmap[i]['model'].toUpperCase() ].prototype[(platform.toLowerCase()) + 'Version'] || "1").toString();
+                                                                
+                                if(platformsConfig.hasOwnProperty(platform.toLowerCase())) {
+                                    configPlatformVersion = platformsConfig[platform.toLowerCase()].minPlatformVersion || false;
+                                }
+                                
+                                // requested platform version is minPlatformVersion from platformsConfig or model prototype
+                                reqPlatformVersion = configPlatformVersion || ($p.models[ $p.mmap[i]['model'].toUpperCase() ].prototype[(platform.toLowerCase()) + 'Version'] || "1").toString();
 
                                 // perform version and config check:
                                 try {
