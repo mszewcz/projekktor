@@ -15,6 +15,9 @@ $p.newModel({
     
     flashVersion: '11.4',
     
+    platform: 'flash',
+    //minPlatformVersion: '11.4',
+    
     iLove: [
         {ext:'flv', type:'video/flv', platform:'flash', fixed: true, streamType: ['*']},
         {ext:'mp4', type:'video/mp4', platform:'flash', streamType: ['*']},
