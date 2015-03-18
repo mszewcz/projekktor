@@ -12,7 +12,7 @@ $p.newModel({
 
     modelId: 'OSMFVIDEO',
     replace: 'VIDEOFLASH',
-   
+    
     flashVersion: "10.2",
     flashVerifyMethod: 'addEventListener',
     
@@ -29,7 +29,6 @@ $p.newModel({
     ],
 
     hasGUI: false,    
-    allowRandomSeek: false,
     isPseudoStream: false,
     streamType: 'http',
     
@@ -157,7 +156,7 @@ $p.newModel({
             });
         
         var config = {
-            src: this.pp.getConfig('playerFlashMP4'),
+            src: this.pp.getConfig('platformsConfig').flash.src,
             attributes: {
                 id: ppMediaId + "_flash",
                 name: ppMediaId + "_flash",
@@ -183,10 +182,10 @@ $p.newModel({
                 enableStageVideo: this._hardwareAcceleration,
                 disableHardwareAcceleration: !this._hardwareAcceleration,
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId
-            }, this.pp.getConfig('OSMFVars'))
+            }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
-    
-        this.createFlash(config, destContainer);
+
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
     },
     
     flashReadyListener: function() {},
@@ -848,7 +847,7 @@ $p.newModel({
         };   
         
         var config = {
-            src: this.pp.getConfig('playerFlashMP4'),
+            src: this.pp.getConfig('platformsConfig').flash.src,
             attributes: {
                 id: ppMediaId + "_flash",
                 name: ppMediaId + "_flash",
@@ -867,9 +866,10 @@ $p.newModel({
             },
             initVars: $.extend({
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId               
-            }, this.pp.getConfig('OSMFVars'))
+            }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
-        this.createFlash(config, flashContainer, false); 
+        
+        this.mediaElement = $p.utils.embedPlugin(this.platform, flashContainer, config, false);
     }
     
 }, 'OSMFVIDEO');
