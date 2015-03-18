@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
 
   "use strict";
+  grunt.file.defaultEncoding = 'utf-8';
 
   var name = grunt.option('name') || '',
     dest = grunt.option('dest') || 'dest/',
@@ -58,10 +59,8 @@ module.exports = function (grunt) {
           "src/models/player.audio.video.hls.js",
           "src/models/player.audio.video.vlc.js",
           "src/models/player.playlist.js",
-          "src/models/player.image.html.js",          
-          // {flag: "jwflash", src: "src/models/player.video.jwflash.js", alt: "src/models/player.audio.video.osmf.js" },         
-          {flag: "jarisflash", src: "src/models/player.audio.video.flash.js", alt: "src/models/player.audio.video.osmf.js" },
-          // {flag: "osmf", src: "src/models/player.audio.video.osmf.js"},         
+          "src/models/player.image.html.js",              
+          {flag: "osmf", src: "src/models/player.audio.video.osmf.js"},         
           {flag: "silverlight", src: "src/models/player.audio.video.silverlight.js"},
           {flag: "youtube", src: "src/models/player.youtube.js" },          
           "src/plugins/projekktor.display.js",
@@ -109,7 +108,16 @@ module.exports = function (grunt) {
       all: {
         files: filesPreUglify,
         options: {
-          banner: "/*! Projekktor v<%= pkg.version %> | " + "http://www.projekktor.com | " + "Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com | " + "GNU General Public License - http://www.projekktor.com/license/\n" + "*/"
+          banner: "/*! Projekktor v<%= pkg.version %>\n" +
+                  "* <%= grunt.template.today('yyyy-mm-dd') %> \n" +
+                  "* \n" +
+                  "* http://www.projekktor.com \n" + 
+                  "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" + 
+                  "* Copyright 2014-2015 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
+                  "* \n" +
+                  "* under GNU General Public License \n" +
+                  "* http://www.projekktor.com/license/\n" + 
+                  "*/"
         }
       }
     },
@@ -515,7 +523,7 @@ module.exports = function (grunt) {
   grunt.registerTask("default", [
     "clean",
     "update_submodules",
-    "build:*:*:+playlist:+youtube:+html:+vlc:-jarisflash:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
+    "build:*:*:+playlist:+youtube:+html:+vlc:+osmf:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
     "pre-uglify",
     "uglify",
     "dist:*",
