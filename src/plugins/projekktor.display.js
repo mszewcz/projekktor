@@ -50,7 +50,7 @@ projekktorDisplay.prototype = {
         spriteCountUp:      false
     },
     
-    
+  
     /* triggered on plugin-instanciation */
     initialize: function() {
         // create the display container itself
@@ -92,6 +92,13 @@ projekktorDisplay.prototype = {
     /*****************************************
         EVENT HANDLERS
     *****************************************/
+    displayReadyHandler: function() {
+        
+        if(this.pp.playerModel.getBufferState() !== 'EMPTY'){
+            this.hideBufferIcon();
+        }
+    },
+   
     synchronizingHandler: function() {        
         var ref = this;
         this.hideStartButton();
@@ -106,7 +113,6 @@ projekktorDisplay.prototype = {
         this.readyHandler();  
     },
     
-        
     readyHandler: function() {
         this.hideBufferIcon();
         if (this.pp.getState('IDLE')) {
@@ -290,7 +296,7 @@ projekktorDisplay.prototype = {
         clearInterval(this.buffIcnHangWatcher);
         if(this.getConfig('bufferIconHangWatcherInterval')){
             this.buffIcnHangWatcher = setInterval(function(){
-                if(ref.pp.playerModel.getBufferState()!='EMPTY'){
+                if(ref.pp.playerModel.getBufferState() !== 'EMPTY'){
                     ref.hideBufferIcon();
                 }
             }, this.getConfig('bufferIconHangWatcherInterval'));
