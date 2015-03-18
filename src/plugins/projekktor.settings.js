@@ -10,12 +10,8 @@ projekktorSettings.prototype = {
 
     reqVer: '1.4.00',
     version: '1.0.00',
-
-    _contextEntry: null,
-    _nativeIdx: 0,
-    _flashIdx: 0, 
-
-    pluginReady: false,
+    
+    _qualities: [],
     
     config: {
         contextTitle: 'Settings',
@@ -163,75 +159,8 @@ projekktorSettings.prototype = {
      * **************************************************/ 
     
     itemHandler: function() {
-        var ref = this,
-            pCount = 0,
-            menuOptions = [];    
-        
-        // setup quality and platforms menu for current playlist item
-        this.setupQualityMenu();
-        this.setupPlatformMenu();
-        
-        $.each(this.dest.find("[" + this.getDA('func') + "]"), function() {
-            var func = $(this).attr(ref.getDA('func')).split('_');
-
-            if (menuOptions[func[0]]==null) {
-                menuOptions[func[0]] = [];
-            }
-
-            // check
-            if (!ref[func[0] + 'Check'](func[1]) && func[1]!='auto') {
-                $(this).addClass('inactive').removeClass('active');
-                return true;
-            } else {
-                $(this).addClass('active').removeClass('inactive');
-            }
-
-            menuOptions[func[0]].push(func[1]);
-
-            // visual feedback custom settings
-            if (ref.cookie(func[0])==func[1] || ( (ref.cookie(func[0])===false || ref.cookie(func[0])==null) && func[1]=='auto')) {
-                $(this).addClass('on').removeClass('off');
-            }
-            else {
-                $(this).addClass('off').removeClass('on');
-            }
-
-            $(this).click(function(evt) {
-                ref.optionSelect($(this), func[0], func[1]); 
-                evt.stopPropagation();
-                evt.preventDefault();
-                return false;
-            }); 
-
-            return true;
-        });
-
-        // restore presets:
-        for (var i in menuOptions) {   
-            if (menuOptions[i].length<3) {
-                this.dest.find('#' + i).addClass('inactive').removeClass('active');
-            } else {
-                this.dest.find('#' + i).addClass('active').removeClass('inactive');
-                this[i + 'Set']();
-                pCount++;
-            }
-        }
-
-        // apply "columns" class
-        var classes = this.dest.attr("class").split(" ").filter(function(item) {
-            return item.lastIndexOf("column", 0) !== 0;
-        });
-        
-        if(pCount){
-            this.setActive(this.btn, true);
-        }
-        else {
-            this.setActive(this.btn, false);
-        }
-        
-        this.dest.attr("class", classes.join(" "));        
-        this.dest.addClass('column' + pCount);
-
+        this._qualities = [];
+        this.setupSettingsMenu();
     },
     
     plugin_controlbarHideHandler: function(controlBar) {
@@ -240,12 +169,13 @@ projekktorSettings.prototype = {
     },
     
     availableQualitiesChangeHandler: function(qualities) {
-        this.itemHandler();
+        this._qualities = qualities.slice().reverse();
+        this.setupSettingsMenu();
     },
     
     qualityChangeHandler: function (val) {
         this.qualitySet(val);
-        this.itemHandler();
+        this.setupSettingsMenu();
     },
     
     errorHandler: function(code) {
@@ -475,12 +405,85 @@ projekktorSettings.prototype = {
         return utftext;
     },
     
+    setupSettingsMenu: function() {
+            var ref = this,
+            pCount = 0,
+            menuOptions = [];    
+        
+        // setup quality and platforms menu for current playlist item
+        this.setupQualityMenu();
+        this.setupPlatformMenu();
+        
+        $.each(this.dest.find("[" + this.getDA('func') + "]"), function() {
+            var func = $(this).attr(ref.getDA('func')).split('_');
+
+            if (menuOptions[func[0]]==null) {
+                menuOptions[func[0]] = [];
+            }
+
+            // check
+            if (!ref[func[0] + 'Check'](func[1]) && func[1]!='auto') {
+                $(this).addClass('inactive').removeClass('active');
+                return true;
+            } else {
+                $(this).addClass('active').removeClass('inactive');
+            }
+
+            menuOptions[func[0]].push(func[1]);
+
+            // visual feedback custom settings
+            if (ref.cookie(func[0])==func[1] || ( (ref.cookie(func[0])===false || ref.cookie(func[0])==null) && func[1]=='auto')) {
+                $(this).addClass('on').removeClass('off');
+            }
+            else {
+                $(this).addClass('off').removeClass('on');
+            }
+
+            $(this).click(function(evt) {
+                ref.optionSelect($(this), func[0], func[1]); 
+                evt.stopPropagation();
+                evt.preventDefault();
+                return false;
+            }); 
+
+            return true;
+        });
+
+        // restore presets:
+        for (var i in menuOptions) {   
+            if (menuOptions[i].length<3) {
+                this.dest.find('#' + i).addClass('inactive').removeClass('active');
+            } else {
+                this.dest.find('#' + i).addClass('active').removeClass('inactive');
+                this[i + 'Set']();
+                pCount++;
+            }
+        }
+
+        // apply "columns" class
+        var classes = this.dest.attr("class").split(" ").filter(function(item) {
+            return item.lastIndexOf("column", 0) !== 0;
+        });
+        
+        if(pCount){
+            this.setActive(this.btn, true);
+        }
+        else {
+            this.setActive(this.btn, false);
+        }
+        
+        this.dest.attr("class", classes.join(" "));        
+        this.dest.addClass('column' + pCount);    
+    },
+    
     setupQualityMenu: function(){
+        var qualities = this._qualities.length ? this._qualities : this.pp.getPlaybackQualities(),
+            qualityList = this.createQualityList(qualities);
         // remove all the current quality menu items
         this.removeMenuItems('quality');
         
         // add new items
-        this.addMenuItems('quality', this.createQualityList());
+        this.addMenuItems('quality', qualityList);
     },
     
     setupPlatformMenu: function(){
@@ -495,8 +498,6 @@ projekktorSettings.prototype = {
         var qualityValues = qualities || this.pp.getPlaybackQualities(),
             qualityList = '',
                     val = '';
-        
-        qualityValues.reverse();
         
         for(var i=0; i<qualityValues.length; i++){
             val = qualityValues[i];
