@@ -13,6 +13,7 @@ jQuery(function ($) {
 
         modelId: 'player',
         iLove: [],
+        platform: 'browser',
 
         // all the player states
         _currentState: null,
@@ -41,7 +42,6 @@ jQuery(function ($) {
         hasGUI: false,
         allowRandomSeek: false,
 
-        flashVerifyMethod: 'api_get',
         mediaElement: null,
 
         pp: {},
@@ -582,7 +582,7 @@ jQuery(function ($) {
         },
 
         loadProgressUpdate: function () {
-
+            
             var me = this.mediaElement.get(0),
                 progress = 0;
           
@@ -617,7 +617,7 @@ jQuery(function ($) {
         },
 
         progressListener: function (obj, evt) {
-
+            
             // we prefer timeranges but keep catching "progress" events by default
             // for historical and compatibility reasons:	
             if (this.mediaElement instanceof jQuery) { // fix this - make sure all instances are jquery objects
@@ -723,10 +723,6 @@ jQuery(function ($) {
             this.sendUpdate('volume', this.getVolume());
         },
 
-        flashReadyListener: function () {
-            this._displayReady = true;
-        },
-
         errorListener: function (event, obj) {},
 
         metaDataListener: function (obj) {
@@ -736,7 +732,7 @@ jQuery(function ($) {
             } catch (e) {}
             this._scaleVideo();
         },
-
+        
         applySrc: function () {},
         
         applyImage: function (url, destObj) {
@@ -822,65 +818,6 @@ jQuery(function ($) {
             });
             
             return imageObj;
-        },
-
-
-
-        /* flash embed */
-        createFlash: function (config, destObj, shield) {
-            this.mediaElement = $p.utils.embedPlugin('flash', destObj.html(''), config, shield, true);
-            this._waitforPlayer();
-        },
-
-        /* we have to wait for the flash components to load and initialize */
-        _waitforPlayer: function () {
-            var ref = this,
-                counter = 0;
-                
-            if (this._displayReady === true) {
-                return;
-            }
-
-            this._setBufferState('empty');
-
-            (function () {
-
-                // this is the most fucked up FF bug sh*t ever:
-                if (counter > 6 && ref._isFF()) {
-                    counter = 0;
-                    var dest = $(ref.mediaElement).parent(),
-                        clone = $(ref.mediaElement).clone();
-                    dest.html('').append(clone);
-                    ref.mediaElement = clone;
-                }
-
-                dest = ref.mediaElement;
-    
-                if (ref.getState('ERROR')) {
-                    return;
-                }
-
-                counter++;
-                try {
-
-                    if (dest === undefined) {
-                        setTimeout(arguments.callee, 200);
-                    } else if (dest.get(0)[ref.flashVerifyMethod] === undefined) {
-                        setTimeout(arguments.callee, 200);
-                    } else {
-                        ref._setBufferState('full');
-                        ref.flashReadyListener();
-                        $('#' + $(ref.mediaElement).attr('id') + "_cc").css({
-                            width: '100%',
-                            height: '100%'
-                        });
-                    }
-
-                } catch (e) {
-                    setTimeout(arguments.callee, 200);
-                }
-
-            })();
         },
 
         _setState: function (state) {
