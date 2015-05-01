@@ -315,6 +315,11 @@ jQuery(function ($) {
          */
         setPosterLive: function () {
         },
+        setSrc: function(src) {
+            try {
+                this.media.file[0].src = src;
+            } catch (e) {}
+        },
         setQuality: function (quality) {
             if (this._quality === quality) {
                 return;
