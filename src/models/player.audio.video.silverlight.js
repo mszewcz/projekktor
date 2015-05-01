@@ -235,7 +235,7 @@ $p.newModel({
         {ext:'m4a', type:'audio/mpeg', platform:'silverlight', streamType: ['*']},
         {ext:'wma', type:'audio/wma', platform: 'silverlight', streamType: ['*']},
         {ext:'wma', type:'audio/x-ms-wma', platform: 'silverlight', streamType: ['*']},
-        {ext:'wav', type:'audio/wav', platform: 'flash', streamType: ['*']}
+        {ext:'wav', type:'audio/wav', platform: 'silverlight', streamType: ['*']}
     ],
     applyMedia: function(destContainer) {
         var ref = this,
