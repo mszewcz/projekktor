@@ -170,7 +170,7 @@ jQuery(function ($) {
             this._maxElapsed = 0;
             this._playlistServer = '';
             this._id = '';
-            this._parsers = [];
+            this._parsers = {};
 
             this.itemRules = [
                 function () {
@@ -794,9 +794,8 @@ jQuery(function ($) {
 
                 switch (obj.callee) {
                     case 'parserscollected':
-                        var parser = this._parsers.pop();
+                        var parser = this.getParser(obj.data[2]);
                         this.setPlaylist(parser(obj.data));
-                        break;
                         if (this.getItemCount() < 1) {
                             this.setPlaylist();
                         }
@@ -917,14 +916,6 @@ jQuery(function ($) {
 
             this.cuepointsRemoveHandler = function (value) {
                 this._cuepointsChangeEventHandler(value);
-            };
-
-            this.scheduleLoadedHandler = function (xmlDocument) {
-                this._parsers.push(
-                    function (data) {
-                        return data;
-                    }
-                );
             };
 
             this.fullscreenHandler = function (value) {
@@ -1127,9 +1118,7 @@ jQuery(function ($) {
                 for (var i = 0; i < plugins.length; i++) {
                     pluginName = "projekktor" + plugins[i].charAt(0).toUpperCase() + plugins[i].slice(1);
 
-                    try {
-                        typeof window[pluginName];
-                    } catch (e) {
+                    if(typeof window[pluginName] !== 'function') {
                         alert("Projekktor Error: Plugin '" + plugins[i] + "' malicious or not available.");
                         continue;
                     }
@@ -2515,7 +2504,7 @@ jQuery(function ($) {
             };
 
             /* asynchronously loads external XML and JSON data from server */
-            this.getFromUrl = function (url, dest, callback, dataType) {
+            this.getFromUrl = function (url, dest, callback, dataType, auxConfig) {
 
                 var data = null,
                     ref = this;
@@ -2571,7 +2560,7 @@ jQuery(function ($) {
                         if (status !== 'error' && dataType !== 'jsonp') {
 
                             try {
-                                dest[callback](data, xhr.responseText);
+                                dest[callback](data, xhr.responseText, auxConfig);
                             } catch (e) {
                             }
                         }
@@ -3141,10 +3130,12 @@ jQuery(function ($) {
 
                 var fileNameOrObject = arguments[0] || '',
                     dataType = arguments[1] || this._getTypeFromFileExtension(fileNameOrObject),
+                    parser = arguments[2] || null,
                     result = [{
                             file: {
-                                src: fileNameOrObject || '',
-                                type: dataType || this._getTypeFromFileExtension(splt[0])
+                                src: fileNameOrObject,
+                                type: dataType,
+                                parser: parser
                             }
                         }
                     ];
@@ -3164,7 +3155,7 @@ jQuery(function ($) {
                     $p.utils.log('Loading playlist data from ' + result[0].file.src + ' supposed to be ' + result[0].file.type);
                     this._promote('scheduleLoading', 1 + this.getItemCount());
                     this._playlistServer = result[0].file.src;
-                    this.getFromUrl(result[0].file.src, this, '_collectParsers', result[0].file.type);
+                    this.getFromUrl(result[0].file.src, this, '_collectParsers', result[0].file.type, parser);
                 } else {
                     // incoming single file:
                     $p.utils.log('Applying single resource:' + result[0].file.src, result);
@@ -3180,9 +3171,24 @@ jQuery(function ($) {
                 this._promote('scheduleLoaded', arguments);
             };
 
-            this.addParser = function (parser) {
-
-                this._parsers.push(parser);
+            this.addParser = function (parserId, parser) {
+                if(typeof parserId === 'string' && typeof parser === 'function'){
+                    this._parsers[parserId.toUpperCase()] = parser;
+                }
+                else {
+                    $p.utils.log('Failed to set improperly defined parser.');
+                }
+            };
+            
+            this.getParser = function(parserId){
+                if(typeof parserId === 'string') {
+                    return this._parsers[parserId.toUpperCase()];
+                }
+                else {
+                    return function(data){
+                        return (data);
+                    };
+                }
             };
 
             this.setPlaylist = this.destroy = function (obj) {
@@ -3373,7 +3379,7 @@ jQuery(function ($) {
 
                     this.playerModel.destroy();
                     this.playerModel = {};
-                    this._parsers = [];
+                    this._parsers = {};
 
                     this.removePlugins();
                     this._removeGUIListeners();
@@ -4213,7 +4219,7 @@ jQuery(function ($) {
                     if (this.config._playlist[0][i].type) {
 
                         if (this.config._playlist[0][i].type.indexOf('/json') > -1 || this.config._playlist[0][i].type.indexOf('/xml') > -1) {
-                            this.setFile(this.config._playlist[0][i].src, this.config._playlist[0][i].type);
+                            this.setFile(this.config._playlist[0][i].src, this.config._playlist[0][i].type, this.config._playlist[0][i].parser);
                             return this;
                         }
                     }
@@ -4274,7 +4280,6 @@ jQuery(function ($) {
 
         return true;
     };
-
 });
 
 var projekktorConfig = function (ver) {
