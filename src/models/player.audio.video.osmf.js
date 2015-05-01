@@ -190,8 +190,6 @@ $p.newModel({
 
         this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
     },
-    
-    flashReadyListener: function() {},
 
     addOSMFEventListeners: function() {
         var ref = this;
