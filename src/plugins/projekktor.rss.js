@@ -7,7 +7,8 @@
 var projekktorRSS = function(){};
 jQuery(function($) {
 projekktorRSS.prototype = {
-        
+    
+    parserId: 'RSS',
     version: '1.0.00',
     reqVer: '1.4.00', 
     
@@ -25,7 +26,7 @@ projekktorRSS.prototype = {
             node = $(xmlDocument).find("rss");
             if (node.length>0) {
                 if (node.attr("version")==2) {
-                    this.pp.addParser(this.parse);
+                    this.pp.addParser(this.parserId, this.parse);
                 }
             }
             
