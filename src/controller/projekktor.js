@@ -2178,8 +2178,13 @@ jQuery(function ($) {
             };
 
             this.getPlatform = function () {
-
-                return this.getItem().platform || 'error';
+                var item = this.getItem();
+                if(item){
+                    return item.platform || 'error';
+                }
+                else {
+                    return 'error';
+                }
             };
 
             this.getPlatforms = function () {
