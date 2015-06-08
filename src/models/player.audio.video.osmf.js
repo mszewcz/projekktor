@@ -178,12 +178,13 @@ $p.newModel({
             },
             // FlashVars
             initVars: $.extend({
+                src: this.getSource()[0].src,
                 mimeType: this.getSource()[0].originalType,
                 streamType: this._streamTypeMap[this.pp.getConfig('streamType')],
                 scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
+                autoPlay: false,
                 urlIncludesFMSApplicationInstance: this.pp.getConfig('rtmpUrlIncludesApplicationInstance'),
                 enableStageVideo: this._hardwareAcceleration,
-                disableHardwareAcceleration: !this._hardwareAcceleration,
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
@@ -204,14 +205,9 @@ $p.newModel({
     
     loadProgressUpdate: function () {},
         
-    applySrc: function() {
+    applyMediaConfig: function() {
         var ref = this,
             sources = this.getSource();
-        
-        try {
-            this.mediaElement[0].setMediaResourceURL(sources[0].src);
-        }
-        catch(e){}
         
         this.streamType = sources[0].streamType || this.pp.getConfig('streamType') || 'http';
         
@@ -251,7 +247,7 @@ $p.newModel({
                 if (this.mediaElement !== null && (this.getState('AWAKENING') || this.getState('STARTING'))) {
                     // add OSMF event listeners
                     this.addOSMFEventListeners();
-                    this.applySrc();
+                    this.applyMediaConfig();
                     this.displayReady();
                 }
             break;
@@ -664,20 +660,23 @@ $p.newModel({
     },
     
     errorListener: function() {
+        var errorId = arguments[0],
+            errorMsg = arguments[1];
+
         /* todo OSMF MediaErrorCodes mapping http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/org/osmf/events/MediaErrorCodes.html */
-        switch (arguments[0]) {
+        switch (errorId) {
             case 15:
-                this.sendUpdate('error', 5);
+                this.sendUpdate('error', 5, errorMsg);
                 break;
             case 16:
-                this.sendUpdate('error', 80);
+                this.sendUpdate('error', 80, errorMsg);
                 break;                    
             case 80:
             case 7:
-                this.sendUpdate('error', 80);
+                this.sendUpdate('error', 80, errorMsg);
                 break;                
             default:
-                // this.sendUpdate('error', 0);
+                this.sendUpdate('error', 0);
                 break;
         }
     },
