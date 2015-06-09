@@ -217,11 +217,12 @@ $p.newModel({
         this.applySrc();
         this._qualitySwitching = false;
         this.qualityChangeListener();
-    }
+    },
 
     /************************************************
-     * getters
-     ************************************************/
+     * disablers
+     ************************************************/    
+    _scaleVideo: function(){}
 });
 
 $p.newModel({    
