@@ -681,7 +681,11 @@ $p.newModel({
         }
     },
     
-    detachMedia: function() {        
+    detachMedia: function() {
+        var ppId = this.pp.getId();
+        // delete global listeners functions
+        delete window['projekktorOSMFReady' + ppId];
+        
         try {
             this.mediaElement[0].remove();
         } 

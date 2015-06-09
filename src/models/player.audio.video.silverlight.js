@@ -137,6 +137,11 @@ $p.newModel({
     }, 
 
     detachMedia: function() {
+        var ppId = this.pp.getId();
+        // delete global listeners functions
+        delete window['projekktorSilverlightReady' + ppId];
+        delete window['projekktorSilverlightEventListener' + ppId];
+        
         try {
             this.mediaElement[0].remove();
         } 
