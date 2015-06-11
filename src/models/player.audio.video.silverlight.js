@@ -227,7 +227,7 @@ $p.newModel({
     /************************************************
      * disablers
      ************************************************/    
-    _scaleVideo: function(){}
+    //_scaleVideo: function(){}
 });
 
 $p.newModel({    
