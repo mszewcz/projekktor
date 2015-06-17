@@ -320,19 +320,24 @@ jQuery(function ($) {
 		 * @return (Boolean) Returns TRUE if <target> was resized in any way, otherwise FALSE
 		 */
 		stretch: function (stretchStyle, target, owid, ohei, twf, thf) {
-			var unti = "%",
+			var unit = "%",
 				wid = owid,
 				hei = ohei;
 				
-			if (target == null)
+			if (!target){
 				return false;
+            }
 
-			if ((target instanceof $)===false) {
+			if ((target instanceof $) === false) {
 				target = $(target);
 			}
 
-            if (!target.attr("data-od-width")) target.attr("data-od-width",  target.width());
-			if (!target.attr("data-od-height")) target.attr("data-od-height", target.height());
+            if(!target.attr("data-od-width")) {
+                target.attr("data-od-width",  target.width());
+            }
+			if(!target.attr("data-od-height")) {
+                target.attr("data-od-height", target.height());
+            }
 				
 			var tw = (twf !== undefined) ? twf : target.attr("data-od-width"),
 				th = (thf !== undefined) ? thf : target.attr("data-od-height"),
@@ -388,8 +393,8 @@ jQuery(function ($) {
 				'padding': 0,
 				'width': wid + unit,
 				'height': hei + unit,
-				'left': ( ((unit=="%") ? 100 : owid) - wid) / 2 + unit,
-				'top': ( ((unit=="%") ? 100 : ohei) - hei) / 2 + unit
+				'left': ( ((unit === "%") ? 100 : owid) - wid) / 2 + unit,
+				'top': ( ((unit === "%") ? 100 : ohei) - hei) / 2 + unit
 			});
 
 			if (target.attr("data-od-width") != target.width() || target.attr("data-od-height") != target.height()) {
@@ -397,7 +402,6 @@ jQuery(function ($) {
 			}
 
 			return false;
-
 		},
 
 		// parseUri 1.2.2

@@ -222,12 +222,7 @@ $p.newModel({
         this.applySrc();
         this._qualitySwitching = false;
         this.qualityChangeListener();
-    },
-
-    /************************************************
-     * disablers
-     ************************************************/    
-    //_scaleVideo: function(){}
+    }
 });
 
 $p.newModel({    

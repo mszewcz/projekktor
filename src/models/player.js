@@ -300,19 +300,8 @@ jQuery(function ($) {
             if (this.element === 'audio') {
                 return;
             }
-            this._scaleVideo(false);
+            this._scaleVideo();
         },
-        /*
-         setResize: function () {
-         var destContainer = this.pp.getMediaContainer();
-         this.sendUpdate('scaled', {
-         realWidth: this.media.videoWidth || null,
-         realHeight: this.media.videoHeight || null,
-         displayWidth: destContainer.width(),
-         displayHeight: destContainer.height()
-         });
-         },
-         */
         setPosterLive: function () {
         },
         setSrc: function(src) {
@@ -757,10 +746,12 @@ jQuery(function ($) {
                 if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), $(currentImageObj[0]), destObj.width(), destObj.height())) {
                     try {
                         ref.sendUpdate('scaled', {
-                            realWidth: currentImageObj._originalDimensions.width,
-                            realHeight: currentImageObj._originalDimensions.height,
-                            displayWidth: ref.mediaElement.width(),
-                            displayHeight: ref.mediaElement.height()
+                            originalWidth: currentImageObj._originalDimensions.width,
+                            originalHeight: currentImageObj._originalDimensions.height,
+                            scaledWidth: ref.mediaElement.width(),
+                            scaledHeight: ref.mediaElement.height(),
+                            displayWidth: destObj.width(),
+                            displayHeight: destObj.height()
                         });
                     } catch (e) {
                     }
@@ -785,10 +776,12 @@ jQuery(function ($) {
                 if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), target, destObj.width(), destObj.height())) {
                     try {
                         ref.sendUpdate('scaled', {
-                            realWidth: imgObj._originalDimensions.width,
-                            realHeight: imgObj._originalDimensions.height,
-                            displayWidth: ref.mediaElement.width(),
-                            displayHeight: ref.mediaElement.height()
+                            originalWidth: imgObj._originalDimensions.width,
+                            originalHeight: imgObj._originalDimensions.height,
+                            scaledWidth: ref.mediaElement.width(),
+                            scaledHeight: ref.mediaElement.height(),
+                            displayWidth: destObj.width(),
+                            displayHeight: destObj.height()
                         });
                     } catch (e) {
                     }
@@ -866,35 +859,40 @@ jQuery(function ($) {
                 this.sendUpdate('seek', this._currentSeekState, value);
             }
         },
-        _scaleVideo: function (promote) {
-            var destContainer = this.pp.getMediaContainer();
+        _scaleVideo: function () {
+            var mediaDisplay = this.pp.getMediaContainer(),
+                displayWidth, displayHeight,
+                videoWidth, videoHeight;
 
-            if (this.pp.getIsMobileClient())
+            if (this.pp.getIsMobileClient()) {
                 return;
+            }
 
             try {
-                var wid = destContainer.width(),
-                    hei = destContainer.height(),
-                    tw = this.media.videoWidth,
-                    th = this.media.videoHeight;
+                displayWidth = mediaDisplay.width();
+                displayHeight = mediaDisplay.height();
+                videoWidth = this.media.videoWidth;
+                videoHeight = this.media.videoHeight;
 
-                if (!this.mediaElement.attr("data-od-width")) {
-                    this.mediaElement.attr("data-od-width", this.media.videoWidth);
+                if (this.mediaElement.attr("data-od-width") != videoWidth) {
+                    this.mediaElement.attr("data-od-width", videoWidth);
                 }
-                if (!this.mediaElement.attr("data-od-height")) {
-                    this.mediaElement.attr("data-od-height", this.media.videoHeight);
+                if (this.mediaElement.attr("data-od-height") != videoHeight) {
+                    this.mediaElement.attr("data-od-height", videoHeight);
                 }
 
-                // if ($p.utils.stretch(ref.pp.getConfig('imageScaling'), imageObj, destObj.width(), destObj.height())) {
-                if ($p.utils.stretch(this.pp.getConfig('videoScaling'), this.mediaElement, wid, hei)) {
+                if ($p.utils.stretch(this.pp.getConfig('videoScaling'), this.mediaElement, displayWidth, displayHeight)) {
                     this.sendUpdate('scaled', {
-                        realWidth: tw,
-                        realHeight: th,
-                        displayWidth: wid,
-                        displayHeight: hei
+                        originalWidth: videoWidth,
+                        originalHeight: videoHeight,
+                        scaledWidth: this.mediaElement.width(),
+                        scaledHeight: this.mediaElement.height(),
+                        displayWidth: displayWidth,
+                        displayHeight: displayHeight
                     });
                 }
             } catch (e) {
+                $p.utils.log('_scaleVideo error', e);
             }
         },
         _isFF: function () {

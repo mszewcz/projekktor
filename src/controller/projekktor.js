@@ -2002,7 +2002,7 @@ jQuery(function ($) {
             this.getMediaContainer = function () {
 
                 // return "buffered" media container
-                if (this.env.mediaContainer == null) {
+                if (!this.env.mediaContainer) {
                     this.env.mediaContainer = $('#' + this.getMediaId());
                 }
 
