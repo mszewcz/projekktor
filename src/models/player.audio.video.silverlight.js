@@ -100,7 +100,8 @@ $p.newModel({
                 windowless: true,
                 background: "black", 
                 minRuntimeVersion: "3.0.0.0",
-                autoUpgrade: true
+                autoUpgrade: true,
+                enableGPUAcceleration: true
             },
             initVars: $.extend({
                 id: ppId,
