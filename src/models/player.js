@@ -697,7 +697,6 @@ jQuery(function ($) {
             if (!this.isPseudoStream) {
                 this.setSeek(this.media.position || 0);
             }
-
             this._setState('playing');
         },
         pauseListener: function (obj) {
@@ -818,8 +817,8 @@ jQuery(function ($) {
             return imageObj;
         },
         _setState: function (state) {
-            var ref = this;
-            state = state.toUpperCase(),
+            var ref = this,
+                state = state.toUpperCase(),
                 old = this._currentState;
 
             this._currentState = state.toUpperCase();
@@ -864,9 +863,9 @@ jQuery(function ($) {
                 displayWidth, displayHeight,
                 videoWidth, videoHeight;
 
-            if (this.pp.getIsMobileClient()) {
+            /*if (this.pp.getIsMobileClient()) {
                 return;
-            }
+            }*/
 
             try {
                 displayWidth = mediaDisplay.width();
