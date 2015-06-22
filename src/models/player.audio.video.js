@@ -39,7 +39,7 @@ $p.newModel({
         loadedmetadata: "metaDataListener",
         loadstart:      null        
     },    
-    
+    _eventsBinded: [],
     isGingerbread: false,
     isAndroid: false, 
     allowRandomSeek: false,
@@ -57,8 +57,8 @@ $p.newModel({
             this.isGingerbread = true;
           }
         }
-        
-        this.ready();    
+        this._eventsBinded = [];
+        this.ready();
     },
         
     applyMedia: function(destContainer) { 
@@ -129,7 +129,6 @@ $p.newModel({
         this.mediaElement.bind('click.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
         
         var func = function(){
-            
             ref.mediaElement.unbind('loadstart.projekktorqs'+ref.pp.getId());
             ref.mediaElement.unbind('loadeddata.projekktorqs'+ref.pp.getId());
             ref.mediaElement.unbind('canplay.projekktorqs'+ref.pp.getId());
@@ -137,6 +136,7 @@ $p.newModel({
             ref.addListeners('error');
             ref.addListeners('play');
             ref.addListeners('canplay');
+            ref.addListeners('loadedmetadata');
             
             ref.mediaElement = $('#'+ref.pp.getMediaId()+"_html");            
 
@@ -170,7 +170,6 @@ $p.newModel({
         
         this.mediaElement[0].load(); // important especially for iOS devices
         
-        // F*CK!!!!
         if (this.isGingerbread)
         {
             func();
@@ -180,11 +179,8 @@ $p.newModel({
     
     detachMedia: function() {
         try {
-            this.removeListener('error');
-            this.removeListener('play');
-            this.removeListener('canplay');
-            this.mediaElement.unbind('mousedown.projekktorqs'+this.pp.getId()); 
-            this.mediaElement.unbind('click.projekktorqs'+this.pp.getId());
+            this.removeListeners();
+            this.mediaElement.unbind('.projekktorqs'+this.pp.getId()); 
             this.mediaElement[0].pause();
             this.mediaElement.attr('src','');
             this.mediaElement[0].load();
@@ -195,27 +191,37 @@ $p.newModel({
      * Handle Events
      ****************************************/ 
     addListeners: function(evtId, subId) {
-        if (this.mediaElement==null) return;
+        if (this.mediaElement==null) {
+            return;
+        }
         var id = (subId!=null) ? '.projekktor'+subId+this.pp.getId() : '.projekktor'+this.pp.getId(),
             ref = this,
             evt = (evtId==null) ? '*' : evtId;
 
         $.each(this._eventMap, function(key, value){
-            if ((key==evt || evt=='*') && value!=null) {
+            if ((key==evt || evt=='*') && value!=null && ref._eventsBinded.indexOf(key) === -1) {
                 ref.mediaElement.bind(key + id, function(evt) { ref[value](this, evt); });
+                ref._eventsBinded.push(key);
             }
         });       
     },
 
-    removeListener: function(evt, subId) {        
-        if (this.mediaElement==null) return;
+    removeListeners: function(evt, subId) {        
+        if (this.mediaElement==null) {
+            return;
+        }
+        evt = (evt === void 0) ? '*' : evt;
         
         var id = (subId!=null) ? '.projekktor'+subId+this.pp.getId() : '.projekktor'+this.pp.getId(),
             ref = this;
 
         $.each(this._eventMap, function(key, value){
-            if (key==evt) {
+            if (key === evt || evt === '*') {
                 ref.mediaElement.unbind(key + id);
+                var idx = ref._eventsBinded.indexOf(key);
+                if(idx>-1){
+                    ref._eventsBinded.splice(idx,1);
+                }
             }
         });              
     },
@@ -441,7 +447,7 @@ $p.newModel({
         this.imageElement.css({border: '0px'});
         
         this.mediaElement = $('#'+this.pp.getMediaId()+"_html");
-        this.applySrc();        
+        this.applySrc();
     },    
     
     setPosterLive: function() {
