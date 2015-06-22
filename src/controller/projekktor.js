@@ -253,7 +253,7 @@ jQuery(function ($) {
                     }             
                     
                     // set cuepoints if there are some
-                    if (item.hasOwnProperty('cuepoints')) {
+                    if (item.hasOwnProperty('cuepoints') && !!item.cuepoints) {
                         this.setCuePoints(item.cuepoints, item.id, true);
                     }
                     
@@ -2668,11 +2668,9 @@ jQuery(function ($) {
 
                 // start model
                 this.playerModel = new playerModel();
-                $.extend(this.playerModel, $p.models[newModel].prototype);
-
+                $.extend(this.playerModel, new $p.models[newModel]());
+                
                 this.__promote('synchronizing', 'display');
-
-                this.syncCuePoints();
 
                 this.initPlayerModel({
                     media: $.extend(true, {}, newItem),
@@ -2684,7 +2682,9 @@ jQuery(function ($) {
                     fullscreen: this.getInFullscreen()
                         // persistent: (ap || this.config._continuous) && (newModel==nextUp)
                 });
-
+                
+                this.syncCuePoints();
+                
                 return this;
             };
 
@@ -4260,8 +4260,7 @@ jQuery(function ($) {
         }
 
         /* register new model */
-        $p.models[obj.modelId] = function () {
-        };
+        $p.models[obj.modelId] = function () {};
         $p.models[obj.modelId].prototype = $.extend({}, extend, obj);
 
         /* add modelname to media map object */
