@@ -503,10 +503,10 @@ jQuery(function ($) {
             if (typeof obj !== 'object' || obj === null) {
                 return;
             }
-
+            
             var position = parseFloat((obj.position || obj.currentTime || this.media.position || 0).toFixed(2)),
                 duration = null;
-
+            
             /*
              * When the duration is POSITIVE_INFINITY then we're dealing with a native live stream (e.g. HLS)
              */
@@ -702,6 +702,18 @@ jQuery(function ($) {
         pauseListener: function (obj) {
             this._setState('paused');
         },
+        resizeListener: function(obj) {
+            try {
+                if(this.media.videoWidth != obj.videoWidth || this.media.videoHeight != obj.videoHeight){
+                    this.media.videoWidth = obj.videoWidth;
+                    this.media.videoHeight = obj.videoHeight;
+                    this._scaleVideo();
+                }
+            }
+            catch(e){
+                $p.log('resizeListener error', e);
+            }
+        },
         seekedListener: function (value) {
             this._setSeekState('SEEKED', value || this.media.position);
         },
@@ -709,14 +721,6 @@ jQuery(function ($) {
             this.sendUpdate('volume', this.getVolume());
         },
         errorListener: function (event, obj) {
-        },
-        metaDataListener: function (obj) {
-            try {
-                this.media.videoWidth = obj.videoWidth;
-                this.media.videoHeight = obj.videoHeight;
-            } catch (e) {
-            }
-            this._scaleVideo();
         },
         nullListener: function (obj) {
         },
@@ -862,10 +866,6 @@ jQuery(function ($) {
             var mediaDisplay = this.pp.getMediaContainer(),
                 displayWidth, displayHeight,
                 videoWidth, videoHeight;
-
-            /*if (this.pp.getIsMobileClient()) {
-                return;
-            }*/
 
             try {
                 displayWidth = mediaDisplay.width();

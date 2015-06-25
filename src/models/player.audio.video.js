@@ -36,7 +36,9 @@ $p.newModel({
         error:          "errorListener",
         suspend:        "suspendListener",
         seeked:         "seekedListener",
-        loadedmetadata: "metaDataListener",
+        loadedmetadata: "resizeListener",
+        loadeddata:     "resizeListener",
+        resize:         "resizeListener",
         loadstart:      null        
     },    
     _eventsBinded: [],
@@ -128,16 +130,11 @@ $p.newModel({
         this.mediaElement.bind('mousedown.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
         this.mediaElement.bind('click.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
         
-        var func = function(){
+        var func = function(e){
             ref.mediaElement.unbind('loadstart.projekktorqs'+ref.pp.getId());
             ref.mediaElement.unbind('loadeddata.projekktorqs'+ref.pp.getId());
             ref.mediaElement.unbind('canplay.projekktorqs'+ref.pp.getId());
-            
-            ref.addListeners('error');
-            ref.addListeners('play');
-            ref.addListeners('canplay');
-            ref.addListeners('loadedmetadata');
-            
+
             ref.mediaElement = $('#'+ref.pp.getMediaId()+"_html");            
 
             if (wasAwakening) {
@@ -163,7 +160,7 @@ $p.newModel({
             }
             
         };
-
+ 
         this.mediaElement.bind('loadstart.projekktorqs'+this.pp.getId(), func);
         this.mediaElement.bind('loadeddata.projekktorqs'+this.pp.getId(), func);
         this.mediaElement.bind('canplay.projekktorqs'+this.pp.getId(), func);
@@ -179,7 +176,6 @@ $p.newModel({
     
     detachMedia: function() {
         try {
-            this.removeListeners();
             this.mediaElement.unbind('.projekktorqs'+this.pp.getId()); 
             this.mediaElement[0].pause();
             this.mediaElement.attr('src','');
@@ -240,6 +236,9 @@ $p.newModel({
                 }
             }, 1000);
         }
+        // check for video size change (e.g. HLS on Safari OSX or iOS)
+        this.resizeListener(video);
+        
         this.timeListener.apply(this, arguments);
     },
     

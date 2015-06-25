@@ -303,7 +303,7 @@ $p.newModel({
     OSMF_mediaSizeChange: function(newWidth, newHeight) {
         if (isNaN(newWidth) || isNaN(newHeight)) return;
         
-        this.metaDataListener({videoWidth:newWidth, videoHeight:newHeight});
+        this.resizeListener({videoWidth:newWidth, videoHeight:newHeight});
     },
     
     /**

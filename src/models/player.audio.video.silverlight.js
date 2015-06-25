@@ -53,7 +53,7 @@ $p.newModel({
         error:          "errorListener",
         suspend:        "suspendListener",
         seeked:         "seekedListener",
-        loadedmetadata: "metaDataListener",
+        loadedmetadata: "resizeListener",
         
         // events to ignore
         playing: "nullListener",
