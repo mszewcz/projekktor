@@ -643,20 +643,20 @@ jQuery(function ($) {
          * If the prefix is set then method will make a second pass 
          * to check all of the prefixed versions of given properties/methods
          */
-        hasProp: function(obj, prop, prefix, own) {
+        hasProp: function(obj, prop, prefix, hasOwn) {
             // add prefixed prop version(s)
             if(this.is(prefix,'string')){
                 prop = this.addPrefix(prop,prefix,false,true);
             }
             
             if (this.is(prop, 'string')) {
-                if (!!obj[prop] && (!!own ? obj.hasOwnProperty(prop) : true)) {
+                if (!!(prop in obj) && (!!hasOwn ? obj.hasOwnProperty(prop) : true)) {
                     return prop;
                 }
             }
             else if ($.isArray(prop)) {
                 for (var i=0; i<prop.length; i++) {
-                    if (!!obj[prop[i]] && (!!own ? obj.hasOwnProperty(prop[i]) : true)) {
+                    if (!!(prop[i] in obj) && (!!hasOwn ? obj.hasOwnProperty(prop[i]) : true)) {
                         return prop[i];
                     }
                 }
