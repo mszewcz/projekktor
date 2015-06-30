@@ -579,7 +579,9 @@ jQuery(function ($) {
 			template = template.replace(/%{(.*?)}/gi, '');
 			return template;
 		},
-
+        regExpEsc: function(s){
+            return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        },
 		
         /**
          * serializes a simple object to a JSON formatted string.
@@ -637,14 +639,99 @@ jQuery(function ($) {
                 dom: dom,
                 lowercase: pre,
                 css: '-' + pre + '-',
-                js: pre[0].toUpperCase() + pre.substr(1)
+                js: this.ucfirst(pre)
             };
         },
         
-        regExpEsc: function(s){
-            return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        /*
+         * Check if object has any of given properties/methods
+         * and returns the name of first existing one
+         * otherwise returns false.
+         * If the prefix is set then method will make a second pass 
+         * to check all of the prefixed versions of given properties/methods
+         */
+        hasProp: function(obj, prop, prefix, own) {
+            // add prefixed prop version(s)
+            if(this.is(prefix,'string')){
+                prop = this.addPrefix(prop,prefix,false,true);
+            }
+            
+            if (this.is(prop, 'string')) {
+                if (!!obj[prop] && (!!own ? obj.hasOwnProperty(prop) : true)) {
+                    return prop;
+                }
+            }
+            else if ($.isArray(prop)) {
+                for (var i=0; i<prop.length; i++) {
+                    if (!!obj[prop[i]] && (!!own ? obj.hasOwnProperty(prop[i]) : true)) {
+                        return prop[i];
+                    }
+                }
+            }
+            return false;
+        },
+        
+        /*
+         * 
+         * @param {string or array} obj - string or array of strings to prefix
+         * @param {string} prefix
+         * @param (boolean) replace - if the obj is array should the prefixed strings be replaced or added to existing ones
+         * @param {boolean} capitalize - should be the first letter of prefixed string capitalized (to preserve camelCase)
+         * @returns {string or array} - returns prefixed string or array of strings
+         */
+        
+        addPrefix: function(obj, prefix, replace, capitalize){
+            if(this.is(obj,'string') && this.is(prefix,'string')){
+                if(!!replace){
+                    return prefix + (!!capitalize ? this.ucfirst(obj) : obj);
+                }
+                else {
+                    return [obj, prefix + (!!capitalize ? this.ucfirst(obj) : obj)];
+                }
+            }
+            else if ($.isArray(obj) && this.is(prefix,'string')){
+                var initLength = obj.length;
+                for (var i=0; i<initLength; i++) {
+                    if(!!replace){
+                        obj[i] = prefix + (!!capitalize ? this.ucfirst(obj[i]) : obj[i]);
+                    }
+                    else {
+                        obj.push(prefix+(!!capitalize ? this.ucfirst(obj[i]) : obj[i]))
+                    }
+                }
+            }
+            return obj;
+        },
+        
+        /**
+         * is returns a boolean for if typeof obj is exactly type.
+         * CREDITS: Modernizr
+        */
+        is: function( obj, type ) {
+            return typeof obj === type;
+        },
+        
+        /**
+         * contains returns a boolean for if substr is found within str
+         * CREDITS: Modernizr
+        */
+        contains: function( str, substr ) {
+            return !!~('' + str).indexOf(substr);
+        },
+        
+        /*
+         * Returns a string with the first character of string capitalized
+         * @param {string} str
+         * @returns {string or boolean}
+         */
+        ucfirst: function(str){
+            if(this.is(str,'string')){
+                return str[0].toUpperCase() + str.substr(1);
+            }
+            return false;
         },
         
 		logging: false
 	};
+        
 });
