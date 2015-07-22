@@ -25,10 +25,7 @@ $p.newModel({
         {ext:'f4v', type:'video/mp4', platform:'flash', streamType: ['*']},
         {ext:'mov', type:'video/quicktime', platform:'flash', streamType: ['*']},
         {ext:'m4v', type:'video/mp4', platform:'flash', fixed: true, streamType: ['*']},
-        {ext:'f4m', type:'application/f4m+xml', platform:'flash', fixed: true, streamType: ['*']},
-        {ext:'m3u8', type:'application/x-mpegurl', platform:'flash', fixed: true, streamType: ['*']},
-        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform:'flash', fixed: true, streamType: ['*']},
-        {ext:'manifest', type:'application/vnd.ms-ss', platform:'flash', fixed: true, streamType: ['*']}
+        {ext:'f4m', type:'application/f4m+xml', platform:'flash', fixed: true, streamType: ['*']}
     ],
 
     hasGUI: false,    
@@ -809,15 +806,7 @@ $p.newModel({
     iLove: [
         {ext:'mp3', type:'audio/mp3', platform:'flash', streamType: ['*']},
         {ext:'m4a', type:'audio/mp4', platform:'flash', streamType: ['*']},
-        {ext:'m4a', type:'audio/mpeg', platform:'flash', streamType: ['*']},
-        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'application/vnd.apple.mpegurl', platform: 'flash', streamType: ['*']},             
-        {ext:'m3u8', type:'application/x-mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'application/x-mpegurl', platform: 'flash', streamType: ['*']},    
-        {ext:'m3u8', type:'audio/mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'audio/mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u8', type:'audio/x-mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'audio/x-mpegurl', platform: 'flash', streamType: ['*']}
+        {ext:'m4a', type:'audio/mpeg', platform:'flash', streamType: ['*']}
     ],
     
     applyMedia: function(destContainer) {
