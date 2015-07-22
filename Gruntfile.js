@@ -443,7 +443,7 @@ module.exports = function (grunt) {
       }
 
       // Ensure only ASCII chars so script tags don't need a charset attribute
-      if (text.length !== Buffer.byteLength(text, "utf8")) {
+      /*if (text.length !== Buffer.byteLength(text, "utf8")) {
         grunt.log.writeln(filename + ": Non-ASCII characters detected:");
         for (i = 0; i < text.length; i++) {
           c = text.charCodeAt(i);
@@ -454,7 +454,7 @@ module.exports = function (grunt) {
           }
         }
         nonascii = true;
-      }
+      }*/
 
       // Modify map/min so that it points to files in the same folder;
       // see https://github.com/mishoo/UglifyJS2/issues/47
