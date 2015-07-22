@@ -417,6 +417,36 @@ jQuery(function ($) {
                     return (catName === item.cat);
                 }) || [];
             };
+            
+            this._canPlayOnPlatforms = function(mimeType) {
+                if(!$p.mmap.length){
+                    return [];
+                }
+                
+                var result = [],
+                    platformsObj = {},
+                    mmap = $p.mmap,
+                    i,l,key;
+                
+                $.each(mmap, function(idx, iLove){
+                   if(iLove.type === mimeType){
+                       if($.isArray(iLove.platform)){
+                           for(i=0,l=iLove.platform.length; i<l; i++){
+                               platformsObj[iLove.platform[i]] = true;
+                           }
+                       }
+                       else {
+                           platformsObj[iLove.platform] = true;
+                       }
+                   } 
+                });
+                
+                for(key in platformsObj){
+                    result.push(key);
+                }
+                
+                return result;
+            };
 
             this._canPlay = function (mediaType, platform, streamType) {
 
@@ -771,6 +801,8 @@ jQuery(function ($) {
 
                 return result;
             };
+            
+            
 
 
             /********************************************************************************************
@@ -2175,6 +2207,10 @@ jQuery(function ($) {
             this.getCanPlayNatively = function (type) {
 
                 return this._canPlay(type, 'native');
+            };
+            
+            this.getCanPlayOnPlatforms = function(mimeType){
+                return this._canPlayOnPlatforms(mimeType);
             };
 
             this.getPlatform = function () {
