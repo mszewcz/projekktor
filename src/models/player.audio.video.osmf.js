@@ -437,6 +437,7 @@ $p.newModel({
             showAudioOnly = this.pp.getConfig('dynamicStreamShowAudioOnlyQualities'),
             avKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioVideo'),
             aoKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioOnly'),
+            dpc = this.pp.getConfig('dynamicStreamQualityKeyBitrateRoundingDecimalPlacesCount'),
             bitrate = 0,
             bitrateKbps = 0,
             bitrateMbps = 0,
@@ -449,7 +450,7 @@ $p.newModel({
             if (dynamicStreams[i].bitrate !== undefined) {
                 
                 bitrateKbps = Math.floor(dynamicStreams[i].bitrate);
-                bitrateMbps = Math.round(bitrateKbps/1000);
+                bitrateMbps = $p.utils.roundNumber(bitrateKbps/1000, dpc);
                 bitrate = bitrateKbps < 1000 ? bitrateKbps : bitrateMbps;
                 bitrateUnit = bitrateKbps < 1000 ? 'kbps' : 'Mbps';
                 

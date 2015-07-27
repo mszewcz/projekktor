@@ -228,6 +228,18 @@ projekktorConfig.prototype = {
      */
     dynamicStreamQualityKeyFormatAudioOnly: 'audio | %{bitrate}%{bitrateunit}',
 
+    /**
+     * If the value is set to >0 than there will be decimal point and so many decimal places shown within
+     * the bitrate parte of the key. E.g.: 
+     * 
+     * dynamicStreamQualityKeyBitrateRoundingDecimalPlacesCount: 2,
+     * dynamicStreamQualityKeyFormatAudioVideo: '%{bitrate}%{bitrateunit}'
+     * // stream bitrate = 1656kbps
+     * // key will be rendered as: 1.66Mbps
+     * 
+     */ 
+    dynamicStreamQualityKeyBitrateRoundingDecimalPlacesCount: 0,
+
     // if true, the player will add audio only streams to the list of available qualities
     dynamicStreamShowAudioOnlyQualities: false,
     
