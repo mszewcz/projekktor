@@ -3273,25 +3273,6 @@ jQuery(function ($) {
 
                 // add media items
                 this.addItems(files, 0, true);
-                /*$.each(files, function() {
-                 
-                 // using try-catch here is not accurate enough but the easiest way to handle parsing issues so far.
-                 try {
-                 itemData = ref._prepareMedia({file:this, config:this.config || {}, errorCode: this.errorCode || 0});
-                 itemIdx = ref._addItem(itemData);
-                 itemId = itemData.id;
-                 ref.setCuePoints(this.cuepoints, itemId);
-                 } catch(e) {
-                 ref._promote('error', 13);
-                 return false;
-                 }
-                 
-                 return true;
-                 });*/
-
-                /*if (itemIdx === null) {
-                 this._addItem(this._prepareMedia({file:'', config:{}, errorCode: 97}));
-                 }*/
 
                 this._syncPlugins('reelupdate');
             };
