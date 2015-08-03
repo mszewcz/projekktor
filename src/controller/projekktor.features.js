@@ -252,6 +252,11 @@ $p.features = (function (window, document, undefined) {
         return !!(Modernizr['canvas'] && is(document.createElement('canvas')
             .getContext('2d').fillText, 'function'));
     };
+    
+    tests['csstransitions'] = function() {
+        return testPropsAll('transition');
+    };
+    
     tests['touch'] = function () {
         var bool;
 
