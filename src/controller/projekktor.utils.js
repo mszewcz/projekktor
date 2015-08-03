@@ -480,28 +480,6 @@ jQuery(function ($) {
 			}
 			return data;
 		},
-
-		cssTransitions: function () {
-			var m = document.createElement('z'),
-				s = m.style;
-
-			function test_props(p) {
-				for (var i in p) {
-					if (s[p[i]] != null) {
-						return true;
-					}
-				}
-				return false;
-			}
-
-			function test_props_all(prop) {
-				var d = 'Webkit Moz O ms Khtml'.split(' '),
-					u = prop.charAt(0).toUpperCase() + prop.substr(1),
-					e = (prop + ' ' + d.join(u + ' ') + u).split(' ');
-				return test_props(e);
-			}
-			return test_props_all('animationName');
-		},
         
         versionCompare: function (installed, required) {
             var a = installed.split('.'),
