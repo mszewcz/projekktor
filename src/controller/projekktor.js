@@ -2738,7 +2738,7 @@ jQuery(function ($) {
                     this.getDC().addClass(this.getNS() + 'live');
                 }
 
-                if (!$p.utils.cssTransitions()) {
+                if (!$p.features.csstransitions) {
                     this.getDC().addClass('notransitions');
                 }
 
