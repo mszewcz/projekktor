@@ -2190,7 +2190,6 @@ jQuery(function ($) {
                 for (var i = 0; i < mobileAgents.length; i++) {
 
                     if (uagent.indexOf(mobileAgents[i]) > -1) {
-                        // if (uagent.indexOf('webkit')>-1) return false;
                         return (what) ? (mobileAgents[i].toUpperCase() === what.toUpperCase()) : true;
                     }
                 }
