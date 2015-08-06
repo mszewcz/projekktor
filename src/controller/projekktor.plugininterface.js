@@ -81,21 +81,6 @@ projekktorPluginInterface.prototype = {
         });
     },
     
-    i18n: function(str) {
-        var results = [],
-            re = /%{([^}]+)}/g,
-            text,
-            custom = $.extend(true, {}, this.getConfig('messages') || {}, {title: this.getConfig('title'), version: this.pp.getVersion()}),
-            msg = ''; 
-
-        while(text = re.exec(str)) {
-            msg = custom[text[1]] || ((projekktorMessages[text[1]]!=undefined) ? projekktorMessages[text[1]] : text[1]);
-            str = str.replace(new RegExp('%{' + $p.utils.regExpEsc(text[1]) + '}', 'gi'), msg);
-        }
-
-        return str;
-    },
-    
     /**
     * applies a new dom element to the player in case it is not yet present
     * also transparently applies the cssclass prefix as configured

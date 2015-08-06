@@ -341,12 +341,11 @@ projekktorDisplay.prototype = {
     
     testCard: function(errorCode) {
         
-        messages = $.extend(this.getConfig('messages'), this.pp.getConfig('msg')),
-        msgTxt = this.i18n("%{error"+errorCode+"}");
+        var msgTxt = $p.utils.i18n("%{error"+errorCode+"}", {});
 
         if (this.pp.getItemCount() > 1) {
             // "press next to continue"
-            msgTxt += ' ' + this.i18n("%{error99}");
+            msgTxt += ' ' + $p.utils.i18n("%{error99}");
         }
 
         if (msgTxt.length < 3) {

@@ -557,6 +557,21 @@ jQuery(function ($) {
 			template = template.replace(/%{(.*?)}/gi, '');
 			return template;
 		},
+        
+        i18n: function(str, customData) {
+            var regexp = /%{([^}]+)}/g,
+                messages = $.extend({}, projekktorMessages, customData),
+                text,
+                msg = '';
+
+            while(text = regexp.exec(str)) {
+                msg = messages.hasOwnProperty(text[1]) ? messages[text[1]] : text[1];
+                str = str.replace(new RegExp('%{' + $p.utils.regExpEsc(text[1]) + '}', 'gi'), msg);
+            }
+
+            return str;
+        },
+        
         regExpEsc: function(s){
             return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         },

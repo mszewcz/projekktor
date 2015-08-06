@@ -89,7 +89,7 @@ projekktorSettings.prototype = {
             _outDelay = 0;
 
         // button, main container and options
-        this.dest = this.applyToPlayer($('<div/>').addClass('settingsmenu').html(this.i18n(this.getConfig('settingsMenu'))));
+        this.dest = this.applyToPlayer($('<div/>').addClass('settingsmenu').html($p.utils.i18n(this.getConfig('settingsMenu'))));
         this.btn = this.applyToPlayer($('<div/>').addClass('settingsbtn'), 'btn');
         this.tool = this.applyToPlayer($('<div/>').addClass('tool'), 'toolwindow');
 
@@ -179,7 +179,7 @@ projekktorSettings.prototype = {
     },
     
     errorHandler: function(code) {
-        var msg = this.i18n("%{error"+code+"}");
+        var msg = $p.utils.i18n("%{error"+code+"}");
         this.toolSet('error', 1, msg);
     },
 
@@ -217,7 +217,7 @@ projekktorSettings.prototype = {
             return; 
         }
         
-        tpl.html(this.i18n(this.getConfig(func + 'Tpl')));
+        tpl.html($p.utils.i18n(this.getConfig(func + 'Tpl')));
         
         this.tool.html($p.utils.parseTemplate(tpl.html(), this.pp.config) );
         this.tool.find('.wizzard').addClass('inactive').removeClass('active');
@@ -509,7 +509,7 @@ projekktorSettings.prototype = {
         
         qualityList +=  '<li data-'+ this.pp.getNS() +'-settings-func="quality_auto"  class="auto inactive">%{auto}</li>';
         
-        return this.i18n(qualityList);
+        return $p.utils.i18n(qualityList);
     },
     
     createPlatformList: function(platforms){
@@ -527,7 +527,7 @@ projekktorSettings.prototype = {
         
         platformList +=  '<li data-'+ this.pp.getNS() +'-settings-func="platform_auto"  class="auto inactive">%{auto}</li>';
         
-        return this.i18n(platformList);
+        return $p.utils.i18n(platformList);
     },
     
     addMenuItems: function(menuId, content, prepend){

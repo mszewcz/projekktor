@@ -356,7 +356,7 @@ jQuery(function ($) {
                             // replace with span markup
                             templateString = templateString.replace(value, '<span class="' + classPrefix + cn + '"></span>');
                         } else {
-                            templateString = templateString.replace(value, 'class="' + classPrefix + cn + '"' + ref.i18n(' aria-label="%{' + cn + '}" title="%{' + cn + '}" ') );
+                            templateString = templateString.replace(value, 'class="' + classPrefix + cn + '"' + $p.utils.i18n(' aria-label="%{' + cn + '}" title="%{' + cn + '}" ') );
                         }
                     });
                 }
