@@ -318,7 +318,7 @@ $p.newModel({
     OSMF_loadStateChange: function(state) {
         
         switch (state) {
-            case 'loading':        
+            case 'loading':
                 this.waitListener();
                 break;
                 
@@ -336,9 +336,8 @@ $p.newModel({
                 break;
 
             case 'loadError':
-                //TODO: prevent false positives in the case of dynamically loaded plugins
-                this.errorListener(80);
-            break;            
+                this.sendUpdate('error', 80, state);
+            break;
         }
     },
     
@@ -660,21 +659,57 @@ $p.newModel({
     errorListener: function() {
         var errorId = arguments[0],
             errorMsg = arguments[1];
-
-        /* todo OSMF MediaErrorCodes mapping http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/org/osmf/events/MediaErrorCodes.html */
+             console.log("errorListener",errorId, errorMsg);
+        /**
+         * Map:
+         * - OSFM MediaErrorCodes - http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/org/osmf/events/MediaErrorCodes.html
+         * - SMP StrobePlayerErrorCodes
+         * to internal Projekktor error codes.
+         */
         switch (errorId) {
-            case 15:
-                this.sendUpdate('error', 5, errorMsg);
+            /**
+             * MediaErrorCodes
+             */
+            case 1: // IO_ERROR - Error constant for when a MediaElement fails to load due to an I/O error.
+            case 2: // SECURITY_ERROR - Error constant for when a MediaElement fails to load due to a security error.
+            case 3: // ASYNC_ERROR - Error constant for when a MediaElement encounters an asynchronous error.
+            case 4: // ARGUMENT_ERROR - Error constant for when a MediaElement encounters an argument error.
+            case 5: // URL_SCHEME_INVALID
+            case 6: // HTTP_GET_FAILED - Error constant for when an HTTP GET request fails due to a client error (i.e. returns a 4xx status code).
+            case 8: // PLUGIN_VERSION_INVALID - Error constant for when a plugin fails to load due to a version mismatch.
+            case 9: // PLUGIN_IMPLEMENTATION_INVALID - Error constant for when a plugin fails to load due to the PluginInfo not being exposed on the root Sprite of the plugin.
+            case 10: // SOUND_PLAY_FAILED - Error constant for when an audio file fails to play (e.g. due to no sound channels or no sound card being available).
+            case 11: // NETCONNECTION_REJECTED - Error constant that corresponds to the NetConnection.Connect.Rejected status code.
+            case 13: // NETCONNECTION_FAILED - Error constant that corresponds to the NetConnection.Connect.Failed status code.
+            case 14: // NETCONNECTION_TIMEOUT - Error constant for when a NetConnection cannot connect due to a timeout.
+            case 16: // NETSTREAM_STREAM_NOT_FOUND - Error constant that corresponds to the NetStream.Play.StreamNotFound status code.
+                this.sendUpdate('error', 4, errorMsg);
                 break;
-            case 16:
+            case 12: // NETCONNECTION_APPLICATION_INVALID - Error constant that corresponds to the NetConnection.Connect.InvalidApp status code.
+            case 15: // NETSTREAM_PLAY_FAILED - Error constant for when a NetStream cannot be played.
+            case 18: // NETSTREAM_NO_SUPPORTED_TRACK_FOUND - Error constant that corresponds to the NetStream.Play.NoSupportedTrackFound status code.
+                this.sendUpdate('error', 5, errorMsg);
+                break;       
+            case 7: // MEDIA_LOAD_FAILED - Error constant for when the loading of a MediaElement fails.
+            case 17: // NETSTREAM_FILE_STRUCTURE_INVALID - Error constant that corresponds to the NetStream.Play.FileStructureInvalid status code.
                 this.sendUpdate('error', 80, errorMsg);
-                break;                    
-            case 80:
-            case 7:
-                this.sendUpdate('error', 80, errorMsg);
-                break;                
+                break;
+            case 19: // DRM_SYSTEM_UPDATE_ERROR - Error constant for when a DRM system update fails.
+            case 20: // DVRCAST_SUBSCRIBE_FAILED - Error constant for when a DVRCast NetConnection cannot connect because the attempt to subscribe to the DVRCast stream fails.
+            case 21: // DVRCAST_CONTENT_OFFLINE - Error constant for when a DVRCast NetConnection cannot connect because the DVRCast application is offline.
+            case 22: // DVRCAST_STREAM_INFO_RETRIEVAL_FAILED - Error constant for when information about the DVRCast stream cannot be retrieved.
+            case 23: // F4M_FILE_INVALID - Error constant for when the manifest file contains errors
+            /**
+             * StrobePlayerErrorCodes
+             */
+            case 1000: // ILLEGAL_INPUT_VARIABLE
+            case 1001: // DYNAMIC_STREAMING_RESOURCE_EXPECTED
+            case 1002: // CONFIGURATION_LOAD_ERROR
+            case 1003: // UNKNOWN_ERROR
+            case 1004: // PLUGIN_NOT_IN_WHITELIST
+            case 1005: // PLUGIN_LOAD_FAILED
             default:
-                this.sendUpdate('error', 0);
+                this.sendUpdate('error', 0, errorMsg);
                 break;
         }
     },
