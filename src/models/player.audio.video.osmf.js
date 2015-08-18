@@ -659,7 +659,7 @@ $p.newModel({
     errorListener: function() {
         var errorId = arguments[0],
             errorMsg = arguments[1];
-             console.log("errorListener",errorId, errorMsg);
+        
         /**
          * Map:
          * - OSFM MediaErrorCodes - http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/org/osmf/events/MediaErrorCodes.html
