@@ -720,9 +720,11 @@ $p.newModel({
         delete window['projekktorOSMFReady' + ppId];
         
         try {
-            this.mediaElement[0].remove();
+            this.mediaElement.remove();
         } 
-        catch(e){}           
+        catch(e){}
+        
+        this.mediaElement = null;
     },
     
     volumeListener: function (volume) {
