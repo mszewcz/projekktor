@@ -14,21 +14,6 @@ jQuery(function ($) {
 
     $p.platforms = {
         
-        VLC: function () {
-            // we are interested in VLC Web Plugin v2 only
-            var result = $p.utils.detectPlugin('"VLC Web Plugin"', 'application/x-vlc-plugin', 'VideoLAN.VLCPlugin.2', function (ax) {
-                var version = [],
-                    d = ax['VersionInfo'] || ax.versionInfo || false;
-                if (d) {
-                    d = d.split(" ")[0].split(".");
-                    version = [parseInt(d[0], 10), parseInt(d[1], 10), parseInt(d[2], 10)];
-                }
-                return version;
-            });
-
-            return result.join(".");
-        },
-        
         /* returns the version of the flash player */
         FLASH: function () {
             var result = $p.utils.detectPlugin('Shockwave Flash', 'application/x-shockwave-flash', 'ShockwaveFlash.ShockwaveFlash', function (ax) {

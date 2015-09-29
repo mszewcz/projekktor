@@ -231,13 +231,16 @@ projekktorSettings.prototype = {
             });
             this.tool.find('#message').css({color:'#aaa'});
         } else {
+            var topHref = this.pp.getIframe() && window.top.location.href;
+            
             var debugData = {
                 version: this.pp.getPlayerVer(),
                 message: data,
                 timestamp: new Date().getTime(),
                 navigator: navigator.userAgent.toLowerCase(),
-                iframe: location.href,
-                href: window.parent.location.href,
+                iframeHref: window.location.href,
+                topHref: topHref,
+                referrer: window.document.referrer,
                 modelstate: this.pp.getState(),
                 duration: this.pp.getDuration(),
                 position: this.pp.getPosition(),
@@ -250,6 +253,7 @@ projekktorSettings.prototype = {
                 compTable: this.pp._testMediaSupport(),
                 rnd: $p.utils.randomId(22)
             };
+            
             $.each(this.pp.config._platforms, function(key, value) {
                 debugData[value + 'ver'] = $p.platforms[value.toUpperCase()]();
             });
