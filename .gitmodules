@@ -1,3 +1,6 @@
 [submodule "lib/projekktor-StrobeMediaPlayback"]
 	path = lib/projekktor-StrobeMediaPlayback
 	url = https://github.com/fixedmachine/projekktor-StrobeMediaPlayback.git
+[submodule "lib/hls.js"]
+	path = lib/hls.js
+	url = https://github.com/fixedmachine/hls.js.git
