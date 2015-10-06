@@ -952,7 +952,7 @@ jQuery(function ($) {
 
             this.fullscreenHandler = function (value) {
 
-                var nativeFullscreen = this.getNativeFullscreenSupport();
+                var nativeFullscreen = this.getFullscreenApi();
 
                 if (value === true) {
                     nativeFullscreen.requestFullscreen();
@@ -2020,7 +2020,7 @@ jQuery(function ($) {
             };
 
             this.getInFullscreen = function () {
-                return this.getNativeFullscreenSupport().isFullscreen();
+                return this.getFullscreenApi().isFullscreen();
             };
 
             this.getIsMuted = function () {
@@ -2333,7 +2333,8 @@ jQuery(function ($) {
                     fullscreenApi.supportsFullscreen = 'native';
                 }
                 else {
-                    // media element only                                                // slice to copy the array
+                    // media element only
+                    // slice to copy the array
                     if (!!$p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullscreenApi.prefix)) {
                         fullscreenApi.supportsFullscreen = 'mediaonly';
                     }
@@ -2341,7 +2342,7 @@ jQuery(function ($) {
 
                 // SEMI:
                 // we are done here: full viewport only
-                if (fullscreenApi.supportsFullscreen == 'viewport' || (fullscreenApi.supportsFullscreen == 'mediaonly' && this.getConfig('forceFullViewport'))) {
+                if (fullscreenApi.supportsFullscreen === 'viewport' || (fullscreenApi.supportsFullscreen === 'mediaonly' && this.getConfig('forceFullViewport'))) {
                     return fullscreenApi;
                 }
 
@@ -3019,7 +3020,7 @@ jQuery(function ($) {
 
             this.setFullscreen = function (goFull) {
 
-                var nativeFullscreen = this.getNativeFullscreenSupport();
+                var nativeFullscreen = this.getFullscreenApi();
 
                 goFull = (goFull == null) ? !nativeFullscreen.isFullscreen() : goFull;
                 this.playerModel.applyCommand('fullscreen', goFull);
