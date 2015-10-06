@@ -9,15 +9,29 @@ projekktorMessages = {
     "keyboard controls": "keyboard",
     "debug": "debug",
     "player info": "player info",
-    "platform": "platform",
-    "platform_flash": "Flash",
-    "platform_native": "HTML5",
-    "platform_vlc": "VLC Plugin",
     "auto": "automatic",
     "quality": "quality",
     "high": "high",
     "medium": "medium",
     "low": "low",
+    
+    // platforms
+    "platform": "platform",
+    
+    // Adobe Flash
+    "platform_flash": "Flash",
+    "platform_flash_info": "<a href='http://www.adobe.com/go/getflashplayer' target='_blank'>Get Adobe Flash player</a>",
+    
+    // Silverlight
+    "platform_silverlight": "Silverlight",
+    "platform_silverlight_info": "<a href='http://go.microsoft.com/fwlink/?LinkID=149156' target='_blank'>Get Microsoft Silverlight</a>",
+    
+    // Native <video>
+    "platform_native": "HTML5",
+    "platform_native_info": "Get one of the modern web browsers: <ul><li>Chrome</li><li>Edge</li><li>Firefox</li><li>Opera</li></ul>",
+    
+    "platform_vlc": "VLC Plugin",
+    "platform_vlc_info": "",
 
     // settings
     'ok': 'OK',
