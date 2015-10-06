@@ -2020,8 +2020,7 @@ jQuery(function ($) {
             };
 
             this.getInFullscreen = function () {
-
-                return this.getNativeFullscreenSupport().isFullScreen();
+                return this.getNativeFullscreenSupport().isFullscreen();
             };
 
             this.getIsMuted = function () {
@@ -2258,13 +2257,10 @@ jQuery(function ($) {
                 return result;
             };
 
-            /*
-             Thanx to John Dyer: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
-             */
-            this.getNativeFullscreenSupport = function () {
+            this.getFullscreenApi = function () {
                 var ref = this,
                     videoElement = document.createElement('video'),
-                    /*
+                    /**
                      *  there are differences in function names and naming conventions between implementations of fullscreen API
                      *  so we list all of their versions (based on W3C official Fullscreen API proposal from 6 July 2012 )
                      *  and trying to find what version does current browser use (if any)
@@ -2282,7 +2278,7 @@ jQuery(function ($) {
                             'cancelFullscreen'],
                         // no W3C proposal
                         // document flag informing if the browser is currently in the fullscreen stage
-                        isFullScreen: ['fullScreen', 'isFullScreen', 'displayingFullscreen',
+                        isFullscreen: ['fullScreen', 'isFullScreen', 'isFullscreen', 'displayingFullscreen',
                             'displayingFullScreen'],
                         //events
                         beginfullscreen: 'beginfullscreen', // iOS specyfic fired by <video> element
@@ -2290,12 +2286,16 @@ jQuery(function ($) {
                         fullscreenchange: 'fullscreenchange', // all the others browsers fired by document
                         fullscreenerror: 'fullscreenerror'// all the others browsers fired by document
                     },
+                    /**
+                     * this object contains proper names for current UA Fullscreen API functions, properties
+                     * and events
+                     */
                     fsApiCurrentUA = {
                         requestFullscreen: function () {},
                         fullscreenEnabled: false,
                         fullscreenElement: null,
                         exitFullscreen: function () {},
-                        isFullScreen: function () {
+                        isFullscreen: function () {
                             return false;
                         },
                         beginfullscreen: '',
@@ -2304,12 +2304,15 @@ jQuery(function ($) {
                         fullscreenerror: ''
                     },
                     fullScreenApi = {
-                        // api for full viewport mode
-                        supportsFullScreen: 'viewport', // viewport = full viewport, mediaonly = video only (e.g. iphone), dom = html5 true fullscreen
-                        isFullScreen: function () {
+                        /**
+                         * viewport = full viewport, 
+                         * mediaonly = video element only (e.g. iPhone), 
+                         * native = HTML5 Fullscreen API
+                         */
+                        supportsFullscreen: 'viewport', // default
+                        isFullscreen: function () {
                             try {
-                            return ref.getDC()
-                                .hasClass('fullscreen');
+                                return ref.getDC().hasClass('fullscreen');
                             } catch (e) {
                                 return false;
                             }
@@ -2330,7 +2333,7 @@ jQuery(function ($) {
                 // detect full screen API
                 // slice to copy the array
                 if (!!$p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullScreenApi.prefix)) {
-                    fullScreenApi.supportsFullScreen = 'dom';
+                    fullScreenApi.supportsFullScreen = 'native';
                 }
                 else {
                     // media element only                                                // slice to copy the array
@@ -2350,7 +2353,7 @@ jQuery(function ($) {
                 fsApiCurrentUA.fullscreenEnabled = $p.utils.hasProp(document, fsApiVersions.fullscreenEnabled.slice(), fullScreenApi.prefix);
                 fsApiCurrentUA.fullscreenElement = $p.utils.hasProp(document, fsApiVersions.fullscreenElement.slice(), fullScreenApi.prefix);
                 fsApiCurrentUA.exitFullscreen    = $p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullScreenApi.prefix);
-                fsApiCurrentUA.isFullScreen      = $p.utils.hasProp(document, fsApiVersions.isFullScreen.slice(), fullScreenApi.prefix);
+                fsApiCurrentUA.isFullscreen      = $p.utils.hasProp(document, fsApiVersions.isFullscreen.slice(), fullScreenApi.prefix);
                 fsApiCurrentUA.beginfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullScreenApi.prefix + fsApiVersions.beginfullscreen);
                 fsApiCurrentUA.endfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullScreenApi.prefix + fsApiVersions.endfullscreen);
                 fsApiCurrentUA.fullscreenchange      = $p.utils.hasProp(document, 'on' + fullScreenApi.prefix + fsApiVersions.fullscreenchange);
@@ -2375,15 +2378,15 @@ jQuery(function ($) {
 
                 // HTML5 true fullscreen:
                 // is in fullscreen check
-                fullScreenApi.isFullScreen = function (esc) {
+                fullScreenApi.isFullscreen = function (esc) {
                     // * FF and GoogleTV report bullshit here:
                     var dest = (ref.getIframe()) ? parent.window.document : document;
-                    return dest[fsApiCurrentUA.isFullScreen] || !!dest[fsApiCurrentUA.fullscreenElement] || (ref.getDC().hasClass('fullscreen') && esc !== true);
+                    return dest[fsApiCurrentUA.isFullscreen] || !!dest[fsApiCurrentUA.fullscreenElement] || (ref.getDC().hasClass('fullscreen') && esc !== true);
                 }
 
                 // the browser supports true fullscreen for any DOM container - this is ubercool:
                 fullScreenApi.requestFullScreen = function () {
-                    if (this.isFullScreen())
+                    if (this.isFullscreen())
                         return;
 
                     var win = ref.getIframeParent() || $(window),
@@ -2403,7 +2406,7 @@ jQuery(function ($) {
 
                     // create fullscreen change listener on the fly:
                     $(dest).bind(fscEvent, function (evt) {
-                        if (!apiRef.isFullScreen(true)) {
+                        if (!apiRef.isFullscreen(true)) {
                             apiRef.ref.getDC().removeClass('fullscreen');
                             apiRef.ref.playerModel.applyCommand('fullscreen', false);
                             var win = apiRef.ref.getIframeParent() || $(window),
@@ -3021,7 +3024,7 @@ jQuery(function ($) {
 
                 var nativeFullscreen = this.getNativeFullscreenSupport();
 
-                goFull = (goFull == null) ? !nativeFullscreen.isFullScreen() : goFull;
+                goFull = (goFull == null) ? !nativeFullscreen.isFullscreen() : goFull;
                 this.playerModel.applyCommand('fullscreen', goFull);
 
                 return this;
