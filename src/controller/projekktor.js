@@ -955,11 +955,11 @@ jQuery(function ($) {
                 var nativeFullscreen = this.getNativeFullscreenSupport();
 
                 if (value === true) {
-                    nativeFullscreen.requestFullScreen();
+                    nativeFullscreen.requestFullscreen();
                     this._enterFullViewport();
                 }
                 else {
-                    nativeFullscreen.cancelFullScreen();
+                    nativeFullscreen.exitFullscreen();
                     this._exitFullViewport();
                 }
             };
@@ -2287,8 +2287,8 @@ jQuery(function ($) {
                         fullscreenerror: 'fullscreenerror'// all the others browsers fired by document
                     },
                     /**
-                     * this object contains proper names for current UA Fullscreen API functions, properties
-                     * and events
+                     * this object contains proper names for current UA native fullscreen API functions, 
+                     * properties and events
                      */
                     fsApiCurrentUA = {
                         requestFullscreen: function () {},
@@ -2303,7 +2303,7 @@ jQuery(function ($) {
                         fullscreenchange: '',
                         fullscreenerror: ''
                     },
-                    fullScreenApi = {
+                    fullscreenApi = {
                         /**
                          * viewport = full viewport, 
                          * mediaonly = video element only (e.g. iPhone), 
@@ -2317,75 +2317,72 @@ jQuery(function ($) {
                                 return false;
                             }
                         },
-                        requestFullScreen: function () {
+                        requestFullscreen: function () {
                             ref.playerModel.applyCommand('fullscreen', true);
                         },
-                        cancelFullScreen: function () {
+                        exitFullscreen: function () {
                             ref.playerModel.applyCommand('fullscreen', false);
                         },
                         prefix: $p.utils.vendorPrefix().lowercase,
                         ref: this
                     };
 
-                // return fullScreenApi;
-                // check for native support
-
                 // detect full screen API
                 // slice to copy the array
-                if (!!$p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullScreenApi.prefix)) {
-                    fullScreenApi.supportsFullScreen = 'native';
+                if (!!$p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullscreenApi.prefix)) {
+                    fullscreenApi.supportsFullscreen = 'native';
                 }
                 else {
                     // media element only                                                // slice to copy the array
-                    if (!!$p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullScreenApi.prefix)) {
-                        fullScreenApi.supportsFullScreen = 'mediaonly';
+                    if (!!$p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullscreenApi.prefix)) {
+                        fullscreenApi.supportsFullscreen = 'mediaonly';
                     }
                 }
 
                 // SEMI:
                 // we are done here: full viewport only
-                if (fullScreenApi.supportsFullScreen == 'viewport' || (fullScreenApi.supportsFullScreen == 'mediaonly' && this.getConfig('forceFullViewport'))) {
-                    return fullScreenApi;
+                if (fullscreenApi.supportsFullscreen == 'viewport' || (fullscreenApi.supportsFullscreen == 'mediaonly' && this.getConfig('forceFullViewport'))) {
+                    return fullscreenApi;
                 }
 
                 // detect fullscreen API for current UA
-                fsApiCurrentUA.requestFullscreen = $p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullScreenApi.prefix);
-                fsApiCurrentUA.fullscreenEnabled = $p.utils.hasProp(document, fsApiVersions.fullscreenEnabled.slice(), fullScreenApi.prefix);
-                fsApiCurrentUA.fullscreenElement = $p.utils.hasProp(document, fsApiVersions.fullscreenElement.slice(), fullScreenApi.prefix);
-                fsApiCurrentUA.exitFullscreen    = $p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullScreenApi.prefix);
-                fsApiCurrentUA.isFullscreen      = $p.utils.hasProp(document, fsApiVersions.isFullscreen.slice(), fullScreenApi.prefix);
-                fsApiCurrentUA.beginfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullScreenApi.prefix + fsApiVersions.beginfullscreen);
-                fsApiCurrentUA.endfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullScreenApi.prefix + fsApiVersions.endfullscreen);
-                fsApiCurrentUA.fullscreenchange      = $p.utils.hasProp(document, 'on' + fullScreenApi.prefix + fsApiVersions.fullscreenchange);
-                fsApiCurrentUA.fullscreenerror      = $p.utils.hasProp(document, 'on' + fullScreenApi.prefix + fsApiVersions.fullscreenerror);
+                fsApiCurrentUA.requestFullscreen = $p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullscreenApi.prefix);
+                fsApiCurrentUA.fullscreenEnabled = $p.utils.hasProp(document, fsApiVersions.fullscreenEnabled.slice(), fullscreenApi.prefix);
+                fsApiCurrentUA.fullscreenElement = $p.utils.hasProp(document, fsApiVersions.fullscreenElement.slice(), fullscreenApi.prefix);
+                fsApiCurrentUA.exitFullscreen    = $p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullscreenApi.prefix);
+                fsApiCurrentUA.isFullscreen      = $p.utils.hasProp(document, fsApiVersions.isFullscreen.slice(), fullscreenApi.prefix);
+                fsApiCurrentUA.beginfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullscreenApi.prefix + fsApiVersions.beginfullscreen);
+                fsApiCurrentUA.endfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullscreenApi.prefix + fsApiVersions.endfullscreen);
+                fsApiCurrentUA.fullscreenchange      = $p.utils.hasProp(document, 'on' + fullscreenApi.prefix + fsApiVersions.fullscreenchange);
+                fsApiCurrentUA.fullscreenerror      = $p.utils.hasProp(document, 'on' + fullscreenApi.prefix + fsApiVersions.fullscreenerror);
                 
                 //
                 // MEDIA ONLY:
                 // the browser supports true fullscreen for the media element only 
-                /*if (fullScreenApi.supportsFullScreen == 'mediaonly') {
-                    fullScreenApi.requestFullScreen = function (el) {
+                /*if (fullscreenApi.supportsFullscreen == 'mediaonly') {
+                    fullscreenApi.requestFullscreen = function (el) {
                         ref.playerModel.getMediaElement().get(0)[this.prefix + 'EnterFullscreen']();
                     }
-                    fullScreenApi.dest = {};
+                    fullscreenApi.dest = {};
 
                     // cancel fullscreen method
-                    fullScreenApi.cancelFullScreen = function () {
+                    fullscreenApi.exitFullscreen = function () {
                     }
 
-                    return fullScreenApi;
+                    return fullscreenApi;
                 }*/
 
 
                 // HTML5 true fullscreen:
                 // is in fullscreen check
-                fullScreenApi.isFullscreen = function (esc) {
+                fullscreenApi.isFullscreen = function (esc) {
                     // * FF and GoogleTV report bullshit here:
                     var dest = (ref.getIframe()) ? parent.window.document : document;
                     return dest[fsApiCurrentUA.isFullscreen] || !!dest[fsApiCurrentUA.fullscreenElement] || (ref.getDC().hasClass('fullscreen') && esc !== true);
                 }
 
                 // the browser supports true fullscreen for any DOM container - this is ubercool:
-                fullScreenApi.requestFullScreen = function () {
+                fullscreenApi.requestFullscreen = function () {
                     if (this.isFullscreen())
                         return;
 
@@ -2425,7 +2422,7 @@ jQuery(function ($) {
                 }
 
                 // cancel fullscreen method
-                fullScreenApi.cancelFullScreen = function () {
+                fullscreenApi.exitFullscreen = function () {
 
                     var target = ref.getIframe() ? parent.window.document : document,
                         win = ref.getIframeParent() || $(window),
@@ -2442,7 +2439,7 @@ jQuery(function ($) {
                     ref.playerModel.applyCommand('fullscreen', false);
                 }
 
-                return fullScreenApi;
+                return fullscreenApi;
             };
 
             this.getId = function () {
