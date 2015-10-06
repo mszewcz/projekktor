@@ -340,8 +340,11 @@ projekktorDisplay.prototype = {
     },
     
     testCard: function(errorCode) {
-        
-        var msgTxt = $p.utils.i18n("%{error"+errorCode+"}", {});
+        var customData = {
+                title: this.getConfig('title'), 
+                version: this.pp.getVersion()
+            },
+            msgTxt = $p.utils.i18n("%{error"+errorCode+"}", customData);
 
         if (this.pp.getItemCount() > 1) {
             // "press next to continue"
