@@ -2295,7 +2295,8 @@ jQuery(function ($) {
                          * mediaonly = video element only (e.g. iPhone), 
                          * native = HTML5 Fullscreen API
                          */
-                        supportsFullscreen: 'viewport', // default
+                        type: 'viewport',
+                        fullscreenEnabled: false,
                         isFullscreen: function () {
                             try {
                                 return ref.getDC().hasClass('fullscreen');
@@ -2316,19 +2317,19 @@ jQuery(function ($) {
                 // detect full screen API
                 // slice to copy the array
                 if (!!$p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullscreenApi.prefix)) {
-                    fullscreenApi.supportsFullscreen = 'native';
+                    fullscreenApi.type = 'native';
                 }
                 else {
                     // media element only
                     // slice to copy the array
                     if (!!$p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullscreenApi.prefix)) {
-                        fullscreenApi.supportsFullscreen = 'mediaonly';
+                        fullscreenApi.type = 'mediaonly';
                     }
                 }
 
                 // SEMI:
                 // we are done here: full viewport only
-                if (fullscreenApi.supportsFullscreen === 'viewport' || (fullscreenApi.supportsFullscreen === 'mediaonly' && this.getConfig('forceFullViewport'))) {
+                if (fullscreenApi.type === 'viewport' || (fullscreenApi.type === 'mediaonly' && this.getConfig('forceFullViewport'))) {
                     return fullscreenApi;
                 }
 
@@ -2346,7 +2347,7 @@ jQuery(function ($) {
                 //
                 // MEDIA ONLY:
                 // the browser supports true fullscreen for the media element only 
-                /*if (fullscreenApi.supportsFullscreen == 'mediaonly') {
+                /*if (fullscreenApi.type == 'mediaonly') {
                     fullscreenApi.requestFullscreen = function (el) {
                         ref.playerModel.getMediaElement().get(0)[this.prefix + 'EnterFullscreen']();
                     }
