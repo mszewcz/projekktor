@@ -615,26 +615,6 @@ jQuery(function ($) {
                 return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
             }
         },
-        /**
-         * Detect Vendor Prefix with JavaScript
-         * CREDITS: http://davidwalsh.name/vendor-prefix
-         */  
-        
-        vendorPrefix: function() {
-            var styles = window.getComputedStyle(document.documentElement, ''),
-                    pre = (Array.prototype.slice
-                            .call(styles)
-                            .join('')
-                            .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
-                            )[1],
-                    dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
-            return {
-                dom: dom,
-                lowercase: pre,
-                css: '-' + pre + '-',
-                js: this.ucfirst(pre)
-            };
-        },
         
         /*
          * Check if object has any of given properties/methods
