@@ -2119,15 +2119,15 @@ jQuery(function ($) {
 
             this.getIframeAllowFullscreen = function () {
 
-                var result = null;
+                var result = false;
 
                 try {
-                    result = window.frameElement.attributes.allowFullscreen || window.frameElement.attributes.mozallowFullscreen || window.frameElement.attributes.webkitallowFullscreen || null;
+                    result = window.frameElement.attributes.allowFullscreen || window.frameElement.attributes.mozallowFullscreen || window.frameElement.attributes.webkitallowFullscreen || false;
                 } catch (e) {
-                    result = true;
+                    result = false;
                 }
 
-                return (result != null) ? true : false;
+                return result;
             };
 
             this.getPlaybackQuality = function () {
