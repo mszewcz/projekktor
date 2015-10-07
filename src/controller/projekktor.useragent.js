@@ -37,7 +37,7 @@ $p.userAgent = (function (window, document, undefined) {
             dom: dom,
             lowercase: pre,
             css: '-' + pre + '-',
-            js: this.ucfirst(pre)
+            js: $p.utils.ucfirst(pre)
         };
     }
     
