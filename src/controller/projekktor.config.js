@@ -69,9 +69,6 @@ projekktorConfig.prototype = {
     
     /* "true" will stop all other player instances but the one the user clicked play on. */
     _thereCanBeOnlyOne:             true, 
-    
-    /* on "true" try to leave fullscreen on player "complete" - does not seem to work properly in Firefox... yeah! */
-    _leaveFullscreen:               true,
             
     /* An array of items to be played. Check http://www.projekktor.com/docs/playlists to learn more */
     _playlist:                      [],
@@ -99,8 +96,19 @@ projekktorConfig.prototype = {
     /* cross domain */
     _isCrossDomain:                 false,
     
-    /* foce full viewport if browser supports native media-element-fullscreen (e.g. iPad) */
-    _forceFullViewport:             false,
+    /* on "true" try to leave fullscreen on player "complete" */
+    _leaveFullscreen:               true,
+    
+    /* A prioritised list of available fullscreen modes:
+     * - full - use HTML5 fullscreen API if available - will push all the player controls and video into fullscreen mode
+     * - mediaonly - will use native video player in fullscreen mode (no custom overlays or controls will be displayed)
+     * - viewport - this is 'pseudo fullscreen', it'll streach player with it's controls to the browser viewport size
+     * 
+     * If the array is empty or value is null then the fullscreen functionality will be disabled. If you prefere to use
+     * fullviewport mode even if the native fullscreen for <video> elements is available (e.g. iPad), just push 'viewport' before
+     * 'mediaonly' into array like: ['full', 'viewport', 'mediaonly']
+     */
+    _fullscreen:                    ['full', 'viewport', 'mediaonly'],
     
     /**************************************************************
         Config options available per playlist item:
