@@ -108,7 +108,7 @@ projekktorConfig.prototype = {
      * fullviewport mode even if the native fullscreen for <video> elements is available (e.g. iPad), just push 'viewport' before
      * 'mediaonly' into array like: ['full', 'viewport', 'mediaonly']
      */
-    _fullscreen:                    ['full', 'viewport', 'mediaonly'],
+    _fullscreen:                    ['full', 'mediaonly', 'viewport'],
     
     /**************************************************************
         Config options available per playlist item:
