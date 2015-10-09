@@ -52,6 +52,7 @@ module.exports = function (grunt) {
           "src/controller/projekktor.utils.js",
           "src/controller/projekktor.useragent.js",
           "src/controller/projekktor.features.js",
+          "src/controller/projekktor.fullscreenapi.js",
           "src/controller/projekktor.platforms.js",
           "src/controller/projekktor.plugininterface.js",
           "src/controller/projekktor.messages.js",
