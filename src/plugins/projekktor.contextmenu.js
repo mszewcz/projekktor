@@ -16,9 +16,9 @@ projekktorContextmenu.prototype = {
     
     initialize: function() {
         var ref = this,
-            target = this.pp.getIframeWindow() || $(window);
+            target = this.pp.getIframeParent() || $(window);
 
-        this._dest = $p.utils.blockSelection(this.applyToPlayer($('<ul/>')))
+        this._dest = $p.utils.blockSelection(this.applyToPlayer($('<ul/>')));
         this._items['player'] = {
             getContextTitle: function() {
                 return ref.getConfig('playerName') + ' V' + ref.pp.getPlayerVer();
@@ -29,18 +29,18 @@ projekktorContextmenu.prototype = {
                     ref.pp.setPause();
                 }
             }            
-        }
+        };
         
         if (this.pp.getConfig('helpHome')) {
             this._items['help'] = {
                 getContextTitle: function() {
-                    return ref.pp.getConfig('messages')[100]
+                    return ref.pp.getConfig('messages')[100];
                 },
                 open: function() {
                     ref.popup(ref.pp.getConfig('helpHome'), 400, 600);
                 }            
-            }            
-        }
+            };            
+        };
     
         this.pluginReady = true;
     },
