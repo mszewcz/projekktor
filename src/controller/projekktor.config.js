@@ -184,10 +184,7 @@ projekktorConfig.prototype = {
     useYTIframeAPI:                 true,
     
     /* enable/disable fetching of keyboard events - works in "fullscreen" only */
-    enableKeyboard:                 true,  
-    
-    /* enable/disable the possibility to toggle to FULLSCREEN mode */
-    enableFullscreen:               true,
+    enableKeyboard:                 true,
     
     /*
     small: Player height is 240px, and player dimensions are at least 320px by 240px for 4:3 aspect ratio.
