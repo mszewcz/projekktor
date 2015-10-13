@@ -409,13 +409,13 @@ jQuery(function ($) {
 
 
             // fullscreen button    
-            if (this.pp.getInFullscreen() === true) {
+            if (this.pp.getIsFullscreen() === true) {
                 this.drawExitFullscreenButton();
             } else {
                 this.drawEnterFullscreenButton();
             }
 
-            if (!this.getConfig('enableFullscreen')) {
+            if (this.pp.getFullscreenEnabled()) {
                 this._active('fsexit', false);
                 this._active('fsenter', false);
             }
@@ -985,7 +985,7 @@ jQuery(function ($) {
             this._vSliderAct = false;
 
             if (!this.getConfig('controls')) return;
-            if (!this.getConfig('enableFullscreen')) return;
+            if (!this.getFullscreenEnabled()) return;
 
             if (inFullscreen) {
                 this.cb.addClass('fullscreen');
