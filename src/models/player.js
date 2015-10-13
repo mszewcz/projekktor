@@ -180,18 +180,6 @@ jQuery(function ($) {
             this.media.position = 0;
             this.media.duration = 0;
         },
-        /* firefox reinit-issue-workaround-helper-thingy */
-        reInit: function () {
-            // no FF:
-            if (this.flashVersion !== false || !this._isFF() || this.getState('ERROR') || this.pp.getConfig('bypassFlashFFFix') === true) {
-                return;
-            }
-
-            // elsewise nuke:
-            this.sendUpdate('FFreinit');
-            this.removeListeners();
-            this.displayItem((!this.getState('IDLE')));
-        },
         applyCommand: function (command, value) {
             switch (command) {
                 case 'quality':
@@ -258,7 +246,6 @@ jQuery(function ($) {
                     if (value !== this._isFullscreen) {
                         this._isFullscreen = value;
                         this.sendUpdate('fullscreen', this._isFullscreen);
-                        this.reInit();
                         this.setFullscreen();
                     }
                     break;
@@ -893,10 +880,6 @@ jQuery(function ($) {
             } catch (e) {
                 $p.utils.log('_scaleVideo error', e);
             }
-        },
-        _isFF: function () {
-            return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         }
-
     };
 });
