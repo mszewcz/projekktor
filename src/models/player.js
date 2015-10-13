@@ -348,8 +348,8 @@ jQuery(function ($) {
         getPlaybackQuality: function () {
             return ($.inArray(this._quality, this.media.qualities) > -1) ? this._quality : 'auto';
         },
-        getInFullscreen: function () {
-            return this.pp.getInFullscreen();
+        getIsFullscreen: function () {
+            return this.pp.getIsFullscreen();
         },
         getKbPerSec: function () {
             return this._KbPerSec;
