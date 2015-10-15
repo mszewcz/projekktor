@@ -38,16 +38,30 @@ projekktorConfig.prototype = {
     _ns:                            'pp',
     
     /* a priorised array of available platforms */
-    _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'silverlight', 'vlc'],
+    _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'silverlight'],
     
     /* additional platforms config */
     _platformsConfig: {
+        browser: {
+            fullscreen: ['full', 'viewport']
+        },
+        native: {
+            fullscreen: ['full', 'mediaonly', 'viewport']
+        },
+        android: {
+            fullscreen: ['full', 'mediaonly', 'viewport']
+        },
+        ios:{
+            fullscreen: ['full', 'mediaonly', 'viewport']
+        },
         flash: {
-            src: ''
+            src: '',
+            fullscreen: ['full', 'viewport']
             // minPlatformVersion: '' // optional minimal flash plugin version rewrite
         },
         silverlight: {
-            src: ''
+            src: '',
+            fullscreen: ['full', 'viewport']
             // minPlatformVersion: '' // optional minimal silverlight plugin version rewrite
         }
     },
