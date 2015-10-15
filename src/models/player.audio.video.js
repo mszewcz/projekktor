@@ -17,10 +17,10 @@ $p.newModel({
     iLove: [
         {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'pseudo', 'httpVideo'], fixed: 'maybe'},
         {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'pseudo', 'httpVideo'], fixed: 'maybe'},        
-        {ext:'ogv', type:'video/ogg', platform:'native', streamType: ['http', 'httpVideo']},
-        {ext:'webm',type:'video/webm', platform:'native', streamType: ['http', 'httpVideo']},
-        {ext:'ogg', type:'video/ogg', platform:'native', streamType: ['http', 'httpVideo']},
-        {ext:'anx', type:'video/ogg', platform:'native', streamType: ['http', 'httpVideo']}
+        {ext:'ogv', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
+        {ext:'webm',type:'video/webm', platform:['native'], streamType: ['http', 'httpVideo']},
+        {ext:'ogg', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
+        {ext:'anx', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']}
     ],
     
     _eventMap: {
@@ -406,8 +406,8 @@ $p.newModel({
     modelId: 'AUDIO',
     
     iLove: [
-        {ext:'ogg', type:'audio/ogg', platform:'native', streamType: ['http', 'httpAudio']},
-        {ext:'oga', type:'audio/ogg', platform:'native', streamType: ['http', 'httpAudio']},
+        {ext:'ogg', type:'audio/ogg', platform:['native'], streamType: ['http', 'httpAudio']},
+        {ext:'oga', type:'audio/ogg', platform:['native'], streamType: ['http', 'httpAudio']},
         {ext:'mp3', type:'audio/mp3', platform:['ios', 'android', 'native'], streamType: ['http', 'httpAudio']},
         {ext:'mp3', type:'audio/mpeg', platform:['ios', 'android', 'native'], streamType: ['http', 'httpAudio']}        
     ],

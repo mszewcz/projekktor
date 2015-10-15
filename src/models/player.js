@@ -13,7 +13,7 @@ jQuery(function ($) {
     playerModel.prototype = {
         modelId: 'player',
         iLove: [],
-        platform: 'browser',
+        platform: ['browser'],
         // all the player states
         _currentState: null,
         _currentBufferState: null,

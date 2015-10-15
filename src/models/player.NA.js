@@ -11,7 +11,7 @@ jQuery(function($) {
 $p.newModel({
     modelId: 'NA',
     iLove: [
-        {ext:'NaN', type:'none/none', platform: 'browser', streamType: ['*']}
+        {ext:'NaN', type:'none/none', platform: ['browser'], streamType: ['*']}
     ],    
     hasGUI: true,
     

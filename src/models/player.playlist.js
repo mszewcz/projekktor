@@ -13,12 +13,12 @@ $p.newModel({
     modelId: 'PLAYLIST',
     
     iLove: [
-        {ext:'json', type:'text/json', platform:'browser'},
-        {ext:'jsonp', type:'text/jsonp', platform:'browser'},        
-        {ext:'xml', type:'text/xml', platform:'browser'},
-        {ext:'json', type:'application/json', platform:'browser'},
-        {ext:'jsonp', type:'application/jsonp', platform:'browser'},        
-        {ext:'xml', type:'application/xml', platform:'browser'}        
+        {ext:'json', type:'text/json', platform: ['browser']},
+        {ext:'jsonp', type:'text/jsonp', platform: ['browser']},        
+        {ext:'xml', type:'text/xml', platform: ['browser']},
+        {ext:'json', type:'application/json', platform: ['browser']},
+        {ext:'jsonp', type:'application/jsonp', platform: ['browser']},        
+        {ext:'xml', type:'application/xml', platform: ['browser']}        
     ],
     
     applyMedia: function(destContainer) {

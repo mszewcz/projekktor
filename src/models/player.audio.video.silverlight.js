@@ -28,13 +28,13 @@ $p.newModel({
     //minPlatformVersion: "3.0",
     
     iLove: [
-        {ext:'wmv', type:'video/wmv', platform:'silverlight', streamType: ['*']},
-        {ext:'wmv', type:'video/x-ms-wmv', platform:'silverlight', streamType: ['*']},
-        {ext:'mp4', type:'video/mp4', platform:'silverlight', streamType: ['*']},
-        {ext:'mp4', type:'video/m4v', platform:'silverlight', streamType: ['*']},
-        {ext:'mov', type:'video/mov', platform:'silverlight', streamType: ['*']},
-        {ext:'mov', type:'video/quicktime', platform:'silverlight', streamType: ['*']},
-        {ext:'m4v', type:'video/mp4', platform:'silverlight', streamType: ['*']}
+        {ext:'wmv', type:'video/wmv', platform: ['silverlight'], streamType: ['*']},
+        {ext:'wmv', type:'video/x-ms-wmv', platform: ['silverlight'], streamType: ['*']},
+        {ext:'mp4', type:'video/mp4', platform: ['silverlight'], streamType: ['*']},
+        {ext:'mp4', type:'video/m4v', platform: ['silverlight'], streamType: ['*']},
+        {ext:'mov', type:'video/mov', platform: ['silverlight'], streamType: ['*']},
+        {ext:'mov', type:'video/quicktime', platform: ['silverlight'], streamType: ['*']},
+        {ext:'m4v', type:'video/mp4', platform: ['silverlight'], streamType: ['*']}
     ],
     
     allowRandomSeek: false,
@@ -232,12 +232,12 @@ $p.newModel({
     
     hasGUI: false,
     iLove: [
-        {ext:'mp3', type:'audio/mp3', platform:'silverlight', streamType: ['*']},
-        {ext:'m4a', type:'audio/mp4', platform:'silverlight', streamType: ['*']},
-        {ext:'m4a', type:'audio/mpeg', platform:'silverlight', streamType: ['*']},
-        {ext:'wma', type:'audio/wma', platform: 'silverlight', streamType: ['*']},
-        {ext:'wma', type:'audio/x-ms-wma', platform: 'silverlight', streamType: ['*']},
-        {ext:'wav', type:'audio/wav', platform: 'silverlight', streamType: ['*']}
+        {ext:'mp3', type:'audio/mp3', platform: ['silverlight'], streamType: ['*']},
+        {ext:'m4a', type:'audio/mp4', platform: ['silverlight'], streamType: ['*']},
+        {ext:'m4a', type:'audio/mpeg', platform: ['silverlight'], streamType: ['*']},
+        {ext:'wma', type:'audio/wma', platform: ['silverlight'], streamType: ['*']},
+        {ext:'wma', type:'audio/x-ms-wma', platform: ['silverlight'], streamType: ['*']},
+        {ext:'wav', type:'audio/wav', platform: ['silverlight'], streamType: ['*']}
     ],
     applyMedia: function(destContainer) {
         var ref = this,

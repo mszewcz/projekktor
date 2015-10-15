@@ -12,22 +12,22 @@ jQuery(function($) {
 $p.newModel({
     modelId: 'OSMFVIDEOHLS',
     iLove: [
-        {ext:'m3u8', type:'application/x-mpegurl', platform:'flash', streamType: ['*']},
-        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform:'flash', streamType: ['*']}
+        {ext:'m3u8', type:'application/x-mpegurl', platform:['flash'], streamType: ['*']},
+        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform:['flash'], streamType: ['*']}
     ]
 }, 'OSMFVIDEO');
 
 $p.newModel({
     modelId: 'OSMFAUDIOHLS',
     iLove: [
-        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'application/vnd.apple.mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u8', type:'application/x-mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'application/x-mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u8', type:'audio/mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'audio/mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u8', type:'audio/x-mpegurl', platform: 'flash', streamType: ['*']},
-        {ext:'m3u', type:'audio/x-mpegurl', platform: 'flash', streamType: ['*']}
+        {ext:'m3u8', type:'application/vnd.apple.mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u', type:'application/vnd.apple.mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u8', type:'application/x-mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u', type:'application/x-mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u8', type:'audio/mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u', type:'audio/mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u8', type:'audio/x-mpegurl', platform: ['flash'], streamType: ['*']},
+        {ext:'m3u', type:'audio/x-mpegurl', platform: ['flash'], streamType: ['*']}
     ]
 }, 'OSMFAUDIO');
 
