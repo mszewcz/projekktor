@@ -42,28 +42,23 @@ projekktorConfig.prototype = {
     
     /* additional platforms config */
     _platformsConfig: {
-        browser: {
-            fullscreen: ['full', 'viewport']
-        },
-        native: {
-            fullscreen: ['full', 'mediaonly', 'viewport']
-        },
-        android: {
-            fullscreen: ['full', 'mediaonly', 'viewport']
-        },
-        ios:{
-            fullscreen: ['full', 'mediaonly', 'viewport']
-        },
         flash: {
-            src: '',
-            fullscreen: ['full', 'viewport']
+            src: ''
             // minPlatformVersion: '' // optional minimal flash plugin version rewrite
         },
         silverlight: {
-            src: '',
-            fullscreen: ['full', 'viewport']
+            src: ''
             // minPlatformVersion: '' // optional minimal silverlight plugin version rewrite
         }
+    },
+    
+    _platformsFullscreenConfig: {
+        browser: ['full', 'viewport'],
+        native: ['full', 'mediaonly', 'viewport'],
+        android: ['full', 'mediaonly', 'viewport'],
+        ios: ['full', 'mediaonly', 'viewport'],
+        flash: ['full', 'viewport'],
+        silverlight: ['full', 'viewport']
     },
     
     /* if set to true, projekktor assumes to live within an iframe and will act accordingly (used for embedding) */
