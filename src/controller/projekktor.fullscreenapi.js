@@ -61,8 +61,12 @@ $p.fullscreenApi = (function (window, document, undefined) {
              * Events
              */
             // fired on DOMDocument 
-            fullscreenchange: ['onfullscreenchange', 'onwebkitfullscreenchange', 'onmsfullscreenchange', 'onmozfullscreenchange', 'onMSFullscreenChange'], // NOTE: cammelcase event names are used in some IE Mobile
-            fullscreenerror: ['onfullscreenerror', 'onwebkitfullscreenerror', 'onmozfullscreenerror', 'onmsfullscreenerror', 'onMSFullscreenError']
+            // NOTE: Internet Explorer 11 and IEMobile on Windows Phone 8.1 are using cammelcase, prefixed, event names
+            // for addEventListener (e.g. MSFullscreenChange) but have lowercase event names in document object (e.g. onmsfullscreenchange)
+            // so in this case detection is useless cause when we detect lowercase event name we can't use it with addEventListener
+            // - there is need for exception
+            fullscreenchange: ['onfullscreenchange', 'onwebkitfullscreenchange', 'onmozfullscreenchange'], 
+            fullscreenerror: ['onfullscreenerror', 'onwebkitfullscreenerror', 'onmozfullscreenerror']
         }
     },
     /**
@@ -123,8 +127,16 @@ $p.fullscreenApi = (function (window, document, undefined) {
             fullscreenApi.full.fullscreenEnabled = $p.utils.hasProp(document, fsApiVersionsMap.full.fullscreenEnabled.slice(), prefix);
             fullscreenApi.full.fullscreenElement = $p.utils.hasProp(document, fsApiVersionsMap.full.fullscreenElement.slice(), prefix);
             fullscreenApi.full.isFullscreen      = $p.utils.hasProp(document, fsApiVersionsMap.full.isFullscreen.slice(), prefix);
-            fullscreenApi.full.fullscreenchange  = $p.utils.hasProp(document, fsApiVersionsMap.full.fullscreenchange.slice());
-            fullscreenApi.full.fullscreenerror   = $p.utils.hasProp(document, fsApiVersionsMap.full.fullscreenerror.slice());
+            
+            // Internet Explorer 11 and IEMobile on Windows Phone 8.1
+            if(prefix === 'ms'){
+                fullscreenApi.full.fullscreenchange = 'onMSFullscreenChange';
+                fullscreenApi.full.fullscreenerror = 'onMSFullscreenError';
+            }
+            else {
+                fullscreenApi.full.fullscreenchange  = $p.utils.hasProp(document, fsApiVersionsMap.full.fullscreenchange.slice());
+                fullscreenApi.full.fullscreenerror   = $p.utils.hasProp(document, fsApiVersionsMap.full.fullscreenerror.slice());
+            }
         break;
     }
 
