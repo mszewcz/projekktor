@@ -281,13 +281,15 @@ $p.features = (function (window, document, undefined) {
         return (div.firstChild && div.firstChild.namespaceURI) == ns.svg;
     };
     
-    tests['fullscreen'] = function () {
-        for (var i = 0; i < Modernizr._domPrefixes.length; i++) {
-            if (document[Modernizr._domPrefixes[i].toLowerCase() + 'CancelFullScreen'])
-                return true;
-        }
-        return !!document['cancelFullScreen'] || false;
-    }
+    tests['inlinevideo'] = function() {
+        var isIPhone = $p.userAgent.device.model === 'iPhone',
+            isWindowsPhone = $p.userAgent.os.name === 'Windows Phone',
+            isAndroid = $p.userAgent.os.name === 'Android',
+            ieMobileVer = ($p.userAgent.browser.name === 'IEMobile') ? parseInt($p.userAgent.browser.major) : 0,
+            osVer = parseFloat($p.userAgent.os.version);
+            
+        return !isIPhone && (!isWindowsPhone || (osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || osVer >= 3);
+    };
     
     for (var feature in tests) {
         if (hasOwnProp(tests, feature)) {
