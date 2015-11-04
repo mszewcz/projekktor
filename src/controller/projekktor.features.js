@@ -288,7 +288,7 @@ $p.features = (function (window, document, undefined) {
             ieMobileVer = ($p.userAgent.browser.name === 'IEMobile') ? parseInt($p.userAgent.browser.major) : 0,
             osVer = parseFloat($p.userAgent.os.version);
             
-        return !isIPhone && (!isWindowsPhone || (osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || osVer >= 3);
+        return !isIPhone && (!isWindowsPhone || (isWindowsPhone && osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || isAndroid && osVer >= 3);
     };
     
     for (var feature in tests) {
