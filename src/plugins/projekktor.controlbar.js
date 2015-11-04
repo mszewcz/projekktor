@@ -415,7 +415,7 @@ jQuery(function ($) {
                 this.drawEnterFullscreenButton();
             }
 
-            if (this.pp.getFullscreenEnabled()) {
+            if (!this.pp.getFullscreenEnabled()) {
                 this._active('fsexit', false);
                 this._active('fsenter', false);
             }
@@ -976,8 +976,7 @@ jQuery(function ($) {
 
         fullscreenHandler: function (inFullscreen) {
 
-            var ref = this,
-                classPrefix = this.pp.getNS();
+            var ref = this;
 
             clearTimeout(this._cTimer);
 
@@ -985,7 +984,7 @@ jQuery(function ($) {
             this._vSliderAct = false;
 
             if (!this.getConfig('controls')) return;
-            if (!this.getFullscreenEnabled()) return;
+            if (!this.pp.getFullscreenEnabled()) return;
 
             if (inFullscreen) {
                 this.cb.addClass('fullscreen');
@@ -995,8 +994,9 @@ jQuery(function ($) {
                 this.drawEnterFullscreenButton();
             }
 
-            if (this.pp.getState() == 'IDLE' && !this.getConfig('showOnIdle'))
+            if (this.pp.getState() === 'IDLE' && !this.getConfig('showOnIdle')){
                 this.hidecb(true);
+            }
         },        
         
         durationChangeHandler: function () {
