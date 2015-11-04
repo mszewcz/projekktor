@@ -39,7 +39,9 @@ $p.newModel({
         loadedmetadata: "resizeListener",
         loadeddata:     "resizeListener",
         resize:         "resizeListener",
-        loadstart:      null        
+        loadstart:      null,
+        webkitbeginfullscreen: "webkitfullscreenListener",
+        webkitendfullscreen: "webkitfullscreenListener"
     },    
     _eventsBinded: [],
     isGingerbread: false,
@@ -50,6 +52,7 @@ $p.newModel({
     wasPersistent: true,
     isPseudoStream: false,
     endedTimeout: 0,
+    displayingFullscreen: false,
     
     init: function() {
         var ua = navigator.userAgent; // TODO: global platform and feature detection
@@ -272,6 +275,7 @@ $p.newModel({
                 } catch(e) {}
             })();
         }
+        
         this._setState('playing'); 
     },
 
@@ -316,7 +320,12 @@ $p.newModel({
         this._setBufferState('full');
     },
     
-     disableDefaultVideoElementActions: function(evt){
+    webkitfullscreenListener: function(evt){
+        this.displayingFullscreen = this.mediaElement[0][$p.fullscreenApi.mediaonly.displayingFullscreen];
+        this.fullscreenchangeListener(this.displayingFullscreen);
+    },
+    
+    disableDefaultVideoElementActions: function(evt){
             evt.preventDefault();
             evt.stopPropagation();
     }, 
