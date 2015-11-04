@@ -153,6 +153,7 @@ jQuery(function ($) {
             this.listeners = [];
             this.playerModel = {};
             this._isReady = false;
+            this._isFullViewport = false;
             this._maxElapsed = 0;
             this._playlistServer = '';
             this._id = '';
@@ -416,14 +417,9 @@ jQuery(function ($) {
                 
                 $.each(mmap, function(idx, iLove){
                    if(iLove.type === mimeType){
-                       if($.isArray(iLove.platform)){
-                           for(i=0,l=iLove.platform.length; i<l; i++){
-                               platformsObj[iLove.platform[i]] = true;
-                           }
-                       }
-                       else {
-                           platformsObj[iLove.platform] = true;
-                       }
+                    for(i=0,l=iLove.platform.length; i<l; i++){
+                        platformsObj[iLove.platform[i]] = true;
+                    }
                    } 
                 });
                 
@@ -520,9 +516,7 @@ jQuery(function ($) {
                 for (mmapIndex in $p.mmap) {
 
                     if ($p.mmap.hasOwnProperty(mmapIndex)) {
-                        modelPlatforms = (typeof $p.mmap[mmapIndex].platform === 'object') ? $p.mmap[mmapIndex].platform : [
-                            $p.mmap[mmapIndex].platform
-                        ];
+                        modelPlatforms = $p.mmap[mmapIndex].platform;
 
                         $.each(modelPlatforms, function (_na, platform) {
 
@@ -891,6 +885,7 @@ jQuery(function ($) {
                         break;
 
                     case 'AWAKENING':
+                        this.playerModel.mediaElement
                         this._syncPlugins('awakening');
                         break;
 
@@ -936,17 +931,15 @@ jQuery(function ($) {
                 this._cuepointsChangeEventHandler(value);
             };
 
-            this.fullscreenHandler = function (value) {
+            this.fullscreenHandler = function (goFullscreen) {
 
-                var nativeFullscreen = this.getFullscreenApi();
-
-                if (value === true) {
-                    nativeFullscreen.requestFullscreen();
-                    this._enterFullViewport();
+                if (goFullscreen === true) {
+                    this._requestFullscreen();
+                    this.getDC().addClass(this.getNS() + 'fullscreen');
                 }
                 else {
-                    nativeFullscreen.exitFullscreen();
-                    this._exitFullViewport();
+                    this._exitFullscreen();
+                    this.getDC().removeClass(this.getNS() + 'fullscreen');
                 }
             };
 
@@ -1425,7 +1418,7 @@ jQuery(function ($) {
                 var ref = this,
                     set = (this.getConfig('keys').length > 0) ? this.getConfig('keys') : [{
                         13: function (player) {
-                            player.setFullscreen(!player.getInFullscreen());
+                            player.setFullscreen(!player.getIsFullscreen());
                         }, // return;
                         32: function (player, evt) {
                             player.setPlayPause();
@@ -1479,26 +1472,15 @@ jQuery(function ($) {
             /*******************************
              DOM manipulations
              *******************************/
-            /* make player fill the whole window viewport */
-            this._enterFullViewport = function (forcePlayer) {
-
-                var win,
-                    target,
-                    targetParent,
-                    overflow;
-
-                // get relevant elements
-                if (forcePlayer) { // when we setup the player to fill up the iframe on its startup when it's in the iframe mode
-                    win = $(window);
-                    target = this.getDC();
-                }
-                else {
-                    win = this.getIframeParent() || $(window);
-                    target = this.getIframe() || this.getDC();
-                    targetParent = target.parent() || null;
-                }
-
-                overflow = $(win[0].document.body).css('overflow');
+            
+            /* make player fill actual viewport */
+            this._expandView = function(win, target, targetParent) {
+                
+                var winBody = $(win[0].document).find('body'),
+                    overflow = winBody.css('overflow'),
+                    isSelf = (win[0] === window.self),
+                    targetWidthAttr = target.attr('width') || '',
+                    targetHeightAttr = target.attr('height') || '';
 
                 // prepare target:
                 target
@@ -1508,27 +1490,29 @@ jQuery(function ($) {
                         targetStyle: target.attr('style') || '',
                         targetWidth: target.width(),
                         targetHeight: target.height(),
-                        bodyOverflow: (overflow == 'visible') ? 'auto' : overflow, // prevent IE7 crash
-                        bodyOverflowX: $(win[0].document.body).css('overflow-x'), // prevent IE7 crash
-                        bodyOverflowY: $(win[0].document.body).css('overflow-y'), // prevent IE7 crash
-                        iframeWidth: target.attr('width') || 0,
-                        iframeHeight: target.attr('height') || 0
+                        bodyOverflow: (overflow === 'visible') ? 'auto' : overflow, // prevent IE7 crash
+                        bodyOverflowX: winBody.css('overflow-x'), // prevent IE7 crash
+                        bodyOverflowY: winBody.css('overflow-y'), // prevent IE7 crash
+                        iframeWidth: targetWidthAttr.indexOf('%') > -1 ? targetWidthAttr : parseInt(targetWidthAttr) || 0,
+                        iframeHeight: targetHeightAttr.indexOf('%') > -1 ? targetHeightAttr : parseInt(targetHeightAttr) || 0
                     })
+                    .removeAttr('width')
+                    .removeAttr('height')
                     .css({
-                        position: forcePlayer ? 'absolute' : 'fixed', // to prevent Android native browser bad 'fixed' positioning when the player is in the iframe mode
+                        position: isSelf && !targetParent ? 'absolute' : 'fixed', // to prevent Android native browser bad 'fixed' positioning when the player is in the iframe mode
                         display: 'block',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        zIndex: 999999, // that still not guarantee that the target element will be on top. Theoretically we could move the target element to the body but this causing reload of the iframe so it's not an option.
+                        zIndex: 9999999, // that still not guarantee that the target element will be on top. Theoretically we could move the target element to the body but this causing reload of the iframe so it's not an option.
                         margin: 0,
                         padding: 0
                     });
 
                 // prepare target parent
                 // check if it's not in the iframe mode and if the targetParent is not <body>
-                if (!forcePlayer && !!targetParent && targetParent[0].tagName !== 'BODY') {
+                if (!isSelf && !!targetParent && targetParent[0].tagName !== 'BODY') {
                     targetParent
                         .data('fsdata', {
                             overflow: targetParent.css('overflow'),
@@ -1538,53 +1522,31 @@ jQuery(function ($) {
                         })
                         .attr('style', (!targetParent.attr('style') ? '' : targetParent.attr('style') + '; ') + 'overflow: visible!important;'); // that fixes IE issues with visibility of the element
                 }
-
+                
                 // prepare parent window
                 win.scrollTop(0).scrollLeft(0);
-
-                // add class to eventually create more specific rules for site elements with high z-indexes
-                $(win[0].document.body)
-                    .addClass(this.getNS() + 'fullviewport')
-                    .css({
+                
+                winBody.css({
                         overflow: 'hidden',
                         overflowX: 'hidden',
                         overflowY: 'hidden'
-                    });
+                });
+
+                return true;
             };
-
-            /* reset player from "full (parent) window viewport" iframe thing */
-            // forcePlayer is quite useless in this case, but for the sake of consistency it's here
-            this._exitFullViewport = function (forcePlayer) {
-
-                var win,
-                    target,
-                    targetParent,
-                    fsData,
-                    fsTargetParentData;
-
-                // get relevant elements
-                if (forcePlayer) {
-                    win = $(window);
-                    target = this.getDC();
-                }
-                else {
-                    win = this.getIframeParent() || $(window);
-                    target = this.getIframe() || this.getDC();
-                    targetParent = target.parent() || null;
-                }
-
-                fsData = target ? target.data('fsdata') : null;
-                fsTargetParentData = targetParent ? targetParent.data('fsdata') : null;
+            
+            /* make player back to original size */
+            this._collapseView = function(win, target, targetParent) {
+                var isSelf = (win[0] === window.self),
+                    fsData = target ? target.data('fsdata') : null,
+                    fsTargetParentData = targetParent ? targetParent.data('fsdata') : null;
 
                 // reset
-                if (fsData != null) {
+                if (fsData !== null) {
 
-                    // rebuild parent window state
-                    win.scrollTop(fsData.scrollTop)
-                        .scrollLeft(fsData.scrollLeft);
+                    
 
                     $(win[0].document.body)
-                        .removeClass(this.getNS() + 'fullviewport')
                         .css({
                             overflow: fsData.bodyOverflow,
                             overflowX: fsData.bodyOverflowX,
@@ -1592,27 +1554,77 @@ jQuery(function ($) {
                         });
 
                     // rebuild iframe:
-                    if (fsData.iframeWidth > 0 && !forcePlayer) {
+                    if (fsData.iframeWidth > 0 && !isSelf) {
                         target
-                            .attr('width', fsData.iframeWidth + "px")
-                            .attr('height', fsData.iframeHeight + "px");
+                            .attr('width', fsData.iframeWidth)
+                            .attr('height', fsData.iframeHeight);
                     }
                     else {
                         target
                             .width(fsData.targetWidth)
                             .height(fsData.targetHeight);
                     }
-                    ;
+
                     target
                         .attr('style', (fsData.targetStyle == null) ? '' : fsData.targetStyle)
                         .data('fsdata', null);
 
-                    if (!forcePlayer && !!fsTargetParentData) {
+                    if (!isSelf && !!fsTargetParentData) {
                         targetParent
                             .attr('style', !fsTargetParentData.styles ? '' : fsTargetParentData.styles)
                             .data('fsdata', null);
                     }
+                    
+                    // rebuild parent window state
+                    win.scrollTop(fsData.scrollTop)
+                       .scrollLeft(fsData.scrollLeft);
+                    
+                    return true;
                 }
+
+                return false;
+            };
+
+            this._enterFullViewport = function () {
+
+                var win = this.getIframeParent() || $(window),
+                    target = this.getIframe() || this.getDC(),
+                    targetParent = target.parent() || null,
+                    winDocument = $(win[0].document);
+
+                // set isFullViewport flag
+                this._isFullViewport = true;
+                
+                // add class to eventually create more specific rules for site elements with high z-indexes
+                winDocument.find('body').addClass(this.getNS() + 'fullviewport');
+                
+                // prevent Android 4.x Browser from scrolling
+                $(document).on('touchmove.fullviewport', function(e) {
+                    e.preventDefault();
+                });
+                
+                this._expandView(win, target, targetParent);
+                
+                return true;
+            };
+
+            /* exit player from full viewport mode - "full (parent) window viewport" to be specyfic */
+            this._exitFullViewport = function () {
+
+                var win = this.getIframeParent() || $(window),
+                    target = this.getIframe() || this.getDC(),
+                    targetParent = target.parent(),
+                    winDocument = $(win[0].document);
+                
+                this._isFullViewport = false;
+                
+                winDocument.find('body').removeClass(this.getNS() + 'fullviewport');
+                
+                $(document).off('.fullviewport');
+
+                this._collapseView(win, target, targetParent);
+
+                return true;
             };
 
             /*******************************
@@ -1938,7 +1950,7 @@ jQuery(function ($) {
             this.getLoadPlaybackProgress = function () {
 
                 try {
-                    return this.playerModel.getLoadPlaybackProgress()
+                    return this.playerModel.getLoadPlaybackProgress();
                 }
                 catch (e) {
                     return 0;
@@ -2004,9 +2016,199 @@ jQuery(function ($) {
                     return this.getItem().duration;
                 }
             };
+            /**
+             * Basing on fullscreen prioritized array config, curently used platform and device abilities 
+             * it detects fullscreen type/mode to use.
+             * 
+             * @returns string - full | mediaonly | viewport | none
+             */
+            this.getFullscreenType = function() {
+                var config = this.getConfig('fullscreen') || [],
+                    usedPlatform = $p.utils.intersect(this.getPlatform(),this.getPlatforms())[0] || [],
+                    fullscreenTypesAvailableForUsedPlatform = this.config._platformsFullscreenConfig[usedPlatform] || [],
+                    availableFullscreenApiType = $p.fullscreenApi.type,
+                    fullscreenTypeAvailableForApi = [],
+                    available = [],
+                    result = 'none',
+                    i;
+                
+                switch(availableFullscreenApiType){
+                    case 'full':
+                        fullscreenTypeAvailableForApi = ['full','mediaonly'];
+                        break;
+                        
+                    case 'mediaonly':
+                        fullscreenTypeAvailableForApi = ['mediaonly'];
+                        break;
+                    
+                    case 'none':
+                        break;
+                }
+                
+                // if device has support for inlinevideo then there is full viewport mode available
+                if($p.features.inlinevideo){
+                    fullscreenTypeAvailableForApi.push('viewport');
+                }
+                
+                available = $p.utils.intersect($p.utils.intersect(config, fullscreenTypesAvailableForUsedPlatform), fullscreenTypeAvailableForApi);
+                
+                // select one from the available fullscreen types with highest configured priority
+                for(i=0; i<config.length; i++){
+                    if(available.indexOf(config[i]) > -1){
+                        result = config[i];
+                        break;
+                    }
+                }
+                
+                return result;
+            };
+            
+            this.getFullscreenEnabled = function() {
+                var fsType = this.getFullscreenType(),
+                    apiType = $p.fullscreenApi.type,
+                    result = false;
+                
+                switch(fsType){
+                    case 'full':
+                        result = this._getFullscreenEnabledApi();
+                        break;
+                    
+                    case 'mediaonly':
+                        /**
+                         * there could be 3 cases in this situation:
+                         * a) there is only 'mediaonly' fullscreen API available
+                         * b) there is 'full' fullscreen API available, but the user prefer 'mediaonly' in config
+                         * c) player is in <iframe> and has 'mediaonly' fullscreen API available, but there is no
+                         *    <iframe> allowfullscreen attribute so we respect that.
+                         */
+                        if(this.getConfig('iframe')){
+                            result = (this.getIframeAllowFullscreen() && this._getFullscreenEnabledApi(apiType));
+                        }
+                        else {
+                            result = this._getFullscreenEnabledApi(apiType);
+                        }
+                        break;
+                    
+                    case 'viewport':
+                        /**
+                         * In this case we just need to check if the player is inside the <iframe> 
+                         * and if the <iframe> attributes allowing fullscreen. We respect those even if it's
+                         * possible to set fullviewport when the <iframe> is from the same domain. 
+                         * If the player isn't inside the <iframe> then we assume that it's possible to
+                         * put the player into fullviewport mode when requested.
+                         */
+                        if(this.getConfig('iframe')){
+                            result = this.getIframeAllowFullscreen();
+                        }
+                        else if(this.config._isCrossDomain){
+                            result = false;
+                        }
+                        else {
+                            result = true;
+                        }
+                        break;
+                        
+                        /**
+                         * The fullscreen functionality is disabled in configuration
+                         */
+                    case 'none':
+                        result = false;
+                        break;
+                }
+                
+                return result;
+            };
+            
+            this._getFullscreenEnabledApi = function(apiType){
+                var apiType = apiType || $p.fullscreenApi.type,
+                    fsFullscreenEnabledPropName = $p.fullscreenApi[apiType]['fullscreenEnabled'] || false,
+                    fsSupportsFullscreenPropName = $p.fullscreenApi[apiType]['supportsFullscreen'] || false,
+                    result = false;
+                
+                switch(apiType){
+                    case 'full':
+                        // we need to check if the document fullscreenEnabled value is true or false
+                        // cause even if the fullscreen API feature is availble it could be blocked
+                        // through browser configuration and/or <iframe> lack of allowfullscreen attribute
+                        result = document[fsFullscreenEnabledPropName];
+                        break;
 
-            this.getInFullscreen = function () {
-                return this.getFullscreenApi().isFullscreen();
+                    case 'mediaonly':
+                        /**
+                         * if the detected fullscreen API is 'mediaonly' then we need to check the status
+                         * of current player model media element supportsFullscreen value. This value is
+                         * reliable only after HTML <video> metadataloaded event was fired. If there is 
+                         * no player model media element available at the function execution time we return
+                         * false.
+                         */
+                        if(!!this.playerModel.mediaElement){
+                            result = this.playerModel.mediaElement[0][fsSupportsFullscreenPropName];
+                        }
+                        break;
+                }
+                
+                return result;
+            };
+            
+            this.getIsFullscreen = function () {
+                var fsType = this.getFullscreenType(),
+                    apiType = $p.fullscreenApi.type,
+                    result = false;
+                
+                switch(fsType){
+                    case 'full':
+                        result = this._getIsFullscreenApi();
+                        break;
+                    
+                    case 'mediaonly':
+                        /**
+                         * there could be 2 cases in this situation:
+                         * a) there is only 'mediaonly' fullscreen API available
+                         * b) there is 'full' fullscreen API available, but the user prefer 'mediaonly' in config
+                         */
+                        result = this._getIsFullscreenApi(apiType);
+                        break;
+                    
+                    case 'viewport':
+                        result = this._isFullViewport;
+                        break;
+                        
+                        /**
+                         * The fullscreen functionality is disabled in configuration
+                         */
+                    case 'none':
+                        result = false;
+                        break;
+                }
+                
+                return result;
+            };
+            
+            this._getIsFullscreenApi = function(apiType){
+                var apiType = apiType || $p.fullscreenApi.type,
+                    fsElementPropName = $p.fullscreenApi[apiType]['fullscreenElement'] || false,
+                    fsIsFullscreenPropName = $p.fullscreenApi[apiType]['isFullscreen'] || false,
+                    fsDisplayingFullscreenPropName = $p.fullscreenApi[apiType]['isFullscreen'] || false,
+                    result = false;
+                
+                switch(apiType){
+                    case 'full':
+                        // NOTE: IE11 and IEMobile on Windows Phone 8.1 don't have isFullscreen property implemented,
+                        // but we can use fullscreenElement property instead
+                        result = document[fsIsFullscreenPropName] || !!document[fsElementPropName];
+                        break;
+
+                    case 'mediaonly':
+                        if(!!this.playerModel.mediaElement && fsDisplayingFullscreenPropName){
+                            result = this.playerModel.mediaElement[0][fsDisplayingFullscreenPropName];
+                        }
+                        else {
+                            result = this.getDC().hasClass('fullscreen');
+                        }
+                        break;
+                }
+                
+                return result;
             };
 
             this.getIsMuted = function () {
@@ -2076,10 +2278,6 @@ jQuery(function ($) {
                 }
             };
 
-            this.getUsesFlash = function () {
-                // return (this.getPlatform)
-            };
-
             this.getModel = function () {
 
                 try {
@@ -2089,14 +2287,10 @@ jQuery(function ($) {
                 }
             };
 
-            this.getIframeParent = this.getIframeWindow = function () {
+            this.getIframeParent = function () {
 
                 try {
-                    var result = false;
-
-                    if (this.config._iframe) {
-                        result = parent.location.host || false;
-                    }
+                    var result = parent.location.host || false;
                     return (result === false) ? false : $(parent.window);
                 } catch (e) {
                     return false;
@@ -2120,7 +2314,7 @@ jQuery(function ($) {
             this.getIframeAllowFullscreen = function () {
 
                 var result = false;
-
+                
                 try {
                     result = window.frameElement.attributes.allowFullscreen || window.frameElement.attributes.mozallowFullscreen || window.frameElement.attributes.webkitallowFullscreen || false;
                 } catch (e) {
@@ -2198,10 +2392,10 @@ jQuery(function ($) {
             this.getPlatform = function () {
                 var item = this.getItem();
                 if(item){
-                    return item.platform || 'error';
+                    return item.platform || [];
                 }
                 else {
-                    return 'error';
+                    return [];
                 }
             };
 
@@ -2222,7 +2416,7 @@ jQuery(function ($) {
                         if (item.availableFiles.hasOwnProperty(i)) {
 
                             for (var j = 0, l = platforms.length; j < l; j++) {
-                                streamType = item.availableFiles[i].streamType || item.availableFiles.config.streamType || streamType;
+                                streamType = item.availableFiles[i].streamType || (item.availableFiles.hasOwnProperty('config') ? item.availableFiles.config.streamType : false) || streamType;
 
                                 if (this._canPlay(item.availableFiles[i].type, platforms[j].toLowerCase(), streamType)) {
 
@@ -2241,193 +2435,6 @@ jQuery(function ($) {
                 });
 
                 return result;
-            };
-
-            this.getFullscreenApi = function () {
-                var ref = this,
-                    videoElement = document.createElement('video'),
-                    /**
-                     *  there are differences in function names and naming conventions between implementations of fullscreen API
-                     *  so we list all of their versions (based on W3C official Fullscreen API proposal from 6 July 2012 )
-                     *  and trying to find what version does current browser use (if any)
-                     */
-                    fsApiVersions = {
-                        requestFullscreen: ['requestFullscreen', 'requestFullScreen', 'enterFullscreen',
-                            'enterFullScreen'],
-                        // document flag informing if you can use the API
-                        fullscreenEnabled: ['fullscreenEnabled', 'fullScreenEnabled', 'supportsFullscreen',
-                            'supportsFullScreen'],
-                        // document property returning element which is currently in the fullscreen stage
-                        fullscreenElement: ['fullscreenElement', 'fullScreenElement',
-                            'currentFullScreenElement'],
-                        exitFullscreen: ['exitFullscreen', 'exitFullScreen', 'cancelFullScreen',
-                            'cancelFullscreen'],
-                        // no W3C proposal
-                        // document flag informing if the browser is currently in the fullscreen stage
-                        isFullscreen: ['fullScreen', 'isFullScreen', 'isFullscreen', 'displayingFullscreen',
-                            'displayingFullScreen'],
-                        //events
-                        beginfullscreen: 'beginfullscreen', // iOS specyfic fired by <video> element
-                        endfullscreen: 'endfullscreen', // iOS specyfic fired by <video> element
-                        fullscreenchange: 'fullscreenchange', // all the others browsers fired by document
-                        fullscreenerror: 'fullscreenerror'// all the others browsers fired by document
-                    },
-                    /**
-                     * this object contains proper names for current UA native fullscreen API functions, 
-                     * properties and events
-                     */
-                    fsApiCurrentUA = {
-                        requestFullscreen: function () {},
-                        fullscreenEnabled: false,
-                        fullscreenElement: null,
-                        exitFullscreen: function () {},
-                        isFullscreen: function () {
-                            return false;
-                        },
-                        beginfullscreen: '',
-                        endfullscreen: '',
-                        fullscreenchange: '',
-                        fullscreenerror: ''
-                    },
-                    fullscreenApi = {
-                        /**
-                         * viewport = full viewport, 
-                         * mediaonly = video element only (e.g. iPhone), 
-                         * native = HTML5 Fullscreen API
-                         */
-                        type: 'viewport',
-                        fullscreenEnabled: false,
-                        isFullscreen: function () {
-                            try {
-                                return ref.getDC().hasClass('fullscreen');
-                            } catch (e) {
-                                return false;
-                            }
-                        },
-                        requestFullscreen: function () {
-                            ref.playerModel.applyCommand('fullscreen', true);
-                        },
-                        exitFullscreen: function () {
-                            ref.playerModel.applyCommand('fullscreen', false);
-                        },
-                        prefix: $p.utils.vendorPrefix().lowercase,
-                        ref: this
-                    };
-
-                // detect full screen API
-                // slice to copy the array
-                if (!!$p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullscreenApi.prefix)) {
-                    fullscreenApi.type = 'native';
-                }
-                else {
-                    // media element only
-                    // slice to copy the array
-                    if (!!$p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullscreenApi.prefix)) {
-                        fullscreenApi.type = 'mediaonly';
-                    }
-                }
-
-                // SEMI:
-                // we are done here: full viewport only
-                if (fullscreenApi.type === 'viewport' || (fullscreenApi.type === 'mediaonly' && this.getConfig('forceFullViewport'))) {
-                    return fullscreenApi;
-                }
-
-                // detect fullscreen API for current UA
-                fsApiCurrentUA.requestFullscreen = $p.utils.hasProp(videoElement, fsApiVersions.requestFullscreen.slice(), fullscreenApi.prefix);
-                fsApiCurrentUA.fullscreenEnabled = $p.utils.hasProp(document, fsApiVersions.fullscreenEnabled.slice(), fullscreenApi.prefix);
-                fsApiCurrentUA.fullscreenElement = $p.utils.hasProp(document, fsApiVersions.fullscreenElement.slice(), fullscreenApi.prefix);
-                fsApiCurrentUA.exitFullscreen    = $p.utils.hasProp(document, fsApiVersions.exitFullscreen.slice(), fullscreenApi.prefix);
-                fsApiCurrentUA.isFullscreen      = $p.utils.hasProp(document, fsApiVersions.isFullscreen.slice(), fullscreenApi.prefix);
-                fsApiCurrentUA.beginfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullscreenApi.prefix + fsApiVersions.beginfullscreen);
-                fsApiCurrentUA.endfullscreen      = $p.utils.hasProp(videoElement, 'on' + fullscreenApi.prefix + fsApiVersions.endfullscreen);
-                fsApiCurrentUA.fullscreenchange      = $p.utils.hasProp(document, 'on' + fullscreenApi.prefix + fsApiVersions.fullscreenchange);
-                fsApiCurrentUA.fullscreenerror      = $p.utils.hasProp(document, 'on' + fullscreenApi.prefix + fsApiVersions.fullscreenerror);
-                
-                //
-                // MEDIA ONLY:
-                // the browser supports true fullscreen for the media element only 
-                /*if (fullscreenApi.type == 'mediaonly') {
-                    fullscreenApi.requestFullscreen = function (el) {
-                        ref.playerModel.getMediaElement().get(0)[this.prefix + 'EnterFullscreen']();
-                    }
-                    fullscreenApi.dest = {};
-
-                    // cancel fullscreen method
-                    fullscreenApi.exitFullscreen = function () {
-                    }
-
-                    return fullscreenApi;
-                }*/
-
-
-                // HTML5 true fullscreen:
-                // is in fullscreen check
-                fullscreenApi.isFullscreen = function (esc) {
-                    // * FF and GoogleTV report bullshit here:
-                    var dest = (ref.getIframe()) ? parent.window.document : document;
-                    return dest[fsApiCurrentUA.isFullscreen] || !!dest[fsApiCurrentUA.fullscreenElement] || (ref.getDC().hasClass('fullscreen') && esc !== true);
-                }
-
-                // the browser supports true fullscreen for any DOM container - this is ubercool:
-                fullscreenApi.requestFullscreen = function () {
-                    if (this.isFullscreen())
-                        return;
-
-                    var win = ref.getIframeParent() || $(window),
-                        target = (ref.getIframe()) ? ref.getIframe().get(0) : null || ref.getDC().get(0),
-                        apiRef = this,
-                        dest = (ref.getIframe()) ? parent.window.document : document,
-                        win = ref.getIframeParent() || $(window),
-                        fscEvent = String(fsApiCurrentUA.fullscreenchange).substring(2) + ".projekktor"
-
-                    // store scroll positon:
-                    win.data('fsdata', {
-                        scrollTop: win.scrollTop(),
-                        scrollLeft: win.scrollLeft()
-                    });
-
-                    $(dest).unbind(fscEvent);
-
-                    // create fullscreen change listener on the fly:
-                    $(dest).bind(fscEvent, function (evt) {
-                        if (!apiRef.isFullscreen(true)) {
-                            apiRef.ref.getDC().removeClass('fullscreen');
-                            apiRef.ref.playerModel.applyCommand('fullscreen', false);
-                            var win = apiRef.ref.getIframeParent() || $(window),
-                                fsData = win.data('fsdata');
-                            if (fsData != null) {
-                                win.scrollTop(fsData.scrollTop);
-                                win.scrollLeft(fsData.scrollLeft);
-                            }
-                        } else {
-                            apiRef.ref.getDC().addClass('fullscreen');
-                            apiRef.ref.playerModel.applyCommand('fullscreen', true);
-                        }
-                    });
-                    
-                    target[fsApiCurrentUA.requestFullscreen]();
-                }
-
-                // cancel fullscreen method
-                fullscreenApi.exitFullscreen = function () {
-
-                    var target = ref.getIframe() ? parent.window.document : document,
-                        win = ref.getIframeParent() || $(window),
-                        fsData = win.data('fsdata');
-
-                    target[fsApiCurrentUA.exitFullscreen]();
-
-                    // restore scrollposition
-                    if (fsData != null) {
-                        win.scrollTop(fsData.scrollTop);
-                        win.scrollLeft(fsData.scrollLeft);
-                    }
-
-                    ref.playerModel.applyCommand('fullscreen', false);
-                }
-
-                return fullscreenApi;
             };
 
             this.getId = function () {
@@ -2674,7 +2681,7 @@ jQuery(function ($) {
                 this._detachplayerModel();
 
                 // reset player class
-                var wasFullscreen = this.getDC().hasClass('fullscreen');
+                var wasFullscreen = this.getIsFullscreen();
                 this.getDC().attr('class', this.env.className);
 
                 if (wasFullscreen) {
@@ -2704,7 +2711,7 @@ jQuery(function ($) {
                     environment: $.extend(true, {}, this.env),
                     autoplay: (typeof autoplay === 'boolean') ? autoplay : ap,
                     quality: this.getPlaybackQuality(),
-                    fullscreen: this.getInFullscreen()
+                    fullscreen: wasFullscreen
                         // persistent: (ap || this.config._continuous) && (newModel==nextUp)
                 });
                 
@@ -3005,14 +3012,202 @@ jQuery(function ($) {
                 return this;
             };
 
-            this.setFullscreen = function (goFull) {
-
-                var nativeFullscreen = this.getFullscreenApi();
-
-                goFull = (goFull == null) ? !nativeFullscreen.isFullscreen() : goFull;
-                this.playerModel.applyCommand('fullscreen', goFull);
+            this.setFullscreen = function (goFullscreen) {
+                var goFullscreen = !!goFullscreen ? !this.getIsFullscreen() : goFullscreen; // toggle or use argument value
+                
+                // inform player model about going fullscreen
+                this.playerModel.applyCommand('fullscreen', goFullscreen);
 
                 return this;
+            };
+            
+            this._requestFullscreen = function() {
+                var fsType = this.getFullscreenType(),
+                    apiType = $p.fullscreenApi.type,
+                    result = false;
+                
+                switch(fsType){
+                    case 'full':
+                        result = this._requestFullscreenApi(apiType, fsType);
+                        break;
+                    
+                    case 'mediaonly':
+                        /**
+                         * there could be 2 cases in this situation:
+                         * a) there is only 'mediaonly' fullscreen API available
+                         * b) there is 'full' fullscreen API available, but the user prefer 'mediaonly' in config
+                         */
+                        result = this._requestFullscreenApi(apiType, fsType);
+                        break;
+                    
+                    case 'viewport':
+                        result = this._enterFullViewport();
+                        break;
+                        
+                        /**
+                         * The fullscreen functionality is disabled in configuration
+                         */
+                    case 'none':
+                        result = false;
+                        break;
+                }
+                
+                return result;
+            };
+            
+            this._requestFullscreenApi = function(apiType, fsType){
+                var apiType = apiType || $p.fullscreenApi.type,
+                    fsElement,
+                    fsRequestFunctionName = $p.fullscreenApi[apiType]['requestFullscreen'] ? $p.fullscreenApi[apiType]['requestFullscreen'] : false,
+                    fsEnterFunctionName = $p.fullscreenApi[apiType]['enterFullscreen'] ? $p.fullscreenApi[apiType]['enterFullscreen'] : false,
+                    fsChangeEventName = $p.fullscreenApi[apiType]['fullscreenchange'] ? $p.fullscreenApi[apiType]['fullscreenchange'].substr(2) : false,
+                    fsErrorEventName = $p.fullscreenApi[apiType]['fullscreenerror'] ? $p.fullscreenApi[apiType]['fullscreenerror'].substr(2) : false,
+                    fsEventsNS = '.' + this.getNS() + 'fullscreen',
+                    result = false,
+                    ref = this;
+                
+                switch(apiType){
+                    case 'full':
+                        if(fsType === 'full'){
+                            fsElement = this.getDC();
+                        }
+                        else if (fsType === 'mediaonly') {
+                            if(!!this.playerModel.mediaElement){
+                                fsElement = this.playerModel.mediaElement;
+                                
+                                // add native controls
+                                fsElement.attr('controls', true);
+                                result = true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        
+                        // remove all previous event listeners
+                        $(document).off(fsEventsNS);
+                        
+                        // add event listeners
+                        if(fsChangeEventName) {
+                            
+                            $(document).on(fsChangeEventName + fsEventsNS, function(event){
+                                
+                                if(!ref.getIsFullscreen()){
+                                    
+                                    if(fsType === 'mediaonly'){
+                                        
+                                        // remove native controls
+                                        fsElement.attr('controls', false);
+                                    }
+                                    ref.setFullscreen(false);
+
+                                    // remove fullscreen event listeners
+                                    $(document).off(fsEventsNS);
+                                }
+                            });
+                        }
+                        else {
+                            $p.utils.log('No fullscreenchange event defined.');
+                        }
+                        
+                        if(fsErrorEventName) {
+                            
+                            $(document).on(fsErrorEventName + fsEventsNS, function(event){
+                                
+                                $p.utils.log('fullscreenerror', event);
+                                ref.setFullscreen(false);
+                                
+                                // remove fullscreen event listeners
+                                $(document).off(fsEventsNS);
+                            });
+                        }
+                        else {
+                            $p.utils.log('No fullscreenerror event defined.');
+                        }
+                        
+                        // request fullscreen
+                        fsElement[0][fsRequestFunctionName]();
+                        result = true;
+                        break;
+
+                    case 'mediaonly':
+                        if(!!this.playerModel.mediaElement){
+                            
+                            fsElement = this.playerModel.mediaElement;
+                            fsElement[0][fsEnterFunctionName]();
+                            result = true;
+                        }
+                        else {
+                            result = false;
+                        }
+                        break;
+                }
+                
+                return result;
+            };
+            
+            this._exitFullscreen = function() {
+                
+                var fsType = this.getFullscreenType(),
+                    apiType = $p.fullscreenApi.type,
+                    result = false;
+                
+                switch(fsType){
+                    case 'full':
+                        result = this._exitFullscreenApi();
+                        break;
+                    
+                    case 'mediaonly':
+                        /**
+                         * there could be 2 cases in this situation:
+                         * a) there is only 'mediaonly' fullscreen API available
+                         * b) there is 'full' fullscreen API available, but the user prefer 'mediaonly' in config
+                         */
+                        result = this._exitFullscreenApi(apiType);
+                        break;
+                    
+                    case 'viewport':
+                        result = this._exitFullViewport();
+                        break;
+                        
+                        /**
+                         * The fullscreen functionality is disabled in configuration
+                         */
+                    case 'none':
+                        result = false;
+                        break;
+                }
+                
+                return result;
+            };
+            
+            this._exitFullscreenApi = function() {
+                
+                var apiType = apiType || $p.fullscreenApi.type,
+                    fsElement,
+                    fsExitFunctionName = $p.fullscreenApi[apiType]['exitFullscreen'] ? $p.fullscreenApi[apiType]['exitFullscreen'] : false,
+                    result = false;
+                
+                switch(apiType){
+                    case 'full':
+                        fsElement = document;
+                        fsElement[fsExitFunctionName]();
+                        result = true;
+                        break;
+
+                    case 'mediaonly':
+                        if(!!this.playerModel.mediaElement){
+                            fsElement = this.playerModel.mediaElement[0];
+                            fsElement[fsExitFunctionName]();
+                            result = true;
+                        }
+                        else {
+                            result = false;
+                        }
+                        break;
+                }
+                
+                return result;
             };
 
             this.setSize = function (data) {
@@ -3026,7 +3221,7 @@ jQuery(function ($) {
                     .width()) / this.getConfig('ratio')) :
                     (this.getConfig('height') != null) ? this.getConfig('height') : false;
 
-                if (this.getInFullscreen() && fsdata != null) {
+                if (this.getIsFullscreen() && fsdata != null) {
                     // remember new dims while in FS
                     fsdata.targetWidth = w;
                     fsdata.targetHeight = h;
@@ -3874,9 +4069,6 @@ jQuery(function ($) {
 
                     if ($p.mmap.hasOwnProperty(i)) {
                         plt = $p.mmap[i].platform;
-                        if (typeof plt !== 'object') {
-                            plt = [plt];
-                        }
                         on = true;
 
                         for (var j = 0; j < plt.length; j++) {
@@ -4203,24 +4395,18 @@ jQuery(function ($) {
 
                 // set up iframe environment
                 if (this.config._iframe === true) {
-
                     if (iframeParent) {
                         iframeParent.ready(function () {
-                            ref._enterFullViewport(true);
+                            ref._expandView($(window), ref.getDC());
                         });
                     } else {
-                        ref._enterFullViewport(true);
+                        ref._expandView($(window), ref.getDC());
                     }
                 }
 
                 // cross domain
                 if (iframeParent === false) {
                     this.config._isCrossDomain = true;
-                }
-
-                // allow fullscreen?
-                if (!this.getIframeAllowFullscreen()) {
-                    this.config.enableFullscreen = false;
                 }
 
                 // playlist?

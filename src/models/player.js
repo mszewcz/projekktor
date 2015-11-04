@@ -245,7 +245,6 @@ jQuery(function ($) {
                      */
                     if (value !== this._isFullscreen) {
                         this._isFullscreen = value;
-                        this.sendUpdate('fullscreen', this._isFullscreen);
                         this.setFullscreen();
                     }
                     break;
@@ -278,10 +277,8 @@ jQuery(function ($) {
         setVolume: function (volume) {
         },
         setFullscreen: function (inFullscreen) {
-            if (this.element === 'audio') {
-                return;
-            }
-            this._scaleVideo();
+            this.sendUpdate('fullscreen', this._isFullscreen);
+            this.setResize();
         },
         setResize: function () {
             if (this.element === 'audio') {
@@ -689,9 +686,12 @@ jQuery(function ($) {
         pauseListener: function (obj) {
             this._setState('paused');
         },
+        fullscreenchangeListener: function(value){
+            this.applyCommand('fullscreen', value);
+        },
         resizeListener: function(obj) {
             try {
-                if(this.media.videoWidth != obj.videoWidth || this.media.videoHeight != obj.videoHeight){
+                if(this.media.videoWidth !== obj.videoWidth || this.media.videoHeight !== obj.videoHeight){
                     this.media.videoWidth = obj.videoWidth;
                     this.media.videoHeight = obj.videoHeight;
                     this._scaleVideo();
