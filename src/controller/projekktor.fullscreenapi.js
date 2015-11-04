@@ -30,9 +30,9 @@ $p.fullscreenApi = (function (window, document, undefined) {
             /*
              * Events
              */
-            beginfullscreen: 'webkitbeginfullscreen', // webkit specyfic, NOTE: this event is unexposed 
+            beginfullscreen: 'onwebkitbeginfullscreen', // webkit specyfic, NOTE: this event is unexposed 
             // in the newest versions of WebKit based browsers, but it's still dispatched
-            endfullscreen: 'webkitendfullscreen' // ditto
+            endfullscreen: 'onwebkitendfullscreen' // ditto
         },
         /*
          * HTML5 fully blown fullscreen API in different flavours. There are differences in function names 
@@ -80,9 +80,9 @@ $p.fullscreenApi = (function (window, document, undefined) {
             exitFullscreen: '',
             supportsFullscreen: '',
             displayingFullscreen: '',
-            beginfullscreen: 'webkitbeginfullscreen', // because in the newest versions of WebKit based browsers this event is unexposed, 
+            beginfullscreen: fsApiVersionsMap.mediaonly['beginfullscreen'], // because in the newest versions of WebKit based browsers this event is unexposed, 
             // but it is still dispatched the string value is fixed (not detected)
-            endfullscreen: 'webkitendfullscreen' // ditto
+            endfullscreen: fsApiVersionsMap.mediaonly['endfullscreen'] // ditto
         },
         /*
          * HTML5 fully blown fullscreen API in different flavours. There are differences in function names 
