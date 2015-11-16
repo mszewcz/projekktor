@@ -4207,6 +4207,7 @@ jQuery(function ($) {
                     result = {
                         autoplay: ((domNode.attr('autoplay') !== undefined || domNode.prop('autoplay') !== undefined) && domNode.prop('autoplay') !== false) ? true : false,
                         controls: ((domNode.attr('controls') !== undefined || domNode.prop('controls') !== undefined) && domNode.prop('controls') !== false) ? true : false,
+                        muted: ((domNode.attr('muted') !== undefined || domNode.prop('muted') !== undefined) && domNode.prop('muted') !== false) ? true : false,
                         loop: ((domNode.attr('autoplay') !== undefined || domNode.prop('loop') !== undefined) && domNode.prop('loop') !== false) ? true : false,
                         title: (domNode.attr('title') !== undefined && domNode.attr('title') !== false) ? domNode.attr('title') : '',
                         poster: (domNode.attr('poster') !== undefined && domNode.attr('poster') !== false) ? domNode.attr('poster') : '',
@@ -4217,7 +4218,7 @@ jQuery(function ($) {
 
                 // IE7+8 and some other idiots do not keep attributes w/o values:
                 htmlTag = $($('<div></div>').html($(domNode).clone())).html();
-                attr = ['autoplay', 'controls', 'loop'];
+                attr = ['autoplay', 'controls', 'loop', 'muted'];
 
                 for (var i = 0; i < attr.length; i++) {
 
