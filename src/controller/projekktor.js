@@ -905,18 +905,22 @@ jQuery(function ($) {
             };
 
             this.volumeHandler = function (value) {
-
-                this.setConfig({
-                    volume: value
-                });
+                var muted;
 
                 if (value <= 0) {
-                    this.env.muted = true;
-                    this._promote('mute', value);
-                } else if (this.env.muted === true) {
-                    this.env.muted = false;
-                    this._promote('unmute', value);
+                    
+                    muted = true;
+                    this._promote('mute', muted);
+                } else if (this.getConfig('muted') === true) {
+                    
+                    muted = false;
+                    this._promote('unmute', muted);
                 }
+                
+                this.setConfig({
+                    volume: value,
+                    muted: muted
+                });
             };
 
             this.playlistHandler = function (value) {
@@ -2211,9 +2215,9 @@ jQuery(function ($) {
                 return result;
             };
 
-            this.getIsMuted = function () {
+            this.getMuted = function () {
 
-                return this.env.muted;
+                return this.getConfig('muted');
             };
 
             this.getMediaContainer = function () {
@@ -2861,6 +2865,12 @@ jQuery(function ($) {
                 }
                 this._enqueue('volume', vol);
 
+                return this;
+            };
+            
+            this.setMuted = function(value) {
+                this.setVolume(0);
+                
                 return this;
             };
 
