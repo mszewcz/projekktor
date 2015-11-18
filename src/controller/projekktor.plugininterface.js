@@ -216,8 +216,11 @@ projekktorPluginInterface.prototype = {
         var t = new Date(),
             result = null,
             cookieString = '',
+            tmp,
+            storedData;
+    
             tmp = storedData = jQuery.parseJSON(eval(result = new RegExp('(?:^|; )' + encodeURIComponent(this.getConfig('cookieName')+"_"+this.name) + '=([^;]*)').exec(document.cookie)) ? decodeURIComponent(result[1]) : null);
-
+    
         if (typeof storedData!='object' || storedData==null) {
             storedData = {};
             if (key!=null)
