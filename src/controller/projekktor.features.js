@@ -291,6 +291,17 @@ $p.features = (function (window, document, undefined) {
         return !isIPhone && (!isWindowsPhone || (isWindowsPhone && osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || isAndroid && osVer >= 3);
     };
     
+    tests['localstorage'] = function () {
+        var mod = 'modernizr';
+        try {
+            localStorage.setItem(mod, mod);
+            localStorage.removeItem(mod);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+    
     for (var feature in tests) {
         if (hasOwnProp(tests, feature)) {
             featureName = feature.toLowerCase();
