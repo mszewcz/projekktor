@@ -82,11 +82,6 @@ projekktorConfig.prototype = {
     /* An array of items to be played. Check http://www.projekktor.com/docs/playlists to learn more */
     _playlist:                      [],
     
-    _theme:                         false,
-    
-    /*'http://www.projekktorxl.com/themegen/api/themes/live/format/jsonp/id/%{id}/version/%{ver}',*/ 
-    _themeRepo:                     false, 
-        
     /* debug on / off */
     _debug:                         false,
     debugLevel:                     'plugins,events,',
@@ -209,7 +204,7 @@ projekktorConfig.prototype = {
     hd1080: Player height is 1080px, and player dimensions are 1920px by 1080px (for 16:9 aspect ratio) or 1440px by 1080px (for 4:3 aspect ratio).
     highres: Player height is greater than 1080px, which means that the player's aspect ratio is greater than 1920px by 1080px.
     */
-    playbackQuality:                'default',
+    playbackQuality:                'auto',
     
     _playbackQualities:
     [
