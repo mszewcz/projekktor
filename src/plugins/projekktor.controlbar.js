@@ -1357,19 +1357,6 @@ jQuery(function ($) {
         /*******************************
             GENERAL HELPERS
         *******************************/
-        _getVolume: function() {
-
-            var volume = parseFloat(this.cookie('volume') || this.getConfig('volume')),
-                muted = this.cookie('muted') || this.getConfig('muted') || false;
-            
-            if (this.getConfig('fixedVolume') || volume==null)
-                return this.getConfig('volume');
-                
-            if (muted) return 0;
-            
-            return volume;
-        },
-        
         _active: function (elmName, on) {
             var dest = this.controlElements[elmName];
             if (on == true) {
