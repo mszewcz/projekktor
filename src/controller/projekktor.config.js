@@ -37,7 +37,7 @@ projekktorConfig.prototype = {
     /* Prefix prepended to all css-Classnames and data-attributes used by the player in order to avoid conflicts with existing layouts and scripts */ 
     _ns:                            'pp',
     
-    /* a priorised array of available platforms */
+    /* a prioritized array of available platforms */
     _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'silverlight'],
     
     /* additional platforms config */
@@ -144,9 +144,9 @@ projekktorConfig.prototype = {
     stop:                           false,   
     
     /* initial volume on player-startup, 0=muted, 1=max */
-    volume:                         0.5,
+    volume:                         0.8,
     
-    /* should the player be initially muted no matter what volume was set or remembered in user cookie */
+    /* should the player be initially muted */
     muted:                          false,
     
     /* a cover which will fill the display on audio-only playback */
@@ -160,6 +160,9 @@ projekktorConfig.prototype = {
     
     /* if set to TRUE users can not change the volume of the player - neither via API nor through controls */
     fixedVolume:                    false,
+    
+    /* if set to true the initial value of muted will be always taken from configuration instead of user last remember settings */
+    forceMuted: false,
     
     /* scaling used for images (playlist items and posters) "fill", "aspectratio" or "none" */
     imageScaling:                   'aspectratio',
