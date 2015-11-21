@@ -136,6 +136,7 @@ jQuery(function ($) {
 
             this.env = {
                 muted: false,
+                volume: 1,
                 playerDom: null,
                 mediaContainer: null,
                 agent: 'standard',
@@ -903,24 +904,23 @@ jQuery(function ($) {
                         }
                 }
             };
-
+            
             this.volumeHandler = function (value) {
                 var muted;
 
                 if (value <= 0) {
-                    
                     muted = true;
-                    this._promote('mute', muted);
-                } else if (this.getConfig('muted') === true) {
-                    
+                } 
+                else {
                     muted = false;
-                    this._promote('unmute', muted);
                 }
                 
-                this.setConfig({
-                    volume: value,
-                    muted: muted
-                });
+                if(muted !== this.env.muted){
+                    this.env.muted = muted;
+                    this._promote('mute', muted);
+                }
+
+                this.env.volume = value;
             };
 
             this.playlistHandler = function (value) {
@@ -1932,10 +1932,18 @@ jQuery(function ($) {
             };
 
             this.getVolume = function () {
-
-                return ((this.getConfig('fixedVolume') === true)
-                    ? this.config.volume
-                    : this.getConfig('volume'));
+                var volume = this.playerModel && this.playerModel.getIsReady() ? this.playerModel.getVolume() : this.env.volume,
+                    fixedVolume = this.getConfig('fixedVolume');
+                
+                if(fixedVolume === true){
+                    volume = this.getConfig('volume');
+                }
+                
+                return volume;
+            };
+            
+            this.getMuted = function () {
+                return this.env.muted;
             };
 
             this.getTrackId = function () {
@@ -2213,11 +2221,6 @@ jQuery(function ($) {
                 }
                 
                 return result;
-            };
-
-            this.getMuted = function () {
-
-                return this.getConfig('muted');
             };
 
             this.getMediaContainer = function () {
@@ -2869,7 +2872,16 @@ jQuery(function ($) {
             };
             
             this.setMuted = function(value) {
-                this.setVolume(0);
+                var value = value === void(0) ? !this.env.muted : value;
+                
+                if(value){
+                    this.env.lastVolume = this.getVolume();
+                    this.setVolume(0);
+                }
+                else {
+                    this.setVolume(typeof this.env.lastVolume === 'number' ? this.env.lastVolume : this.getVolume());
+                    this.env.lastVolume = null;
+                }
                 
                 return this;
             };
@@ -4393,7 +4405,11 @@ jQuery(function ($) {
                     this.config._autoplay = false;
                     this.config.fixedVolume = true;
                 }
-
+                
+                // set initial volume and muted values
+                this.env.volume = this.getConfig('volume');
+                this.env.muted = this.getConfig('muted');
+                
                 // -----------------------------------------------------------------------------
                 // - 2. TRIM DEST --------------------------------------------------------------
                 // -----------------------------------------------------------------------------

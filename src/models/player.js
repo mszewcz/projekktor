@@ -19,7 +19,7 @@ jQuery(function ($) {
         _currentBufferState: null,
         _currentSeekState: null,
         _ap: false, // autoplay
-        _volume: 0, // async
+        _volume: 1, // async
         _quality: 'auto',
         _displayReady: false,
         _isPlaying: false,
@@ -58,8 +58,7 @@ jQuery(function ($) {
             this._isFullscreen = params.fullscreen;
             this._id = $p.utils.randomId(8);
             this._quality = params.quality || this._quality;
-            this._volume = this.pp.getVolume();
-            this._playbackQuality = this.pp.getPlaybackQuality();
+            this._volume = params.environment.volume;
             this.init();
         },
         init: function (params) {
@@ -130,7 +129,9 @@ jQuery(function ($) {
             if (!this.getState('STOPPED')) {
                 this.addListeners();
             }
-
+            
+            this.applyCommand('volume', this.pp.getVolume());
+            
             if (this.pp.getIsMobileClient('ANDROID') && !this.getState('PLAYING')) {
                 setTimeout(function () {
                     ref.setPlay();
@@ -206,10 +207,7 @@ jQuery(function ($) {
                 case 'volume':
                     if (this.getState('ERROR'))
                         break;
-                    if (!this.setVolume(value)) {
-                        this._volume = value;
-                        this.sendUpdate('volume', value);
-                    }
+                    this.setVolume(value);
                     break;
                 case 'stop':
                     this.setStop();
@@ -275,6 +273,7 @@ jQuery(function ($) {
 
         },
         setVolume: function (volume) {
+            this.volumeListener(volume);
         },
         setFullscreen: function (inFullscreen) {
             this.sendUpdate('fullscreen', this._isFullscreen);
@@ -318,11 +317,7 @@ jQuery(function ($) {
             return this._quality;
         },
         getVolume: function () {
-            if (this.mediaElement == null) {
-                return this._volume;
-            }
-
-            return (this.mediaElement.prop('muted') === true) ? 0 : this.mediaElement.prop('volume');
+            return this._volume;
         },
         getLoadProgress: function () {
             return this.media.loadProgress || 0;
@@ -676,13 +671,6 @@ jQuery(function ($) {
         playingListener: function (obj) {
             this._setState('playing');
         },
-        startListener: function (obj) {
-            this.applyCommand('volume', this.pp.getConfig('volume'));
-            if (!this.isPseudoStream) {
-                this.setSeek(this.media.position || 0);
-            }
-            this._setState('playing');
-        },
         pauseListener: function (obj) {
             this._setState('paused');
         },
@@ -705,7 +693,11 @@ jQuery(function ($) {
             this._setSeekState('SEEKED', value || this.media.position);
         },
         volumeListener: function (obj) {
-            this.sendUpdate('volume', this.getVolume());
+            var newVolume = obj.volume !== void(0) ? parseFloat(obj.volume) : parseFloat(obj);
+            if(newVolume !== this._volume) {
+                this._volume = newVolume;
+                this.sendUpdate('volume', newVolume);
+            }
         },
         errorListener: function (event, obj) {
         },

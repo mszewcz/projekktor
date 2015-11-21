@@ -66,7 +66,7 @@ $p.newModel({
         this.ready();
     },
         
-    applyMedia: function(destContainer) { 
+    applyMedia: function(destContainer) {
         
         if ($('#'+this.pp.getMediaId()+"_html").length === 0) {
             
@@ -342,15 +342,14 @@ $p.newModel({
     },   
             
     setVolume: function(volume) {
-        this._volume = volume;
-            try {
-            this.mediaElement.prop('volume', volume);
-        } catch(e){
-            return false;
+        if (this.mediaElement === null) {
+            this.volumeListener(volume);
         }
-        return volume;
-    }, 
-     
+        else {
+            this.mediaElement.prop('volume', volume);
+        }
+    },
+    
     setSeek: function(newpos) {
         var ref = this,
             np = newpos,
@@ -406,8 +405,18 @@ $p.newModel({
             }
         
         })();
-    }
+    },
+    /************************************************
+     * getters
+     ************************************************/
     
+    getVolume: function () {
+        if (this.mediaElement === null) {
+            return this._volume;
+        }
+
+        return this.mediaElement.prop('volume');
+    }
 });
 
 $p.newModel({

@@ -35,11 +35,9 @@ $p.newModel({
     availableQualities: {},
     
     _hardwareAcceleration: true,
-    _isMuted: false,
     _qualitySwitching: false,
     _isDynamicStream: false,
     _requestedDynamicStreamIndex: -1, // inited with "auto switch" value to indicate that no index was manually requested
-    _volume: 0,
     _bufferTime: 0,
     _cbTimeout: null, // clear buffer timeout id
 
@@ -726,11 +724,7 @@ $p.newModel({
         
         this.mediaElement = null;
     },
-    
-    volumeListener: function (volume) {
-        this._volume = volume;      
-    },    
-    
+
     endedListener: function (obj) {
         if (this.mediaElement === null) return;
         if (this.media.maxpos <= 0) return;
@@ -760,12 +754,12 @@ $p.newModel({
         }
     },
     
-    setVolume: function(newvol) {
+    setVolume: function(volume) {
         if (this.mediaElement === null) {
-            this.volumeListener(newvol);
+            this.volumeListener(volume);
         }
         else {
-            this.mediaElement[0].setVolume(newvol);
+            this.mediaElement[0].setVolume(volume);
         }
     },
     
@@ -797,12 +791,6 @@ $p.newModel({
      * getters
      ************************************************/
     getVolume: function() {
-        if (this._isMuted===true)
-            return 0;
-        
-        if (this.mediaElement===null)
-            return this.media.volume;
-    
         return this._volume;
     },
     

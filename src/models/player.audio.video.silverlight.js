@@ -108,7 +108,7 @@ $p.newModel({
                 isvideo: true,
                 autoplay: false, 
                 preload: "none",
-                startvolume: this._volume,
+                startvolume: this.getVolume(),
                 timerrate: 250,
                 jsinitfunction: 'window.projekktorSilverlightReady' + ppId,
                 jscallbackfunction: 'window.projekktorSilverlightEventListener' + ppId
@@ -195,12 +195,12 @@ $p.newModel({
         this._silverlightApi.setCurrentTime(newpos);
     },
     
-    setVolume: function(newvol) {
+    setVolume: function(volume) {
         if (this.mediaElement === null) {
-            this.volumeListener(newvol);
+            this.volumeListener(volume);
         }
         else {
-            this._silverlightApi.setVolume(newvol);
+            this._silverlightApi.setVolume(volume);
         }
     },
     
@@ -278,7 +278,7 @@ $p.newModel({
                 isvideo: true,
                 autoplay: false, 
                 preload: "none",
-                startvolume: this._volume,
+                startvolume: this.getVolume(),
                 timerrate: 250,
                 jsinitfunction: 'window.projekktorSilverlightReady' + ppId,
                 jscallbackfunction: 'window.projekktorSilverlightEventListener' + ppId

@@ -434,7 +434,7 @@ jQuery(function ($) {
             this.displayTime();
 
             // init volume display
-            this.displayVolume(this._getVolume());
+            this.displayVolume(this.pp.getVolume());
         },
         
         deconstruct: function() {
@@ -746,7 +746,6 @@ jQuery(function ($) {
                     this._active('mute', true);
                     this._active('unmute', false);
                     this._active('vmax', false);
-                    //  vknob.css('left', volume*(vslider.width()-(vknob.width()/2))+"px");  
                     break;
                 }
             }
@@ -755,7 +754,7 @@ jQuery(function ($) {
             if (isVisible) {
                 this.cb.fadeTo(1, .99).fadeTo(1, 1, function () {
                     ref.cb.removeAttr('style');
-                })
+                });
             }
         },
 
@@ -868,9 +867,9 @@ jQuery(function ($) {
         Player Event Handlers
         *******************************/
         itemHandler: function (data) {
+            
             $(this.cb).find('.' + this.pp.getNS() + 'cuepoint').remove();
             this._lastPos = -1;
-            this.pp.setVolume(this._getVolume())
             this.updateDisplay();
             this.hidecb(false);
             this.drawTitle();
@@ -879,7 +878,7 @@ jQuery(function ($) {
         },
 
         startHandler: function () {
-            this.pp.setVolume(this._getVolume());
+            
             if (this.getConfig('showOnStart') == true) {
                 this.showcb(true);
             } else {
@@ -928,18 +927,7 @@ jQuery(function ($) {
         },
 
         volumeHandler: function (value) {
-            try {
-               if (value>0){
-                   this.cookie('muted', false);
-               }
- 
-               if (!this.cookie('muted')){
-                   this.cookie('volume', value);
-               }
-               
-            } catch(e){console.log(e)}
-            
-            this.displayVolume(this._getVolume());
+            this.displayVolume(value);
         },
 
         progressHandler: function (obj) {
@@ -1093,17 +1081,14 @@ jQuery(function ($) {
         },
 
         muteClk: function (evt) {
-            this.cookie('muted', true);
-            this.pp.setVolume(0);
+            this.pp.setMuted(true);
         },
 
         unmuteClk: function (evt) {
-            this.cookie('muted', false);
-            this.pp.setVolume(this._getVolume());
+            this.pp.setMuted(false);
         },
 
         vmaxClk: function (evt) {
-            this.cookie('muted', false);
             this.pp.setVolume(1);
         },
 
@@ -1375,7 +1360,7 @@ jQuery(function ($) {
         _getVolume: function() {
 
             var volume = parseFloat(this.cookie('volume') || this.getConfig('volume')),
-                muted = this.cookie('muted') || false;
+                muted = this.cookie('muted') || this.getConfig('muted') || false;
             
             if (this.getConfig('fixedVolume') || volume==null)
                 return this.getConfig('volume');
