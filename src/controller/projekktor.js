@@ -133,6 +133,8 @@ jQuery(function ($) {
         function PPlayer (srcNode, cfg, onReady) {
 
             this.config = new projekktorConfig('1.4.00');
+            
+            this.storage = new projekktorPersistentStorage(this);
 
             this.env = {
                 muted: false,
@@ -917,9 +919,11 @@ jQuery(function ($) {
                 
                 if(muted !== this.env.muted){
                     this.env.muted = muted;
+                    this.storage.save('muted', muted);
                     this._promote('mute', muted);
                 }
-
+                
+                this.storage.save('volume', value);
                 this.env.volume = value;
             };
 
@@ -4407,8 +4411,19 @@ jQuery(function ($) {
                 }
                 
                 // set initial volume and muted values
-                this.env.volume = this.getConfig('volume');
-                this.env.muted = this.getConfig('muted');
+                if(this.getConfig('forceMuted')){
+                    this.env.muted = this.getConfig('muted');
+                }
+                else {
+                    this.env.muted = this.storage.restore('muted') !== null ? this.storage.restore('muted') : this.getConfig('muted');
+                }
+
+                if(this.env.muted){
+                    this.env.volume = 0;
+                }
+                else {
+                    this.env.volume = this.storage.restore('volume') !== null ? this.storage.restore('volume') : this.getConfig('volume');
+                }
                 
                 // -----------------------------------------------------------------------------
                 // - 2. TRIM DEST --------------------------------------------------------------
