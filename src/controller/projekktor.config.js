@@ -141,9 +141,6 @@ projekktorConfig.prototype = {
     /* initial volume on player-startup, 0=muted, 1=max */
     volume:                         0.8,
     
-    /* should the player be initially muted */
-    muted:                          false,
-    
     /* a cover which will fill the display on audio-only playback */
     cover:                          '',     
             

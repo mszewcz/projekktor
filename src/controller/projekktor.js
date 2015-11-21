@@ -4412,10 +4412,10 @@ jQuery(function ($) {
                 
                 // set initial volume and muted values
                 if(this.getConfig('forceMuted')){
-                    this.env.muted = this.getConfig('muted');
+                    this.env.muted = true;
                 }
                 else {
-                    this.env.muted = this.storage.restore('muted') !== null ? this.storage.restore('muted') : this.getConfig('muted');
+                    this.env.muted = this.storage.restore('muted') !== null ? this.storage.restore('muted') : this.env.muted;
                 }
 
                 if(this.env.muted){
