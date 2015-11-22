@@ -3036,7 +3036,7 @@ jQuery(function ($) {
             };
 
             this.setFullscreen = function (goFullscreen) {
-                var goFullscreen = !!goFullscreen ? !this.getIsFullscreen() : goFullscreen; // toggle or use argument value
+                var goFullscreen = goFullscreen === void(0) ? !this.getIsFullscreen() : goFullscreen; // toggle or use argument value
                 
                 // inform player model about going fullscreen
                 this.playerModel.applyCommand('fullscreen', goFullscreen);
