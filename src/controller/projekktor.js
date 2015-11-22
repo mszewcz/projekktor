@@ -2108,16 +2108,13 @@ jQuery(function ($) {
                     case 'viewport':
                         /**
                          * In this case we just need to check if the player is inside the <iframe> 
-                         * and if the <iframe> attributes allowing fullscreen. We respect those even if it's
+                         * and if the <iframe> attributes allowing fullscreen. We respect this even if it's
                          * possible to set fullviewport when the <iframe> is from the same domain. 
                          * If the player isn't inside the <iframe> then we assume that it's possible to
                          * put the player into fullviewport mode when requested.
                          */
-                        if(this.getConfig('iframe')){
+                        if(this.getConfig('iframe') && !this.config._isCrossDomain){
                             result = this.getIframeAllowFullscreen();
-                        }
-                        else if(this.config._isCrossDomain){
-                            result = false;
                         }
                         else {
                             result = true;
