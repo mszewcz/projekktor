@@ -1595,8 +1595,9 @@ jQuery(function ($) {
 
             this._enterFullViewport = function () {
 
-                var win = this.getIframeParent() || $(window),
-                    target = this.getIframe() || this.getDC(),
+                var iframeCfg = this.getConfig('iframe'),
+                    win = iframeCfg ? this.getIframeParent() || $(window) : $(window),
+                    target = iframeCfg? this.getIframe() || this.getDC() : this.getDC(),
                     targetParent = target.parent() || null,
                     winDocument = $(win[0].document);
 
@@ -1619,9 +1620,10 @@ jQuery(function ($) {
             /* exit player from full viewport mode - "full (parent) window viewport" to be specyfic */
             this._exitFullViewport = function () {
 
-                var win = this.getIframeParent() || $(window),
-                    target = this.getIframe() || this.getDC(),
-                    targetParent = target.parent(),
+                var iframeCfg = this.getConfig('iframe'),
+                    win = iframeCfg ? this.getIframeParent() || $(window) : $(window),
+                    target = iframeCfg? this.getIframe() || this.getDC() : this.getDC(),
+                    targetParent = target.parent() || null,
                     winDocument = $(win[0].document);
                 
                 this._isFullViewport = false;
