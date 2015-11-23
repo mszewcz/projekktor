@@ -16,6 +16,7 @@ jQuery(function ($) {
 $p.features = (function (window, document, undefined) {
 
     var Modernizr = {},
+        features = {},
         docElement = document.documentElement,
         mod = 'modernizr',
         modElem = document.createElement(mod),
@@ -305,16 +306,15 @@ $p.features = (function (window, document, undefined) {
     for (var feature in tests) {
         if (hasOwnProp(tests, feature)) {
             featureName = feature.toLowerCase();
-            Modernizr[featureName] = tests[feature]();
-
-            classes.push((Modernizr[featureName] ? '' : 'no-') + featureName);
+            features[featureName] = tests[feature]();
+            classes.push((features[featureName] ? '' : 'no-') + featureName);
         }
     }
 
     setCss('');
     modElem = inputElem = null;
 
-    return Modernizr;
+    return features;
 
 })(window, window.document);
 });
