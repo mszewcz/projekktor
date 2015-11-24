@@ -303,6 +303,14 @@ $p.features = (function (window, document, undefined) {
         }
     };
     
+    tests['mse'] = function(){
+        return (window.MediaSource);
+    };
+    
+    tests['hlsjs'] = function(){
+        return (window.MediaSource && window.MediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"'));
+    };
+    
     for (var feature in tests) {
         if (hasOwnProp(tests, feature)) {
             featureName = feature.toLowerCase();
