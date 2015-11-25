@@ -51,6 +51,25 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
                 } catch (e) {}
             }
         },
+        
+        list: function() {
+            var ns = this.pp.getNS() + '_',
+                regexp = new RegExp('^' + ns),
+                result = {},
+                key;
+        
+            if (window.$p.features.localstorage){
+                try {
+                    for (key in window.localStorage){
+                        if(regexp.test(key)){
+                            result[key] = window.localStorage.getItem(key);
+                        }
+                    }
+                } catch (e) {}
+            }
+            
+            return result;
+        },
      
         clear: function() {
             var ns = this.pp.getNS() + '_',
