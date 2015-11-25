@@ -17,11 +17,12 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
     var persistentStorage = {
         
         save: function (key, value) {
-            var ns = this.pp.getNS()+'_';
+            var ns = this.pp.getNS(),
+                nskey = ns + '_' + key;
             
             if (window.$p.features.localstorage) {
                 try {
-                    window.localStorage.setItem(ns + key, value);
+                    window.localStorage.setItem(nskey, value);
                     return true;
                 } catch (e) {
                     return false;
@@ -30,33 +31,36 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
         },
         
         restore: function (key) {
-            var ns = this.pp.getNS()+'_';
+            var ns = this.pp.getNS(),
+                nskey = ns + '_' + key;
             
             if (window.$p.features.localstorage){
                 try {
-                    return JSON.parse(window.localStorage.getItem(ns + key));
+                    return JSON.parse(window.localStorage.getItem(nskey));
                 } catch (e) {}
             }
         },
         
         remove: function(key) {
-            var ns = this.pp.getNS()+'_';
+            var ns = this.pp.getNS(),
+                nskey = ns + '_' + key;
             
             if (window.$p.features.localstorage){
                 try {
-                    window.localStorage.removeItem(ns + key);
+                    window.localStorage.removeItem(nskey);
                 } catch (e) {}
             }
         },
-        
+     
         clear: function() {
-            var ns = this.pp.getNS()+'_',
+            var ns = this.pp.getNS() + '_',
+                regexp = new RegExp('^' + ns),
                 key;
             
             if (window.$p.features.localstorage){
                 try {
                     for (key in window.localStorage){
-                        if(key.indexOf(ns) > -1){
+                        if(regexp.test(key)){
                             window.localStorage.removeItem(key);
                         }
                     }
