@@ -184,7 +184,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
 
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
     },
 
     addOSMFEventListeners: function() {

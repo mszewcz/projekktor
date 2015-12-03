@@ -115,7 +115,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').silverlight.initVars || {})
         };
         
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
     },
         
     applySrc: function() {
@@ -285,7 +285,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').silverlight.initVars || {})
         };
         
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
     }
     
 }, 'SILVERLIGHTVIDEO');
