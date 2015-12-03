@@ -2740,7 +2740,7 @@ jQuery(function ($) {
                 }
                 this.getDC().addClass(this.getNS() + (this.getConfig('streamType') || 'http'));
 
-                if (this.getConfig('streamType').indexOf('dvr') > -1) {
+                if (this.getConfig('streamType').indexOf('dvr') > -1 || this.getConfig('streamType').indexOf('live') > -1) {
                     this.getDC().addClass(this.getNS() + 'live');
                 }
 
