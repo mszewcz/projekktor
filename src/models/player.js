@@ -25,6 +25,7 @@ jQuery(function ($) {
         _isPlaying: false,
         _isReady: false,
         _isDVR: false,
+        _isLive: false,
         _id: null,
         // experimental
         _KbPerSec: 0,

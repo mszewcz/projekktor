@@ -600,17 +600,45 @@ $p.newModel({
         return this.mediaElement[0].getCanSeek();
     },
     
-    canSeekTo: function(value) {
+    getCanSeekTo: function(value) {
         return this.mediaElement[0].canSeekTo(value);
     },
     
+    getIsDVRRecording: function() {
+        return this.mediaElement[0].getIsDVRRecording();
+    },
+    
+    getDvrSnapToLiveClockOffset: function() {
+        return this.mediaElement[0].getDvrSnapToLiveClockOffset();
+    },
+    
     goToLive: function() {
+        var livePosition;
+        
+        if(!this.getIsDVRRecording()){
+            return false;
+        }
+        if(this.getState() !== 'PLAYING') {
+            this.setPlay();
+        }
+        
+        livePosition = this.getLivePosition();
+        
+        if(this.getCanSeek(livePosition)){
+            this.setSeek(livePosition);
+            this._isLive = true;
+            return true;
+        }
         
     },
     
     getLivePosition: function() {
-        var smp = this.mediaElement[0];
-        return Math.max(smp);
+        var livePosition = 0;
+        if(this.getIsDVRRecording()) {
+             livePosition = Math.max(0, this.getDuration() - this._bufferTime - this.getDvrSnapToLiveClockOffset());
+        }
+        
+        return livePosition;
     },
     
     /**
@@ -625,7 +653,7 @@ $p.newModel({
             // Perform a seek to the current time so we force an immediate quality switch
             var currentTime = ref.mediaElement[0].getCurrentTime();
 
-            if(ref.getCanSeek() && ref.canSeekTo(currentTime)){
+            if(ref.getCanSeek() && ref.getCanSeekTo(currentTime)){
                 ref.mediaElement[0].seek(currentTime);
             }
             ref.getDynamicStreamingStatus('after clear buffer');
@@ -674,6 +702,7 @@ $p.newModel({
             case 4: // ARGUMENT_ERROR - Error constant for when a MediaElement encounters an argument error.
             case 5: // URL_SCHEME_INVALID
             case 6: // HTTP_GET_FAILED - Error constant for when an HTTP GET request fails due to a client error (i.e. returns a 4xx status code).
+            case 7: // MEDIA_LOAD_FAILED - Error constant for when the loading of a MediaElement fails.
             case 8: // PLUGIN_VERSION_INVALID - Error constant for when a plugin fails to load due to a version mismatch.
             case 9: // PLUGIN_IMPLEMENTATION_INVALID - Error constant for when a plugin fails to load due to the PluginInfo not being exposed on the root Sprite of the plugin.
             case 10: // SOUND_PLAY_FAILED - Error constant for when an audio file fails to play (e.g. due to no sound channels or no sound card being available).
@@ -685,13 +714,10 @@ $p.newModel({
                 break;
             case 12: // NETCONNECTION_APPLICATION_INVALID - Error constant that corresponds to the NetConnection.Connect.InvalidApp status code.
             case 15: // NETSTREAM_PLAY_FAILED - Error constant for when a NetStream cannot be played.
+            case 17: // NETSTREAM_FILE_STRUCTURE_INVALID - Error constant that corresponds to the NetStream.Play.FileStructureInvalid status code.
             case 18: // NETSTREAM_NO_SUPPORTED_TRACK_FOUND - Error constant that corresponds to the NetStream.Play.NoSupportedTrackFound status code.
                 this.sendUpdate('error', 5, errorMsg);
                 break;       
-            case 7: // MEDIA_LOAD_FAILED - Error constant for when the loading of a MediaElement fails.
-            case 17: // NETSTREAM_FILE_STRUCTURE_INVALID - Error constant that corresponds to the NetStream.Play.FileStructureInvalid status code.
-                this.sendUpdate('error', 80, errorMsg);
-                break;
             case 19: // DRM_SYSTEM_UPDATE_ERROR - Error constant for when a DRM system update fails.
             case 20: // DVRCAST_SUBSCRIBE_FAILED - Error constant for when a DVRCast NetConnection cannot connect because the attempt to subscribe to the DVRCast stream fails.
             case 21: // DVRCAST_CONTENT_OFFLINE - Error constant for when a DVRCast NetConnection cannot connect because the DVRCast application is offline.
@@ -747,7 +773,7 @@ $p.newModel({
         
         // snap to live position
         if (newpos < 0) {
-            this.mediaElement[0].snapToLive();
+            this.goToLive();
         }
         else {
             this.mediaElement[0].seek(newpos);
