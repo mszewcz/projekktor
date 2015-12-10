@@ -773,7 +773,7 @@ $p.newModel({
         }
         
         // snap to live position
-        if (newpos < 0) {
+        if (newpos < 0 || (this.getIsDVRRecording() && newpos > this.getLivePosition())) {
             this.goToLive();
         }
         else {
