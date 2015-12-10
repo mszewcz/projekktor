@@ -39,6 +39,7 @@ $p.newModel({
     _isDynamicStream: false,
     _requestedDynamicStreamIndex: -1, // inited with "auto switch" value to indicate that no index was manually requested
     _bufferTime: 0,
+    _liveOffset: 2,
     _cbTimeout: null, // clear buffer timeout id
 
     _eventMap: {
@@ -635,7 +636,7 @@ $p.newModel({
     getLivePosition: function() {
         var livePosition = 0;
         if(this.getIsDVRRecording()) {
-             livePosition = Math.max(0, this.getDuration() - this._bufferTime - this.getDvrSnapToLiveClockOffset());
+             livePosition = Math.max(0, this.getDuration() - this._bufferTime - this.getDvrSnapToLiveClockOffset() - this._liveOffset);
         }
         
         return livePosition;
