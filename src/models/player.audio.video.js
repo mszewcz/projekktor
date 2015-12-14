@@ -181,8 +181,6 @@ $p.newModel({
         try {
             this.mediaElement.unbind('.projekktorqs'+this.pp.getId()); 
             this.mediaElement[0].pause();
-            this.mediaElement.attr('src','');
-            this.mediaElement[0].load();
         } catch(e){}
     },
    
