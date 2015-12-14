@@ -304,7 +304,7 @@ $p.features = (function (window, document, undefined) {
     };
     
     tests['mse'] = function(){
-        return (window.MediaSource);
+        return (!!window.MediaSource);
     };
     
     tests['hlsjs'] = function(){
