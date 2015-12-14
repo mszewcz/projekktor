@@ -2663,31 +2663,36 @@ jQuery(function ($) {
 
                     // index number given
                     newItem = this.getItemAtIdx(mixedData);
-                    if (newItem === false) {
-                        return this;
-                    }
-                }
-
-                // all items in PL completed:
-                if (newItem === false) {
-                    this._promote('done', {});
+                // wrong argument
+                } else {
                     return this;
                 }
 
-                // item change requested...
-                if (newItem !== lastItem) {
+                if (newItem === false) {
+                    // end of playlist reached
+                    if(!this.getNextItem()){
+                        this._promote('done');
+                    }
+                    // nothing to do
+                    return this;
+                }
+                
+                // 
 
-                    // and denied... gnehe
+                // item change requested
+                if (newItem.id !== lastItem.id) {
+
+                    // but and denied by config or state
                     if (this.getConfig('disallowSkip') === true && (!this.getState('COMPLETED') && !this.getState('IDLE'))) {
                         return this;
                     }
                 }
-
-                // do we have an autoplay situation?
-                if (!this.getState('IDLE') && this.getNextItem() !== false && newItem !== lastItem) {
+                
+                // do we have an continuous play situation?
+                if (!this.getState('IDLE')) {
                     ap = this.config._continuous;
                 }
-
+                
                 this._detachplayerModel();
 
                 // reset player class
@@ -2722,7 +2727,7 @@ jQuery(function ($) {
                     autoplay: (typeof autoplay === 'boolean') ? autoplay : ap,
                     quality: this.getPlaybackQuality(),
                     fullscreen: wasFullscreen
-                        // persistent: (ap || this.config._continuous) && (newModel==nextUp)
+                    // persistent: (ap || this.config._continuous) && (newModel==nextUp)
                 });
                 
                 this.syncCuePoints();
