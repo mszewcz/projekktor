@@ -570,12 +570,13 @@ jQuery(function ($) {
                 return;
             }
 
-            if (instant)
+            if (instant) {
                 this._noHide = false;
-
+            }
             // do not hide nao
-            if (this._noHide || this.cb.hasClass('inactive'))
+            if (this._noHide || this.cb.hasClass('inactive')) {
                 return;
+            }
 
             this.cb.removeClass('active').addClass('inactive');
             this.sendEvent('hide', this.cb);
@@ -604,13 +605,14 @@ jQuery(function ($) {
                 this._cTimer = setTimeout(function () {
                     ref.hidecb();
                 }, this.getConfig('fadeDelay'));
+                
                 return;
-            };
+            }
 
             // show up:
             this.cb.removeClass('inactive').addClass('active');
             this.sendEvent('show', this.cb);
-            this._cTimer=setTimeout(
+            this._cTimer = setTimeout(
                 function() {
                     ref.hidecb();
                 }, this.getConfig('fadeDelay')
