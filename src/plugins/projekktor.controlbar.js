@@ -261,6 +261,7 @@ jQuery(function ($) {
             fadeDelay: 2500,
             showOnStart: false,
             showOnIdle: false,
+            hideWhenPaused: false,
             
             /* cuepoints */
             showCuePoints: true,
@@ -899,13 +900,17 @@ jQuery(function ($) {
 
         stateHandler: function (state) {
             this.updateDisplay();
-
+            
+            if ('PAUSED'.indexOf(state) > -1) {
+                if(!this.getConfig('hideWhenPaused')){
+                    this._noHide = true;
+                }
+                this.showcb(true);
+            }
+            
             if ('STOPPED|AWAKENING|IDLE|DONE'.indexOf(state) > -1) {
                 this.displayTime(0, 0, 0);
                 this.displayProgress(0);
-                if (this.pp.getIsMobileClient()) {
-                    this.hidecb(true);
-                }
             }
 
             if ('STOPPED|DONE|IDLE'.indexOf(state) > -1) {
