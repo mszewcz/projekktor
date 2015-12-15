@@ -169,7 +169,7 @@ jQuery(function ($) {
 			return (noSecs === true) ? hours + ':' + minutes : hours + ':' + minutes + ':' + seconds;
 		},
 
-		embedPlugin: function (pluginName, destObj, config, shield, shrinkShield) {
+	embedPlugin: function (pluginName, destObj, config, shield, shrinkShield) {
 
 			var src = config.src || '',
                 attributes = config.attributes || {},
@@ -541,22 +541,22 @@ jQuery(function ($) {
             return version;
         },
 
-		/**
-		* replaces {}-tags with parameter equialents
-		* @public
-		* @param (String) Da string to get processed
-		* @param (Object) Object holding data to fill in
-		* @return (String) Da parsed string
-		*/
-		parseTemplate: function (template, data, encode) {
-			if (data === undefined || data.length == 0 || typeof data != 'object') return template;
-			
-			for (var i in data) {
-				template = template.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
-			}
-			template = template.replace(/%{(.*?)}/gi, '');
-			return template;
-		},
+        /**
+        * replaces {}-tags with parameter equialents
+        * @public
+        * @param (String) Da string to get processed
+        * @param (Object) Object holding data to fill in
+        * @return (String) Da parsed string
+        */
+        parseTemplate: function (template, data, encode) {
+                if (data === undefined || data.length == 0 || typeof data != 'object') return template;
+
+                for (var i in data) {
+                        template = template.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
+                }
+                template = template.replace(/%{(.*?)}/gi, '');
+                return template;
+        },
         
         i18n: function(str, customData) {
             var regexp = /%{([^}]+)}/g,
@@ -570,6 +570,15 @@ jQuery(function ($) {
             }
 
             return str;
+        },
+        
+        errorMessage: function(errorCode, pp) {
+            var customData = {
+                title: pp.getConfig('title'), 
+                version: pp.getVersion()
+            };
+            
+            return this.i18n("%{error"+errorCode+"}", customData);
         },
         
         regExpEsc: function(s){

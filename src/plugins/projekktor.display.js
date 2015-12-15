@@ -340,15 +340,11 @@ projekktorDisplay.prototype = {
     },
     
     testCard: function(errorCode) {
-        var customData = {
-                title: this.getConfig('title'), 
-                version: this.pp.getVersion()
-            },
-            msgTxt = $p.utils.i18n("%{error"+errorCode+"}", customData);
+        var msgTxt = $p.utils.errorMessage(errorCode, this.pp);
 
         if (this.pp.getItemCount() > 1) {
             // "press next to continue"
-            msgTxt += ' ' + $p.utils.i18n("%{error99}");
+            msgTxt += ' ' + $p.utils.errorMessage(99, this.pp);
         }
 
         if (msgTxt.length < 3) {
