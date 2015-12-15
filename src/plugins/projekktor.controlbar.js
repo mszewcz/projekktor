@@ -336,7 +336,7 @@ jQuery(function ($) {
             }
 
             this.addGuiListeners();
-            this.hidecb(true);
+            this.showcb();
             this.pluginReady = true;
         },
 
@@ -370,13 +370,9 @@ jQuery(function ($) {
             var ref = this,
                 state = this.pp.getState();
 
-            // clearTimeout(this._cTimer);
-
-            if (this.pp.getHasGUI()) return;
-
             // nothing to do
-            if (this.getConfig('controls') == false) {
-                this.hidecb(true);
+            if (this.getConfig('controls') === false) {
+                this.hidecb();
                 return;
             }
 
@@ -433,6 +429,9 @@ jQuery(function ($) {
 
             // init time display
             this.displayTime();
+            
+            // update progress
+            this.displayProgress();
 
             // init volume display
             this.displayVolume(this.pp.getVolume());
@@ -553,73 +552,70 @@ jQuery(function ($) {
                 this._active('logo', false);
             }
         },
-
-        hidecb: function (instant) {
-
-            clearTimeout(this._cTimer);
-
-            if (this.cb == null) return;
-
-            // no controls at all:
-            if (this.getConfig('controls') == false) {
-                this.cb.removeClass('active').addClass('inactive');
-                return;
-            }
+        
+        canHide: function() {
+            var state = this.pp.getState(),
+                result = this.cb === null
+                    || this._noHide  
+                    || (state === 'IDLE' && this.getConfig('showOnIdle'))
+                    || (state === 'PAUSED' && !this.getConfig('hideWhenPaused'));
                         
-            if (this.getConfig('showOnIdle') && this.pp.getState('IDLE')) {
-                this.showcb(true);
-                return;
-            }
-
-            if (instant) {
-                this._noHide = false;
-            }
-            // do not hide nao
-            if (this._noHide || this.cb.hasClass('inactive')) {
-                return;
-            }
-
-            this.cb.removeClass('active').addClass('inactive');
-            this.sendEvent('hide', this.cb);
-
+                return !result;
+        },
+        
+        canShow: function() {
+            var state = this.pp.getState(),
+                result = this.cb === null
+                        || !this.getConfig('controls')
+                        || this.pp.getHasGUI()
+                        || ('COMPLETED|DESTROYING'.indexOf(state) > -1)
+                        || ('AWAKENING|STARTING'.indexOf(state) > -1 && !this.getConfig('showOnStart'))
+                        || (state === 'IDLE' && !this.getConfig('showOnIdle'))
+                        || false;
+                        
+                return !result;
         },
 
-        showcb: function (fade) {
+        hidecb: function () {
+            var wasVisible = this.cb.hasClass('active');
+            
+            clearTimeout(this._cTimer);
+            
+            // don't hide
+            if (!this.canHide()) {
+                return;
+            }
+            
+            this.cb.removeClass('active').addClass('inactive');
+            
+            if(wasVisible) {
+                this.sendEvent('hide', this.cb);
+            }
+        },
 
-            var ref = this;
+        showcb: function () {
+            var ref = this,
+                isVisible = this.cb.hasClass('active');
 
             // always clear timeout, stop animations
             clearTimeout(this._cTimer);
-
-            // hide for current playback component
-            if (this.pp.getHasGUI() || this.getConfig('controls') == false) {
-                this.cb.removeClass('active').addClass('inactive');
-                return;
-            }
-
-            // player is IDLEing
-            if (this.cb == null) return;
-            if ("IDLE|AWAKENING|ERROR".indexOf(this.pp.getState()) > -1 && fade != true) return;
-
-            // is visible  restart timer:
-            if (this.cb.hasClass('active') && fade !== false) {
-                this._cTimer = setTimeout(function () {
-                    ref.hidecb();
-                }, this.getConfig('fadeDelay'));
-                
-                return;
-            }
-
-            // show up:
-            this.cb.removeClass('inactive').addClass('active');
-            this.sendEvent('show', this.cb);
             this._cTimer = setTimeout(
                 function() {
                     ref.hidecb();
                 }, this.getConfig('fadeDelay')
             );
+
+            if(!this.canShow()){
+                return;
+            }
+
+            // show up:
+            if(!isVisible){
+                this.cb.removeClass('inactive').addClass('active');
+                this.sendEvent('show', this.cb);
+            }
             
-            this.displayProgress();
+            this.updateDisplay();
         },
         
         displayTime: function (pct, dur, pos) {
@@ -752,13 +748,6 @@ jQuery(function ($) {
                     break;
                 }
             }
-
-            // hide again - if necessary
-            if (isVisible) {
-                this.cb.fadeTo(1, .99).fadeTo(1, 1, function () {
-                    ref.cb.removeAttr('style');
-                });
-            }
         },
 
 	displayCuePoints: function(immediately) {
@@ -874,54 +863,41 @@ jQuery(function ($) {
             $(this.cb).find('.' + this.pp.getNS() + 'cuepoint').remove();
             this._lastPos = -1;
             this.updateDisplay();
-            this.hidecb(false);
             this.drawTitle();
             this.displayLogo();
             this.pluginReady = true;
         },
 
         startHandler: function () {
-            
-            if (this.getConfig('showOnStart') == true) {
-                this.showcb(true);
+            if (this.getConfig('showOnStart') === true) {
+                this.showcb();
             } else {
-                this.hidecb(true);
+                this.hidecb();
             }
         },
 
         readyHandler: function (data) {
-            clearTimeout(this._cTimer);
-            if (this.getConfig('showOnIdle')) {
-                this.showcb(true);
-                this.cb.removeClass('inactive').addClass('active').show();
-            }
+            this.showcb();
             this.pluginReady = true;
         },
 
         stateHandler: function (state) {
             this.updateDisplay();
             
-            if ('PAUSED'.indexOf(state) > -1) {
-                if(!this.getConfig('hideWhenPaused')){
-                    this._noHide = true;
-                }
-                this.showcb(true);
-            }
-            
-            if ('STOPPED|AWAKENING|IDLE|DONE'.indexOf(state) > -1) {
+            if ('STOPPED|AWAKENING|IDLE|COMPLETED'.indexOf(state) > -1) {
                 this.displayTime(0, 0, 0);
                 this.displayProgress(0);
             }
 
-            if ('STOPPED|DONE|IDLE'.indexOf(state) > -1) {
-                this.hidecb(true);
+            if ('PLAYING|STOPPED|COMPLETED|DESTROYING'.indexOf(state) > -1) {
                 return;
             }
 
             if ('ERROR'.indexOf(state) > -1) {
                 this._noHide = false;
-                this.hidecb(true);
             }
+            
+            this.showcb();
 
             this.displayProgress();
         },
@@ -973,8 +949,6 @@ jQuery(function ($) {
 
             var ref = this;
 
-            clearTimeout(this._cTimer);
-
             this._noHide = false;
             this._vSliderAct = false;
 
@@ -987,10 +961,6 @@ jQuery(function ($) {
             } else {
                 this.cb.removeClass('fullscreen');
                 this.drawEnterFullscreenButton();
-            }
-
-            if (this.pp.getState() === 'IDLE' && !this.getConfig('showOnIdle')){
-                this.hidecb(true);
             }
         },        
         
@@ -1007,7 +977,7 @@ jQuery(function ($) {
         },
         
         errorHandler: function (value) {
-            this.hidecb(true);
+            this.hidecb();
         },
 
         leftclickHandler: function () {
