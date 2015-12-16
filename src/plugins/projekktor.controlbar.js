@@ -11,7 +11,7 @@ var projekktorControlbar = function () {};
 jQuery(function ($) {
     projekktorControlbar.prototype = {
     
-        version: '1.1.01',
+        version: '1.2.00',
 
         _cTimer: null,
         _lastPos: -1,
