@@ -1938,7 +1938,7 @@ jQuery(function ($) {
             };
 
             this.getVolume = function () {
-                var volume = this.playerModel && this.playerModel.getIsReady() ? this.playerModel.getVolume() : this.env.volume,
+                var volume = ('getIsReady' in this.playerModel && this.playerModel.getIsReady()) ? this.playerModel.getVolume() : this.env.volume,
                     fixedVolume = this.getConfig('fixedVolume');
                 
                 if(fixedVolume === true){
