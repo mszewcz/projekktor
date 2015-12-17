@@ -61,7 +61,6 @@ module.exports = function (grunt) {
           "src/models/player.NA.js",
           "src/models/player.audio.video.js",
           "src/models/player.audio.video.hls.js",
-          "src/models/player.audio.video.vlc.js",
           "src/models/player.playlist.js",
           "src/models/player.image.html.js",              
           {flag: "osmf", src: "src/models/player.audio.video.osmf.js"},
