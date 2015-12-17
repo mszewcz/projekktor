@@ -528,7 +528,7 @@ module.exports = function (grunt) {
   grunt.registerTask("default", [
     "clean",
     "update_submodules",
-    "build:*:*:+playlist:+youtube:+html:+vlc:+osmf:+osmfhls:+osmfmss:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
+    "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
     "pre-uglify",
     "uglify",
     "dist:*",
