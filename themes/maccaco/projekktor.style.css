@@ -2,9 +2,11 @@
 Theme Name: MACCACO
 Theme URI: http://www.projekktor.com/downloads
 Description: this theme is a screenr clone
-Version: 2.2
+Version: 2.3
 Author: Michel Maillard
 Author URI: http://www.porkhead.org
+Contributor: Radosław Włodkowski
+Contributor URI: http://www.wlodkowski.net
 */
 
 
@@ -22,6 +24,9 @@ general
     position: relative;
     overflow: hidden;
     width: 400px;
+    /** Remove highlight when use clicks **/
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent; /* For some Androids */
 }
 
 .pptestcard,
@@ -55,6 +60,57 @@ general
 .ppstateerror .pptestcard p {
     top: 25%;
     border:5px solid #000;
+}
+
+/* fullscreen */
+
+/* IE 11 */
+.projekktor:-ms-fullscreen {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width: 100% !important;
+    height: 100% !important;          
+}
+
+/* Webkit */
+.projekktor:-webkit-full-screen {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width: 100% !important;
+    height: 100% !important;    
+}
+
+/* Mozilla */
+.projekktor:-moz-full-screen {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width: 100% !important;
+    height: 100% !important;   
+}
+
+.projekktor:fullscreen  {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width: 100% !important;
+    height: 100% !important;   
+}
+
+/* IE 11 */
+.projekktor:-ms-fullscreen::-ms-backdrop {
+   background-color: black;
+}
+
+/* Webkit */
+.projekktor:-webkit-full-screen::-webkit-backdrop {
+    background-color: black;
+}
+
+.projekktor:fullscreen::backdrop   {
+    background-color: black;
 }
 
 
@@ -140,6 +196,7 @@ controlbar plugin
     border-width:1px 0;
     padding: 0;
     margin:0;
+    z-index: 100000;
 }
 
 .ppcontrols .active {
@@ -170,6 +227,9 @@ controlbar plugin
     -moz-transition: opacity 0.1s linear;
     -o-transition: opacity 0.1s linear;
     transition: opacity 0.1s linear;    
+    -webkit-box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.80);
+    -moz-box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.80);
+    box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.80);
 }
 
 
@@ -494,29 +554,59 @@ background: url("maccaco.png") no-repeat -91px top transparent;
 /* Scrubber, Playhead and fluff */
 .ppscrubber {
     position: absolute;
-    height: 5px;
+  bottom: 31px;
     width: 100%;
-    background: url("maccaco-load.gif") repeat-x left top transparent;
-    left: 0;
+  height: 4px;
+  padding: 0;
     margin: 0;
-    padding: 0;
-    border-bottom: 1px solid #000;
+  overflow: visible;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transition: height 0.1s linear;
+  -moz-transition: height 0.1s linear;
+  -o-transition: height 0.1s linear;
+  transition: height 0.1s linear; 
 }
 
-.audio .ppscrubber {
-    background: url("maccaco-load-static.png") repeat-x left top transparent;
+.ppscrubber:hover {
+  height: 8px;
 }
 
+.pploaded,
+.ppplayhead,
+.ppscrubberdrag,
+.ppscrubberknob {
+  position: absolute;
+  top: 0;
+  width: 0%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #fff;
+  z-index: 300;
+  display: block; 
+}
+
+.pploaded {
+    opacity: 0.3;
+    filter: alpha(opacity = 30);
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+}
+
+.ppplayhead {
+  z-index: 301;
+}
 
 
 .ppscrubberdrag {
     cursor: pointer;
+  height: 100%;
     z-index: 302;
-    position: absolute;
-    background-color: transparent;    
-    top:0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
+  -moz-opacity: 0.1;
+  opacity: 0.1;
     left:0;
-    height: 5px;
     width: 100%;    
 }
 
