@@ -27,9 +27,9 @@ general
     -webkit-tap-highlight-color: transparent; /* For some Androids */
 }
 
-.pptestcard,
-.ppstateidle .pptestcard {
-    background: none;
+.ppstateidle .pptestcard,
+.ppstateerror .pptestcard {
+    background: url("noise.gif") center center repeat;
     width: 100%;
     height: 100%;
     color: #fff;
@@ -37,27 +37,17 @@ general
     overflow: hidden;
 }
 
-.pptestcard p,
-.ppstateidle .pptestcard p {
+.ppstateidle .pptestcard p,
+.ppstateerror .pptestcard p {
     background-color: #3b393e;
     width: 60%;
     margin: auto;
     line-height: 25px;
     position: relative;
-    top: 5%;
-    padding: 10px;
-    border:5px solid red;
-    text-align: center;
-}
-
-
-.ppstateerror .pptestcard {
-    background: url("noise.gif") center center repeat;
-}
-
-.ppstateerror .pptestcard p {
     top: 25%;
+    padding: 10px;
     border:5px solid #000;
+    text-align: center;
 }
 
 /* fullscreen */
