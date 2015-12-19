@@ -1240,7 +1240,8 @@ jQuery(function ($) {
             this.__promote = function (evt, value) {
 
                 var event = evt,
-                    pluginData = {};
+                    pluginData = {},
+                    debug = this.getConfig('debug');
 
                 if (typeof event === 'object') {
 
@@ -1259,7 +1260,7 @@ jQuery(function ($) {
 
                     for (var i = 0; i < this._pluginCache[event + "Handler"].length; i++) {
 
-                        if (this.getConfig('debug')) {
+                        if (debug) {
 
                             try {
                                 this._pluginCache[event + "Handler"][i][event + "Handler"](value, this);
@@ -1276,7 +1277,7 @@ jQuery(function ($) {
 
                     for (var i = 0; i < this._pluginCache["eventHandler"].length; i++) {
 
-                        if (this.getConfig('debug')) {
+                        if (debug) {
                             try {
                                 this._pluginCache["eventHandler"][i]["eventHandler"](event, value, this);
                             } catch (e) {
@@ -1295,7 +1296,7 @@ jQuery(function ($) {
 
                         if (this.listeners[i]['event'] === event || this.listeners[i]['event'] === '*') {
 
-                            if (this.getConfig('debug')) {
+                            if (debug) {
                                 try {
                                     this.listeners[i]['callback'](value, this);
                                 } catch (e) {
