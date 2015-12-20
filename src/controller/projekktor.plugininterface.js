@@ -50,9 +50,9 @@ projekktorPluginInterface.prototype = {
             result = this.config[idx];
         }
     
-        if (typeof result == 'object' && result.length === null)
+        if ($.isPlainObject(result))
             result = $.extend(true, {}, result, this.config[idx]);
-        else if (typeof result == 'object') {
+        else if ($.isArray(result)) {
             result = $.extend(true, [], this.config[idx] || [], result || [] );
         }
         
