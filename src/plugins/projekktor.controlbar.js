@@ -557,7 +557,6 @@ jQuery(function ($) {
             var state = this.pp.getState(),
                 result = this.cb === null
                     || this._noHide  
-                    || (state === 'ERROR')
                     || (state === 'IDLE' && this.getConfig('showOnIdle'))
                     || (state === 'PAUSED' && !this.getConfig('hideWhenPaused'));
                         
@@ -978,6 +977,7 @@ jQuery(function ($) {
         },
         
         errorHandler: function (value) {
+            this._noHide = false;
             this.hidecb();
         },
 
