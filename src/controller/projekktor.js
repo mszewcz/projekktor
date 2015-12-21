@@ -2282,10 +2282,11 @@ jQuery(function ($) {
             this.getMediaType = function () {
 
                 // might be called before a model has been initialized
-                try {
-                    return this._getTypeFromFileExtension(this.playerModel.getSrc()) || 'na/na';
-                } catch (e) {
-                    return 'na/na';
+                if('getSrc' in this.playerModel) {
+                    return this._getTypeFromFileExtension(this.playerModel.getSrc());
+                }
+                else {
+                    return 'none/none';
                 }
             };
 
