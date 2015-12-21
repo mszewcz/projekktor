@@ -597,7 +597,11 @@ $p.newModel({
     },
     
     getBuffering: function() {
-        return this.mediaElement ? this.mediaElement[0].getBuffering() : false;
+        try {
+            return this.mediaElement[0].getBuffering();
+        } catch(e) {
+            return false;
+        }
     },
     
     getCanSeek: function() {
