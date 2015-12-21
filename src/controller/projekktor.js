@@ -4359,7 +4359,7 @@ jQuery(function ($) {
                 // -----------------------------------------------------------------------------
                 // - 1. GENERAL CONFIG ---------------------------------------------------------
                 // -----------------------------------------------------------------------------
-
+                
                 // remember original node HTML for reset and reference purposes:
                 this.env.srcNode = theNode.wrap('<div></div>').parent().html();
                 theNode.unwrap();
@@ -4411,8 +4411,21 @@ jQuery(function ($) {
                         }
                     }
                 }
-
+                
+                // turn debug mode on/off
                 this.setDebug(this.getConfig('debug'));
+                
+                // check platforms config is valid
+                // should be array with at least 1 platform 'browser' defined
+                if(!$.isArray(this.config['_platforms'])){
+                    $p.utils.log('ERROR: platforms config must be an array. Reset platforms config to the defaults.'); 
+                    this.config['_platforms'] = Object.getPrototypeOf(this.config)['_platforms'] || [];
+                }
+                // add BROWSER platform if it's not defined in config
+                if($.inArray('browser', this.config['_platforms']) === -1){
+                    $p.utils.log('ERROR: "browser" platform not present in platforms config. Adding it.'); 
+                    this.config._platforms.unshift('browser');
+                }
 
                 // initial DOM scaling
                 this.setSize();
@@ -4439,7 +4452,7 @@ jQuery(function ($) {
                 }
                 
                 // -----------------------------------------------------------------------------
-                // - 2. TRIM DEST --------------------------------------------------------------
+                // - TRIM DEST --------------------------------------------------------------
                 // -----------------------------------------------------------------------------
 
                 // make sure we can deal with a domID here:
