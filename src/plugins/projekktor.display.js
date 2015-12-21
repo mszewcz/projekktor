@@ -94,7 +94,7 @@ projekktorDisplay.prototype = {
     *****************************************/
     displayReadyHandler: function() {
         
-        if(this.pp.playerModel.getBufferState() !== 'EMPTY'){
+        if('NONE|EMPTY'.indexOf(this.pp.playerModel.getBufferState()) === -1){
             this.hideBufferIcon();
         }
     },
@@ -121,15 +121,17 @@ projekktorDisplay.prototype = {
     },    
     
     bufferHandler: function(state) {
-        if (state=='EMPTY') {
+        if ('NONE|EMPTY'.indexOf(state) > -1) {
             this.showBufferIcon();
         }
-        else { 
+        else {
             this.hideBufferIcon();
         }
     },    
     
     stateHandler: function(state) {
+        var bufferState = this.pp.playerModel.getBufferState();
+        
         switch(state) {
         
             case 'IDLE':
@@ -138,7 +140,7 @@ projekktorDisplay.prototype = {
                 break;
 
             case 'PLAYING':
-                this.hideBufferIcon();
+                this.bufferHandler(bufferState);
                 this.hideStartButton();
                 break;
             
@@ -199,7 +201,8 @@ projekktorDisplay.prototype = {
     },
     
     qualityChangeHandler: function() {
-        this.hideBufferIcon();
+        var bufferState = this.pp.playerModel.getBufferState();
+        this.bufferHandler(bufferState);
     },
 
     /*****************************************,
@@ -296,7 +299,7 @@ projekktorDisplay.prototype = {
         clearInterval(this.buffIcnHangWatcher);
         if(this.getConfig('bufferIconHangWatcherInterval')){
             this.buffIcnHangWatcher = setInterval(function(){
-                if(ref.pp.playerModel.getBufferState() !== 'EMPTY'){
+                if('NONE|EMPTY'.indexOf(ref.pp.playerModel.getBufferState()) === -1){
                     ref.hideBufferIcon();
                 }
             }, this.getConfig('bufferIconHangWatcherInterval'));
