@@ -4086,6 +4086,12 @@ jQuery(function ($) {
             /********************************************************************************************
              GENERAL Tools
              *********************************************************************************************/
+            /**
+             * 
+             * @param {string} url or filename containing file extension for which mimeType we want to get
+             * @returns {string} one of defined mimeTypes from available models iLove definitions 
+             * or 'none/none' if there is no such a type or url attribute was other than 'string'
+             */
             this._getTypeFromFileExtension = function (url) {
 
                 var fileExt = '',
@@ -4093,42 +4099,43 @@ jQuery(function ($) {
                     extTypes = {},
                     extRegEx = [],
                     plt = null,
-                    on = true;
+                    on = true,
+                    result = 'none/none';
+                
+                if(typeof url === 'string') {
+                    // build regex string and filter dublicate extensions:
+                    for (var i in $p.mmap) {
 
-                // build regex string and filter dublicate extensions:
-                for (var i in $p.mmap) {
+                        if ($p.mmap.hasOwnProperty(i)) {
+                            plt = $p.mmap[i].platform;
+                            on = true;
 
-                    if ($p.mmap.hasOwnProperty(i)) {
-                        plt = $p.mmap[i].platform;
-                        on = true;
+                            for (var j = 0; j < plt.length; j++) {
 
-                        for (var j = 0; j < plt.length; j++) {
+                                if (plt[j] != null) {
 
-                            if (plt[j] != null) {
-
-                                if (this.getConfig('enable' + plt[j].toUpperCase() + 'Platform') === false || $.inArray(plt[j], this.getConfig('platforms')) === -1) {
-                                    on = false;
+                                    if (this.getConfig('enable' + plt[j].toUpperCase() + 'Platform') === false || $.inArray(plt[j], this.getConfig('platforms')) === -1) {
+                                        on = false;
+                                    }
                                 }
                             }
-                        }
 
-                        if (on === false) {
-                            continue;
+                            if (on === false) {
+                                continue;
+                            }
+                            extRegEx.push('\\\.' + $p.mmap[i].ext);
+                            extTypes[$p.mmap [i].ext] = $p.mmap [i];
                         }
-                        extRegEx.push('\\\.' + $p.mmap[i].ext);
-                        extTypes[$p.mmap [i].ext] = $p.mmap [i];
                     }
-                }
-                extRegEx = '^.*\.(' + extRegEx.join('|') + ")";
+                    extRegEx = '^.*\.(' + extRegEx.join('|') + ")";
 
-                try {
+
                     fileExt = url.match(new RegExp(extRegEx))[1];
                     fileExt = (!fileExt) ? 'NaN' : fileExt.replace('.', '');
-                } catch (e) {
-                    fileExt = 'NaN';
+                    result = extTypes.hasOwnProperty(fileExt) ? extTypes[fileExt] : result;
                 }
 
-                return extTypes[fileExt].type;
+                return result;
             };
 
             /* generates an array of mediatype=>playertype relations depending on browser capabilities */
