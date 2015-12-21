@@ -315,7 +315,6 @@ $p.newModel({
      *                 
      */
     OSMF_loadStateChange: function(state) {
-        
         switch (state) {
             case 'loading':
                 this.waitListener();
@@ -597,6 +596,10 @@ $p.newModel({
         return this.mediaElement[0].getDynamicStreamSwitching();
     },
     
+    getBuffering: function() {
+        return this.mediaElement ? this.mediaElement[0].getBuffering() : false;
+    },
+    
     getCanSeek: function() {
         return this.mediaElement[0].getCanSeek();
     },
@@ -829,6 +832,18 @@ $p.newModel({
     
     getQuality: function () {
         return this._quality;
+    },
+    
+    getBufferState: function (isThis) {
+        var result = (this._currentBufferState == null) ? 'NONE' : this._currentBufferState;
+        /* additional check for buffering state from SMP, cause there are situations when
+         * even if the state is 'playing' the buffering status could be set to true */
+        result = this.getBuffering() ? 'EMPTY' : result;
+        
+        if (isThis != null) {
+            return (result == isThis.toUpperCase());
+        }
+        return result;
     },
     
     // org.osmf.media.MediaPlayer
