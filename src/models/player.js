@@ -282,7 +282,7 @@ jQuery(function ($) {
             this.setResize();
         },
         setResize: function () {
-            if (this.element === 'audio') {
+            if (this.element === 'audio' || this.getState('ERROR')) {
                 return;
             }
             this._scaleVideo();
