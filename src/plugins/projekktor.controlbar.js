@@ -568,7 +568,7 @@ jQuery(function ($) {
                 result = this.cb === null
                         || !this.getConfig('controls')
                         || this.pp.getHasGUI()
-                        || ('COMPLETED|DESTROYING'.indexOf(state) > -1)
+                        || ('ERROR|COMPLETED|DESTROYING'.indexOf(state) > -1)
                         || ('AWAKENING|STARTING'.indexOf(state) > -1 && !this.getConfig('showOnStart'))
                         || (state === 'IDLE' && !this.getConfig('showOnIdle'))
                         || false;
