@@ -139,11 +139,16 @@ $p.newModel({
             ppId = ref.pp.getId(),
             ppMediaId = ref.pp.getMediaId();
         
-        // register global listener
+        // register global ready listener
         window['projekktorOSMFReady' + ppId] = function() {
             projekktor(ppId).playerModel._OSMFListener(arguments);
-        };     
-
+        };
+        
+        // register global error listener
+        window['projekktorOSMFError' + ppId] = function(mediaId, errorCode, errorMessage, errorDetail) {
+            projekktor(ppId).playerModel._OSMFErrorListener(mediaId, errorCode, errorMessage, errorDetail);
+        };
+        
         destContainer
             .html('')
             .css({
@@ -181,7 +186,8 @@ $p.newModel({
                 autoPlay: false,
                 urlIncludesFMSApplicationInstance: this.pp.getConfig('rtmpUrlIncludesApplicationInstance'),
                 enableStageVideo: this._hardwareAcceleration,
-                javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId
+                javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId,
+                javascriptErrorCallbackFunction: 'window.projekktorOSMFError' + ppId
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
 
@@ -231,8 +237,7 @@ $p.newModel({
     _OSMFListener: function() {
         var mediaId = arguments[0][0],
             event = arguments[0][1],
-            value = arguments[0][2],
-            ref = this;
+            value = arguments[0][2];
         
         if(!this.mediaElement){
             this.mediaElement = $('#' +  mediaId); // IE 10 sucks
@@ -248,6 +253,10 @@ $p.newModel({
                 }
             break;
         }
+    },
+    
+    _OSMFErrorListener: function(mediaId, errorCode, errorMessage, errorDetail) {
+        this.errorListener(errorCode, errorMessage);
     },
 
     OSMF_bytesLoadedChange: function(value) {
@@ -750,6 +759,7 @@ $p.newModel({
         var ppId = this.pp.getId();
         // delete global listeners functions
         delete window['projekktorOSMFReady' + ppId];
+        delete window['projekktorOSMFError' + ppId];
         
         try {
             this.mediaElement.remove();
@@ -904,6 +914,11 @@ $p.newModel({
             projekktor(ppId).playerModel._OSMFListener(arguments);
         };   
         
+        // register global error listener
+        window['projekktorOSMFError' + ppId] = function(mediaId, errorCode, errorMessage, errorDetail) {
+            projekktor(ppId).playerModel._OSMFErrorListener(mediaId, errorCode, errorMessage, errorDetail);
+        };
+        
         var config = {
             src: this.pp.getConfig('platformsConfig').flash.src,
             attributes: {
@@ -923,7 +938,8 @@ $p.newModel({
                 bgcolor: '#000000'
             },
             initVars: $.extend({
-                javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId               
+                javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId,
+                javascriptErrorCallbackFunction: 'window.projekktorOSMFError' + ppId               
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
         
