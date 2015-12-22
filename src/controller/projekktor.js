@@ -507,7 +507,6 @@ jQuery(function ($) {
                     modelSet = {},
                     modelSets = [],
                     result = {},
-                    extRegEx = [],
                     bestMatch = 0,
                     currentMediaPlatforms = [],
                     modelPlatforms = [],
@@ -515,7 +514,7 @@ jQuery(function ($) {
                     supportedPlatforms = this._testMediaSupport(true),
                     mmapIndex;
 
-                // build regex string and filter duplicate extensions and more ...
+                // filter duplicate extensions and more ...
                 for (mmapIndex in $p.mmap) {
 
                     if ($p.mmap.hasOwnProperty(mmapIndex)) {
@@ -548,9 +547,6 @@ jQuery(function ($) {
                                     // set priority level
                                     $p.mmap[mmapIndex].level = $.inArray(platform, platformsConfig);
                                     $p.mmap[mmapIndex].level = ($p.mmap[mmapIndex].level < 0) ? 100 : $p.mmap[mmapIndex].level;
-
-                                    // upcoming fun:
-                                    extRegEx.push('.' + $p.mmap[mmapIndex].ext);
 
                                     // build extension2filetype map
                                     if (!extTypes.hasOwnProperty($p.mmap[mmapIndex].ext)) {
@@ -585,8 +581,6 @@ jQuery(function ($) {
                         });
                     }
                 }
-
-                extRegEx = '^.*\.(' + extRegEx.join('|') + ")$";
 
                 // incoming file is a string only, no array
                 if (typeof data.file === 'string') {
@@ -631,14 +625,6 @@ jQuery(function ($) {
                         if (data.file[index].src == null) {
                             continue;
                         }
-
-                        // get file extension:
-                        /**
-                         try {
-                         data.file[index].ext = data.file[index].src.match( new RegExp(extRegEx))[1];
-                         data.file[index].ext = (!data.file[index].ext) ? 'NaN' : data.file[index].ext.replace('.','');
-                         } catch(e) { data.file[index].ext='NaN'; }
-                         */
 
                         // if type is set, get rid of the codec mess
                         if (data.file[index].hasOwnProperty('type') && typeof data.file[index].type === 'string' && data.file[index].type !== '') {
