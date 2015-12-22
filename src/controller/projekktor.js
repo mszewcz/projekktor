@@ -445,7 +445,7 @@ jQuery(function ($) {
 
                 $.each(pltfrm, function (nothing, plt) {
 
-                    $.each($.extend(tm[st], tm['*'] || []) || [], function (thisPlatform, val) {
+                    $.each($.extend(true, {}, tm[st], tm['*'] || []) || [], function (thisPlatform, val) {
 
                         if (plt != null) {
                             if (thisPlatform != plt) {
