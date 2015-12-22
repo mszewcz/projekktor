@@ -20,6 +20,7 @@ jQuery(function ($) {
         _currentSeekState: null,
         _ap: false, // autoplay
         _volume: 1, // async
+        _fixedVolume: false,
         _quality: 'auto',
         _displayReady: false,
         _isPlaying: false,

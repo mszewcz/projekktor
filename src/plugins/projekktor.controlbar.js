@@ -684,7 +684,7 @@ jQuery(function ($) {
 
             var isVisible = this.cb.hasClass('active'),
                 ref = this,
-                fixed = this.getConfig('fixedVolume'),
+                fixed = this.getConfig('fixedVolume') || (this.pp.playerModel && this.pp.playerModel._fixedVolume),
                 toggleMute = (this.controlElements['mute'].hasClass('toggle') || this.controlElements['unmute'].hasClass('toggle') || this.getConfig('toggleMute')),
                 // check if the volume is in the proper range and correct its value if it's not
                 volume = volume > 1 ? 1 : volume,

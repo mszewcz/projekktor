@@ -22,6 +22,7 @@ $p.newModel({
 
     _position: 0,
     _duration: 0,
+    _fixedVolume: true,
     
     applyMedia: function(destContainer) {
         this.mediaElement = this.applyImage(this.media.file[0].src, destContainer.html(''));
