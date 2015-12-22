@@ -4131,9 +4131,14 @@ jQuery(function ($) {
                     extRegEx = '^.*\.(' + extRegEx.join('|') + ")";
 
 
-                    fileExt = url.match(new RegExp(extRegEx))[1];
-                    fileExt = (!fileExt) ? 'NaN' : fileExt.replace('.', '');
-                    result = extTypes.hasOwnProperty(fileExt) ? extTypes[fileExt] : result;
+                    fileExt = url.match(new RegExp(extRegEx));
+                    if(fileExt === null) {
+                        fileExt = 'NaN';
+                    }
+                    else {
+                        fileExt = fileExt[1].replace('.', '');
+                    }
+                    result = extTypes.hasOwnProperty(fileExt) ? extTypes[fileExt].type : result;
                 }
 
                 return result;
