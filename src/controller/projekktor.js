@@ -880,6 +880,9 @@ jQuery(function ($) {
 
                     case 'ERROR':
                         this._addGUIListeners();
+                        if (this.getConfig('skipTestcard')) {
+                            this.setActiveItem('next');
+                        }
                         break;
 
                     case 'COMPLETED':
@@ -890,7 +893,8 @@ jQuery(function ($) {
                         if (this.getConfig('leaveFullscreen')) {
                             this.setFullscreen(false);
                         }
-                }
+                        break;
+                };
             };
             
             this.volumeHandler = function (value) {
@@ -988,13 +992,6 @@ jQuery(function ($) {
 
                 if (value === 'dvr') {
                     this.getDC().addClass(this.getNS() + 'dvr');
-                }
-            };
-
-            this.errorHandler = function (value) {
-
-                if (this.getConfig('skipTestcard')) {
-                    this.setActiveItem('next');
                 }
             };
 
@@ -2671,7 +2668,7 @@ jQuery(function ($) {
                 if (newItem.id !== lastItem.id) {
 
                     // but and denied by config or state
-                    if (this.getConfig('disallowSkip') === true && (!this.getState('COMPLETED') && !this.getState('IDLE'))) {
+                    if (this.getConfig('disallowSkip') === true && ('COMPLETED|IDLE|ERROR'.indexOf(this.getState()) === -1)) {
                         return this;
                     }
                 }
