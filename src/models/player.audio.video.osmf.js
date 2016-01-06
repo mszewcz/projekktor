@@ -41,6 +41,8 @@ $p.newModel({
     _bufferTime: 0,
     _liveOffset: 2,
     _cbTimeout: null, // clear buffer timeout id
+    _modelInitTimeout: 120000,
+    _modelInitTimeoutId: null,
 
     _eventMap: {
         // org.osmf.events.AudioEvent, org.osmf.traits.AudioTrait
@@ -192,6 +194,9 @@ $p.newModel({
         };
 
         this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this._modelInitTimeoutId = setTimeout(function(){
+            ref._modelInitTimeoutHandler();
+        }, this._modelInitTimeout);
     },
 
     addOSMFEventListeners: function() {
@@ -233,6 +238,10 @@ $p.newModel({
         
         return true;
     }, 
+    
+    _modelInitTimeoutHandler: function(){
+        this.sendUpdate('error', 200, "Model " + this.modelId + " init timeout");
+    },
 
     _OSMFListener: function() {
         var mediaId = arguments[0][0],
@@ -245,6 +254,7 @@ $p.newModel({
 
         switch(event) {
             case 'onJavaScriptBridgeCreated':
+                clearTimeout(this._modelInitTimeoutId);
                 if (this.mediaElement !== null && (this.getState('AWAKENING') || this.getState('STARTING'))) {
                     // add OSMF event listeners
                     this.addOSMFEventListeners();
@@ -944,6 +954,9 @@ $p.newModel({
         };
         
         this.mediaElement = $p.utils.embedPlugin(this.platform, flashContainer, config, false);
+        this._modelInitTimeoutId = setTimeout(function(){
+            ref._modelInitTimeoutHandler();
+        }, this._modelInitTimeout);
     }
     
 }, 'OSMFVIDEO');

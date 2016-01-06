@@ -38,6 +38,8 @@ $p.newModel({
     ],
     
     allowRandomSeek: false,
+    _modelInitTimeout: 120000,
+    _modelInitTimeoutId: null,
     _silverlightApi: {},
 
     _eventMap: {
@@ -116,6 +118,9 @@ $p.newModel({
         };
         
         this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this._modelInitTimeoutId = setTimeout(function(){
+            ref._modelInitTimeoutHandler();
+        }, this._modelInitTimeout);
     },
         
     applySrc: function() {
@@ -159,7 +164,13 @@ $p.newModel({
     
     loadProgressUpdate: function () {},
     
+    _modelInitTimeoutHandler: function(){
+        this.sendUpdate('error', 200, "Model " + this.modelId + " init timeout");
+    },
+    
     silverlightReadyListener: function(mediaId) {
+        clearTimeout(this._modelInitTimeoutId);
+        
         if(!this.mediaElement){
             this.mediaElement = $('#' +  mediaId); // IE 10 sucks
         }
@@ -286,6 +297,9 @@ $p.newModel({
         };
         
         this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this._modelInitTimeoutId = setTimeout(function(){
+            ref._modelInitTimeoutHandler();
+        }, this._modelInitTimeout);
     }
     
 }, 'SILVERLIGHTVIDEO');

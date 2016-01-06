@@ -68,6 +68,8 @@ projekktorMessages = {
     "error98": 'Invalid or malformed playlist data!',
     "error99": 'Click display to proceed. ',
     "error100": 'Keyboard Shortcuts',
+    
+    "error200": 'Loading timeout',
         
     // youtube errors: 
     "error500": 'This Youtube video has been removed or set to private',
