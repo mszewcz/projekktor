@@ -69,7 +69,7 @@ $p.newModel({
     
     applyMedia: function(destContainer) {
 	
-	this._setBufferState('empty');
+	this._setBufferState('EMPTY');
 
 	var ref = this,
 	    width = (this.modelId=='YTAUDIO') ? 1 : '100%',
@@ -249,11 +249,11 @@ $p.newModel({
 	    case 0:
                 // fixing a YT API bug:
 		if (this.getState('AWAKENING')) break;
-                this._setBufferState('full');
+                this._setBufferState('FULL');
 		this.endedListener({});
 		break;
 	    case 1:
-		this._setBufferState('full');
+		this._setBufferState('FULL');
 		
 		if ( (this.media.position || 0) > 0 && this._isFF() && this.ffFix) {
 		    this.ffFix = false;

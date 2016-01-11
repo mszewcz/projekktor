@@ -16,7 +16,7 @@ jQuery(function ($) {
         platform: ['browser'],
         // all the player states
         _currentState: null,
-        _currentBufferState: null,
+        _currentBufferState: 'EMPTY', // EMPTY / FULL
         _currentSeekState: null,
         _ap: false, // autoplay
         _volume: 1, // async
@@ -356,9 +356,9 @@ jQuery(function ($) {
             return result;
         },
         getBufferState: function (isThis) {
-            var result = (this._currentBufferState == null) ? 'NONE' : this._currentBufferState;
+            var result = this._currentBufferState;
             if (isThis != null) {
-                return (result == isThis.toUpperCase());
+                return (result === isThis.toUpperCase());
             }
             return result;
         },
@@ -643,7 +643,7 @@ jQuery(function ($) {
 
             // Mac flash fix:
             if (this.media.loadProgress >= 100 && this.allowRandomSeek === false) {
-                this._setBufferState('full');
+                this._setBufferState('FULL');
             }
         },
         qualityChangeListener: function () {
@@ -659,16 +659,13 @@ jQuery(function ($) {
             this._setState('completed');
         },
         waitingListener: function (event) {
-            this._setBufferState('empty');
+            this._setBufferState('EMPTY');
         },
         canplayListener: function (obj) {
-            this._setBufferState('full');
+            this._setBufferState('FULL');
         },
         canplaythroughListener: function (obj) {
-            this._setBufferState('full');
-        },
-        suspendListener: function (obj) {
-            this._setBufferState('full'); // hmmmm...
+            this._setBufferState('FULL');
         },
         playingListener: function (obj) {
             this._setState('playing');

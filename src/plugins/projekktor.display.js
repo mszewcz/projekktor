@@ -94,7 +94,7 @@ projekktorDisplay.prototype = {
     *****************************************/
     displayReadyHandler: function() {
         
-        if('NONE|EMPTY'.indexOf(this.pp.playerModel.getBufferState()) === -1){
+        if(this.pp.playerModel.getBufferState('FULL')){
             this.hideBufferIcon();
         }
     },
@@ -299,7 +299,7 @@ projekktorDisplay.prototype = {
         clearInterval(this.buffIcnHangWatcher);
         if(this.getConfig('bufferIconHangWatcherInterval')){
             this.buffIcnHangWatcher = setInterval(function(){
-                if('NONE|EMPTY'.indexOf(ref.pp.playerModel.getBufferState()) === -1){
+                if(ref.pp.playerModel.getBufferState('FULL')){
                     ref.hideBufferIcon();
                 }
             }, this.getConfig('bufferIconHangWatcherInterval'));

@@ -859,13 +859,13 @@ $p.newModel({
     },
     
     getBufferState: function (isThis) {
-        var result = (this._currentBufferState == null) ? 'NONE' : this._currentBufferState;
+        var result = this._currentBufferState;
         /* additional check for buffering state from SMP, cause there are situations when
          * even if the state is 'playing' the buffering status could be set to true */
         result = this.getBuffering() ? 'EMPTY' : result;
         
         if (isThis != null) {
-            return (result == isThis.toUpperCase());
+            return (result === isThis.toUpperCase());
         }
         return result;
     },

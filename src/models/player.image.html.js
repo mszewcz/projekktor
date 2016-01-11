@@ -37,7 +37,7 @@ $p.newModel({
 
         var ref = this;
     
-        this._setBufferState('full');
+        this._setBufferState('FULL');
         this.progressListener(100);
         this.playingListener();    
         

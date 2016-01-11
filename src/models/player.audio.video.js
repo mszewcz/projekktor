@@ -276,7 +276,7 @@ $p.newModel({
         
         this._setState('playing'); 
     },
-
+    
     errorListener: function(obj, evt) {
         try {
             switch (evt.target.error.code) {
@@ -315,7 +315,7 @@ $p.newModel({
                 return true;
             });
         }        
-        this._setBufferState('full');
+        this._setBufferState('FULL');
     },
     
     webkitfullscreenListener: function(evt){
