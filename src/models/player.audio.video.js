@@ -53,6 +53,7 @@ $p.newModel({
     isPseudoStream: false,
     endedTimeout: 0,
     displayingFullscreen: false,
+    _lastPosition: null,
     
     init: function() {
         var ua = navigator.userAgent; // TODO: global platform and feature detection
@@ -62,6 +63,7 @@ $p.newModel({
             this.isGingerbread = true;
           }
         }
+        this._lastPosition = null;
         this._eventsBinded = [];
         this.ready();
     },
@@ -241,7 +243,11 @@ $p.newModel({
         // check for video size change (e.g. HLS on Safari OSX or iOS)
         this.resizeListener(video);
         
-        this.timeListener.apply(this, arguments);
+        // IE & Edge firing timeupdate event even if the currentTime didn't change
+        if(video.currentTime !== this._lastPosition){
+            this._lastPosition = video.currentTime;
+            this.timeListener.apply(this, arguments);
+        }
     },
     
     _ended: function() {
