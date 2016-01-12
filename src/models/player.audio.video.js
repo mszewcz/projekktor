@@ -95,6 +95,7 @@ $p.newModel({
         }
 
         this.mediaElement = $('#'+this.pp.getMediaId()+"_html");
+        this.addListeners();
         this.applySrc();
     },
         
