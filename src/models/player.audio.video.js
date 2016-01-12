@@ -33,13 +33,16 @@ $p.newModel({
         waiting:        "waitingListener",
         canplaythrough: "canplayListener",
         canplay:        "canplayListener",
+        // suspend:        "suspendListener",
+        // abort:          "abortListener",
         error:          "errorListener",
-        suspend:        "suspendListener",
+        emptied:        "emptiedListener",
+        stalled:        "stalledListener",
         seeked:         "seekedListener",
         loadedmetadata: "resizeListener",
         loadeddata:     "resizeListener",
         resize:         "resizeListener",
-        loadstart:      null,
+        // loadstart:      null,
         webkitbeginfullscreen: "webkitfullscreenListener",
         webkitendfullscreen: "webkitfullscreenListener"
     },    
@@ -243,10 +246,20 @@ $p.newModel({
         // check for video size change (e.g. HLS on Safari OSX or iOS)
         this.resizeListener(video);
         
-        // IE & Edge firing timeupdate event even if the currentTime didn't change
+        // IE & Edge firing timeupdate event even if the currentTime didn't change,
+        // this has place when the video is buffering and cause IE & Edge 
+        // don't fire waiting & stalled events we can use that bug to set 
+        // buffering state to 'EMPTY'. It's a hack but it's working.
         if(video.currentTime !== this._lastPosition){
+            // we assume that the buffer is full when the video time was updated
+            if(this._lastPosition !== null){
+                this._setBufferState('FULL');
+            }
             this._lastPosition = video.currentTime;
             this.timeListener.apply(this, arguments);
+        }
+        else {
+            this._setBufferState('EMPTY');
         }
     },
     
@@ -306,6 +319,14 @@ $p.newModel({
         } catch(e) {}
     },
      
+    emptiedListener: function (obj) {
+        this._setBufferState('EMPTY');
+    },
+    
+    stalledListener: function (obj) {
+        this._setBufferState('EMPTY');
+    },
+    
     canplayListener: function(obj) {
         var ref = this;
         // pseudo streaming
