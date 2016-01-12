@@ -276,7 +276,7 @@ $p.newModel({
         
         this._setState('playing'); 
     },
-    
+
     errorListener: function(obj, evt) {
         try {
             switch (evt.target.error.code) {
@@ -298,7 +298,7 @@ $p.newModel({
             }
         } catch(e) {}
     },
-    
+     
     canplayListener: function(obj) {
         var ref = this;
         // pseudo streaming
@@ -326,7 +326,105 @@ $p.newModel({
     disableDefaultVideoElementActions: function(evt){
             evt.preventDefault();
             evt.stopPropagation();
-    }, 
+    },
+    
+    getMediaStatus: function(name){
+        if($p.utils.logging){
+            var m = this.mediaElement[0],
+                networkState  = m.networkState,
+                readyState = m.readyState,
+                error = m.error,
+                pos = m.currentTime,
+                dur = m.duration,
+                buffered = m.buffered,
+                seekable = m.seekable;
+        
+            $p.utils.log('| ' + name + ' |');
+            $p.utils.log(
+                        '| networkState: ', this._getNetworkStateName(networkState), 
+                        'readyState: ', this._getReadyStateName(readyState),
+                        'error: ', this._getErrorName(error)
+                        );
+            $p.utils.log('| duration: ', dur, 'currentTime: ', pos);
+            $p.utils.log('| buffered: ', this._loopThroughTimeRanges(buffered));
+            $p.utils.log('| seekable: ', this._loopThroughTimeRanges(seekable));
+        }
+    },
+    
+    _getNetworkStateName: function(networkStateCode){
+        var result = networkStateCode + " - ";
+        switch(networkStateCode){
+            case 0: 
+                result += "NETWORK_EMPTY";
+                break;
+            case 1: 
+                result += "NETWORK_IDLE";
+                break;
+            case 2: 
+                result += "NETWORK_LOADING";
+                break;
+            case 3: 
+                result += "NETWORK_NO_SOURCE";
+                break;                
+        }
+        return result;
+    },
+    
+    _getReadyStateName: function(readyStateCode){
+        var result = readyStateCode + " - ";
+        switch(readyStateCode){
+            case 0: 
+                result += "HAVE_NOTHING";
+                break;
+            case 1: 
+                result += "HAVE_METADATA";
+                break;
+            case 2: 
+                result += "HAVE_CURRENT_DATA";
+                break;
+            case 3: 
+                result += "HAVE_FUTURE_DATA";
+                break;                
+            case 4: 
+                result += "HAVE_ENOUGH_DATA";
+                break;                
+        }
+        return result;
+    },
+    
+    _getErrorName: function(errorCode){
+        var result = errorCode + " - ";
+        switch(errorCode){
+            case 1: 
+                result += "MEDIA_ERR_ABORTED";
+                break;
+            case 2: 
+                result += "MEDIA_ERR_NETWORK";
+                break;
+            case 3: 
+                result += "MEDIA_ERR_DECODE";
+                break;
+            case 4: 
+                result += "MEDIA_ERR_SRC_NOT_SUPPORTED";
+                break;                
+        }
+        return result;
+    },
+    
+    _loopThroughTimeRanges: function(timeRanges) {
+        var i = 0,
+            l = timeRanges.length,
+            result = "lenght: " + l + "; ";
+            
+        for(; i<l; i++){
+            result += "#" + i + " - ";
+            result += "start: " + timeRanges.start(i) + ", ";
+            result += "end: " + timeRanges.end(i);
+            result += "; ";
+        }
+            
+        return result;
+    },
     
     /*****************************************
      * Setters
