@@ -121,7 +121,7 @@ projekktorDisplay.prototype = {
     },    
     
     bufferHandler: function(state) {
-        if ('NONE|EMPTY'.indexOf(state) > -1) {
+        if (this.pp.playerModel.getBufferState('EMPTY') && !this.pp.getState('PAUSED')) {
             this.showBufferIcon();
         }
         else {
