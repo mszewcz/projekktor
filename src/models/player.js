@@ -816,8 +816,10 @@ jQuery(function ($) {
                     this._isPlaying = true;
                 }
 
-                if (state === 'PAUSED')
+                if (state === 'PAUSED') {
                     this._isPlaying = false;
+                    this._setBufferState('FULL');
+                }
 
                 if (state === 'ERROR') {
                     this.setPlay = this.setPause = function () {
