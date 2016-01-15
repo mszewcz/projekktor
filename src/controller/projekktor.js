@@ -1899,7 +1899,7 @@ jQuery(function ($) {
 
                 // ignore NA dummy
                 if (this.media.length === 1 && this.media[0].mediaModel === 'na') {
-                    return null;
+                    return false;
                 }
 
                 // some shortcuts
