@@ -668,9 +668,11 @@ jQuery(function ($) {
         },
 
         displayProgress: function () {
-            var percent = Math.round(this.pp.getLoadProgress() * 10) / 10;
-            // limit updates
-            if (this.controlElements['loaded'].data('pct') == undefined || this.controlElements['loaded'].data('pct') != percent) {                
+            var percent = Math.round(this.pp.getLoadProgress() * 10) / 10,
+                lastUpdatedPercent = this.controlElements['loaded'].data('pct') || undefined;
+            
+            // limit updates to 1 per 5%
+            if (lastUpdatedPercent === undefined || lastUpdatedPercent !== percent) {                
                 this.controlElements['loaded'].data('pct', percent).css("width", percent + "%");
             };
         },
