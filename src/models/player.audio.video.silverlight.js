@@ -49,11 +49,8 @@ $p.newModel({
         progress:       "_progress",
         timeupdate:     "timeListener",
         ended:          "endedListener",
-        waiting:        "waitingListener",
-        canplaythrough: "canplayListener",
         canplay:        "canplayListener",
         'System.Windows.MediaFailedRoutedEventArgs': "errorListener",
-        suspend:        "suspendListener",
         seeked:         "seekedListener",
         loadedmetadata: "resizeListener",
         
@@ -161,8 +158,6 @@ $p.newModel({
     addListeners: function() {}, 
     
     removeListeners: function() {},
-    
-    loadProgressUpdate: function () {},
     
     _modelInitTimeoutHandler: function(){
         this.sendUpdate('error', 200, "Model " + this.modelId + " init timeout");
