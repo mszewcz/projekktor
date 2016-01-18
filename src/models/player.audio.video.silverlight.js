@@ -52,7 +52,7 @@ $p.newModel({
         waiting:        "waitingListener",
         canplaythrough: "canplayListener",
         canplay:        "canplayListener",
-        error:          "errorListener",
+        'System.Windows.MediaFailedRoutedEventArgs': "errorListener",
         suspend:        "suspendListener",
         seeked:         "seekedListener",
         loadedmetadata: "resizeListener",
@@ -192,6 +192,7 @@ $p.newModel({
     },
     
     errorListener: function() {
+        this.sendUpdate('error', 4);
     },
     
     _progress: function(event) {
