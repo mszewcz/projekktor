@@ -53,10 +53,10 @@ $p.newModel({
         'System.Windows.MediaFailedRoutedEventArgs': "errorListener",
         seeked:         "seekedListener",
         loadedmetadata: "resizeListener",
+        loadstart: "loadstartListener",
         
         // events to ignore
         playing: "nullListener",
-        loadstart: "nullListener",
         loadeddata: "nullListener",
         seeking: "nullListener",
         click: "nullListener"
@@ -186,11 +186,23 @@ $p.newModel({
         }
     },
     
+    loadstartListener: function(event) {
+        this._setBufferState('EMPTY');
+    },
+    
     errorListener: function() {
         this.sendUpdate('error', 4);
     },
     
     _progress: function(event) {
+        // handle buffering
+        if(event.bufferedBytes < 1){
+            this._setBufferState('EMPTY');
+        }
+        else {
+            this._setBufferState('FULL');
+        }
+        
         this.progressListener({loaded:event.bufferedTime, total:event.duration});
     },
     
