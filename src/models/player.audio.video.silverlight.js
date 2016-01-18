@@ -117,7 +117,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').silverlight.initVars || {})
         };
         
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
         this._modelInitTimeoutId = setTimeout(function(){
             ref._modelInitTimeoutHandler();
         }, this._modelInitTimeout);
@@ -296,7 +296,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').silverlight.initVars || {})
         };
         
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, true);
         this._modelInitTimeoutId = setTimeout(function(){
             ref._modelInitTimeoutHandler();
         }, this._modelInitTimeout);
