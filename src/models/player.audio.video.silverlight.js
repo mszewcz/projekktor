@@ -38,6 +38,7 @@ $p.newModel({
     ],
     
     allowRandomSeek: false,
+    _bufferTime: 6, // default 6 seconds
     _modelInitTimeout: 120000,
     _modelInitTimeoutId: null,
     _silverlightApi: {},
@@ -196,11 +197,14 @@ $p.newModel({
     
     _progress: function(event) {
         // handle buffering
-        if(event.bufferedBytes < 1){
-            this._setBufferState('EMPTY');
+        /* there is a bug in the msjs Silverlight element that prevents bufferedBytes from update from 0 to 1
+         * with good quality network connection. So we need to check the change of bufferedTime to overcome this problem.
+         */
+        if(event.bufferedBytes === 1 || this._bufferTime <= event.bufferedTime - event.currentTime){ 
+                this._setBufferState('FULL');
         }
         else {
-            this._setBufferState('FULL');
+            this._setBufferState('EMPTY');
         }
         
         this.progressListener({loaded:event.bufferedTime, total:event.duration});
