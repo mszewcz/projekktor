@@ -2983,7 +2983,7 @@ jQuery(function ($) {
                     return this;
                 }
 
-                if (arguments[1] === 'string' || arguments[1] === 'number') {
+                if (typeof arguments[1] === 'string' || typeof arguments[1] === 'number') {
                     dest = arguments[1];
                 } else {
                     dest = this.getItemIdx();
