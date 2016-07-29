@@ -3727,7 +3727,7 @@ jQuery(function ($) {
                                 // trigger OFF
                                 else if ((timeIdx < this.on || timeIdx > this.off) && this.off !== this.on && this._active === true) {
                                     this._active = false;
-                                    $p.utils.log("Cue Point: [OFF] at " + this.off, this);
+                                    $p.utils.log("Cue Point: [OFF "  + this.off + "] at " + timeIdx, this);
 
                                     var cp = $.extend(this, {
                                         enabled: false,
