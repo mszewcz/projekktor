@@ -156,6 +156,7 @@ jQuery(function ($) {
             this.listeners = [];
             this.playerModel = {};
             this._isReady = false;
+            this._isLive = false;
             this._isFullViewport = false;
             this._maxElapsed = 0;
             this._playlistServer = '';
@@ -992,6 +993,10 @@ jQuery(function ($) {
 
                 if (value === 'dvr') {
                     this.getDC().addClass(this.getNS() + 'dvr');
+                    this._isLive = true;
+                }
+                else {
+                    this._isLive = false;
                 }
             };
 
@@ -1978,6 +1983,15 @@ jQuery(function ($) {
                     return 0;
                 }
             };
+            
+            this.getIsLiveOrDvr = function() {
+                try {
+                    return this._isLive || this.playerModel._isDVR || this.playerModel._isLive;
+                }
+                catch (e) {
+                    return false;
+                }
+            };
 
             this.getPosition = function () {
 
@@ -2732,6 +2746,7 @@ jQuery(function ($) {
 
                 if (this.getConfig('streamType').indexOf('dvr') > -1 || this.getConfig('streamType').indexOf('live') > -1) {
                     this.getDC().addClass(this.getNS() + 'live');
+                    this._isLive = true;
                 }
 
                 if (!$p.features.csstransitions) {
