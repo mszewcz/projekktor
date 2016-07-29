@@ -118,7 +118,7 @@ module.exports = function (grunt) {
                   "* \n" +
                   "* http://www.projekktor.com \n" + 
                   "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" + 
-                  "* Copyright 2014-2015 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
+                  "* Copyright 2014-2016 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
                   "* \n" +
                   "* under GNU General Public License \n" +
                   "* http://www.projekktor.com/license/\n" + 
