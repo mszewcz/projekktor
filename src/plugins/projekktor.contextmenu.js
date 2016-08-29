@@ -34,7 +34,7 @@ projekktorContextmenu.prototype = {
         if (this.pp.getConfig('helpHome')) {
             this._items['help'] = {
                 getContextTitle: function() {
-                    return ref.pp.getConfig('messages')[100];
+                    return $p.utils.i18n('%{error100}');
                 },
                 open: function() {
                     ref.popup(ref.pp.getConfig('helpHome'), 400, 600);
