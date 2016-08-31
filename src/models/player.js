@@ -527,11 +527,6 @@ jQuery(function ($) {
                 duration = obj.duration > position ? parseFloat((obj.duration || 0).toFixed(2)) : 0; // Android native browsers tend to report bad duration (1-100s)
             }
 
-            // bypass strange IE flash bug	
-            if (isNaN(duration + position)) {
-                return;
-            }
-
             // duration has changed:	
             if (duration !== null && ((duration !== this.media.duration && !this.isPseudoStream) || (this.isPseudoStream && this.media.duration === 0))) {
                 this.media.duration = duration;
