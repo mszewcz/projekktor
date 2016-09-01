@@ -929,7 +929,7 @@ jQuery(function ($) {
         },
         
         streamTypeChangeHandler: function (streamType) {
-            if (streamType==='dvr') {
+            if (streamType==='dvr' || streamType==='live') {
                 this._isDVR = true;
                 this.setActive(this.controlElements['golive'], true);
             }
