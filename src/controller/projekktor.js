@@ -991,12 +991,26 @@ jQuery(function ($) {
 
             this.streamTypeChangeHandler = function (value) {
 
-                if (value === 'dvr') {
-                    this.getDC().addClass(this.getNS() + 'dvr');
+                if (value === 'dvr' || value === 'live') {
                     this._isLive = true;
                 }
                 else {
                     this._isLive = false;
+                }
+                
+                switch(value){
+                    case 'dvr':
+                        this.getDC().addClass(this.getNS() + 'dvr');
+                        this.getDC().addClass(this.getNS() + 'live');
+                        break;
+                    case 'live':
+                        this.getDC().removeClass(this.getNS() + 'dvr'); 
+                        this.getDC().addClass(this.getNS() + 'live');
+                        break;
+                    default:
+                        this.getDC().removeClass(this.getNS() + 'dvr'); 
+                        this.getDC().removeClass(this.getNS() + 'live'); 
+                        break;
                 }
             };
 

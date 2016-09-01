@@ -492,33 +492,52 @@ jQuery(function ($) {
              * When the duration is POSITIVE_INFINITY then we're dealing with a native live stream (e.g. HLS)
              */
             if (obj.duration === Number.POSITIVE_INFINITY && obj.seekable && obj.seekable.length) {
-                // set DVR flag to true and propagate streamTypeChange event (mainly to the controlbar plugin)
-                if (!this._isDVR) {
-                    this._isDVR = true;
-                    this.sendUpdate('streamTypeChange', 'dvr');
-                }
+                
                 /*
-                 * When seekable.start(0) is >0 the seekable.start is probably set properly (e.g. Safari 7.0.5 on OS X 10.9.4) 
-                 * so we could use it to derermine DVR window duration 
+                 * When the seekable.end(0) === POSITIVE_INFINITY we don't have any option to determine DVR window,
+                 * so we set _isLive to true and propagate streamTypeChange event with 'live' value
                  */
-                if (obj.seekable.start(0) > 0) {
-                    duration = parseFloat((obj.seekable.end(0) - obj.seekable.start(0)).toFixed(2));
+                if(obj.seekable.end(0) === Number.POSITIVE_INFINITY){
+                    // set live and DVR flag to true and propagate streamTypeChange event with 'dvr' value (mainly to the controlbar plugin)
+                    if (!this._isLive) {
+                        this._isLive = true;
+                        this._isDVR = false;
+                        this.sendUpdate('streamTypeChange', 'live');
+                    }
                 }
                 /*
-                 * When seekable.start(0) == 0 then the only way to determine DVR window is to get the first known seekable.end(0) 
-                 * value and store it for the whole live session (e.g. Safari 7.0 on iOS 7.1.2).
-                 * It's not 100% reliable method, but it's the best estimation we could possibly get.
+                 * Otherwise we've got DVR stream
                  */
                 else {
-                    if (obj.seekable.end(0) > 0 && this.media.duration === 0) {
-                        duration = parseFloat(obj.seekable.end(0).toFixed(2));
+                    // set live and DVR flag to true and propagate streamTypeChange event with 'dvr' value (mainly to the controlbar plugin)
+                    if (!this._isDVR && !this._isLive) {
+                        this._isLive = true;
+                        this._isDVR = true;
+                        this.sendUpdate('streamTypeChange', 'dvr');
                     }
+                    /*
+                     * When seekable.start(0) is >0 the seekable.start is probably set properly (e.g. Safari 7.0.5 on OS X 10.9.4) 
+                     * so we could use it to derermine DVR window duration 
+                     */
+                    if (obj.seekable.start(0) > 0) {
+                        duration = parseFloat((obj.seekable.end(0) - obj.seekable.start(0)).toFixed(2));
+                    }
+                    /*
+                     * When seekable.start(0) == 0 then the only way to determine DVR window is to get the first known seekable.end(0) 
+                     * value and store it for the whole live session (e.g. Safari 7.0 on iOS 7.1.2).
+                     * It's not 100% reliable method, but it's the best estimation we could possibly get.
+                     */
                     else {
-                        duration = this.media.duration;
+                        if (obj.seekable.end(0) > 0 && this.media.duration === 0) {
+                            duration = parseFloat(obj.seekable.end(0).toFixed(2));
+                        }
+                        else {
+                            duration = this.media.duration;
+                        }
                     }
+                    position = (duration - (obj.seekable.end(0) - obj.currentTime));
+                    position = position < 0 ? 0 : parseFloat(position.toFixed(2));
                 }
-                position = (duration - (obj.seekable.end(0) - obj.currentTime));
-                position = position < 0 ? 0 : parseFloat(position.toFixed(2));
             }
             /*
              * If duration is a number
