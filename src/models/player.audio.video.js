@@ -85,7 +85,8 @@ $p.newModel({
                     "loop": false,
                     "autoplay": false,
                     "preload": "none",
-                    "x-webkit-airplay": "allow"
+                    "x-webkit-airplay": "allow",
+                    "playsinline": ""
                 }).prop({
                     controls: false,
                     volume: this.getVolume()
@@ -570,7 +571,8 @@ $p.newModel({
                     "loop": false,
                     "autoplay": false,
                     "preload": "none",
-                    "x-webkit-airplay": "allow"
+                    "x-webkit-airplay": "allow",
+                    "playsinline": ""
                 }).prop({
                     controls: false,
                     volume: this.getVolume()
