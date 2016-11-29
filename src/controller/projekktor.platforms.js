@@ -13,7 +13,13 @@
 jQuery(function ($) {
 
     $p.platforms = {
-        
+        /**
+         * returns 1 if MSE is available 0 otherwise 
+         */
+        MSE: function() {
+            return $p.features.hlsjs ? "1" : "0";
+        },
+
         /* returns the version of the flash player */
         FLASH: function () {
             var result = $p.utils.detectPlugin('Shockwave Flash', 'application/x-shockwave-flash', 'ShockwaveFlash.ShockwaveFlash', function (ax) {
