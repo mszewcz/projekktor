@@ -67,6 +67,7 @@ module.exports = function (grunt) {
           {flag: "osmfhls", src: "src/models/player.audio.video.osmf.hls.js"},
           {flag: "osmfmss", src: "src/models/player.audio.video.osmf.mss.js"},
           {flag: "silverlight", src: "src/models/player.audio.video.silverlight.js"},
+          {flag: "msehls", src: "src/models/player.audio.video.mse.hls.js"},
           {flag: "youtube", src: "src/models/player.youtube.js" }, 
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
@@ -529,7 +530,7 @@ module.exports = function (grunt) {
   grunt.registerTask("default", [
     "clean",
     "update_submodules",
-    "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
+    "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
     "pre-uglify",
     "uglify",
     "dist:*",
@@ -546,7 +547,7 @@ module.exports = function (grunt) {
   grunt.registerTask("build-user", [
     "clean",
     "update_submodules",
-    "build:*:*:+plugins/ads:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
+    "build:*:*:+plugins/ads:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
     "pre-uglify",
     "uglify",
     "dist:*",
