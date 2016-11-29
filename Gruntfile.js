@@ -67,11 +67,12 @@ module.exports = function (grunt) {
           {flag: "osmfhls", src: "src/models/player.audio.video.osmf.hls.js"},
           {flag: "osmfmss", src: "src/models/player.audio.video.osmf.mss.js"},
           {flag: "silverlight", src: "src/models/player.audio.video.silverlight.js"},
-          {flag: "youtube", src: "src/models/player.youtube.js" },          
+          {flag: "youtube", src: "src/models/player.youtube.js" }, 
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
           "src/plugins/projekktor.contextmenu.js",
           "src/plugins/projekktor.settings.js", 
+          {user:true, flag: "plugins/ads", src: "ads", ver: true },
           {user:true, flag: "plugins/ima", src: "ima", ver: true },
           {user:true, flag: "plugins/logo", src: "logo" , ver: true},
           {user:true, flag: "plugins/postertitle", src: "postertitle", ver: true },
@@ -432,7 +433,7 @@ module.exports = function (grunt) {
     nonascii = false;
 
     distpaths.forEach(function (filename) {
-      var i, c,
+      var i,
       text = fs.readFileSync(filename, "utf8"); 
 
       // Ensure files use only \n for line endings, not \r\n
@@ -545,7 +546,7 @@ module.exports = function (grunt) {
   grunt.registerTask("build-user", [
     "clean",
     "update_submodules",
-    "build:*:*:+plugins/tracking:+playlist:-plugins/tracks:-plugins/share:+html:-jarisflash:+vlc;-youtube:-jwflash",
+    "build:*:*:+plugins/ads:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
     "pre-uglify",
     "uglify",
     "dist:*",
