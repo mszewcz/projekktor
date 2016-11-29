@@ -398,8 +398,8 @@ jQuery(function ($) {
         getIsReady: function () {
             return this._isReady;
         },
-        getPoster: function () {
-            var type = 'poster',
+        getPoster: function (type) {
+            var type = type || 'poster',
                 result = null,
                 cfg = this.pp.getConfig(type),
                 qual = 'default',
@@ -759,9 +759,9 @@ jQuery(function ($) {
                     imgObj;
 
                 if (!imageObj.attr("data-od-width"))
-                    imageObj.attr("data-od-width", target.naturalWidth);
+                    imageObj.attr("data-od-width", target[0].naturalWidth);
                 if (!imageObj.attr("data-od-height"))
-                    imageObj.attr("data-od-height", target.naturalHeight);
+                    imageObj.attr("data-od-height", target[0].naturalHeight);
 
                 currentImageObj.remove();
 
