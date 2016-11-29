@@ -49,6 +49,9 @@ projekktorConfig.prototype = {
         silverlight: {
             src: ''
             // minPlatformVersion: '' // optional minimal silverlight plugin version rewrite
+        },
+        mse: {
+            src: ''
         }
     },
     
