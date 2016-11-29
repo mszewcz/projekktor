@@ -135,6 +135,14 @@ $p.newModel({
         'pseudo': 'recorded',
         'dvr': 'dvr'
     },
+    /**
+     * Sometimes there are streams which are handled by OSMF but with other mimeType
+     * explicitly given to the SMP. In this case we need to have a map.
+     */
+    _mimeTypeMap: {
+        'audio/mpegurl': 'application/vnd.apple.mpegurl',
+        'audio/x-mpegurl': 'application/vnd.apple.mpegurl'
+    },
     
     applyMedia: function(destContainer) {
         var ref = this,
@@ -182,7 +190,7 @@ $p.newModel({
             // FlashVars
             initVars: $.extend({
                 src: this.getSource()[0].src,
-                mimeType: this.getSource()[0].originalType,
+                mimeType: this._mimeTypeMap[this.getSource()[0].originalType] || this.getSource()[0].originalType,
                 streamType: this._streamTypeMap[this.pp.getConfig('streamType')],
                 scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
                 autoPlay: false,
@@ -900,34 +908,35 @@ $p.newModel({
         {ext:'m4a', type:'audio/mp4', platform: ['flash'], streamType: ['*']},
         {ext:'m4a', type:'audio/mpeg', platform: ['flash'], streamType: ['*']}
     ],
-    
+
     applyMedia: function(destContainer) {
         var ref = this,
             ppId = ref.pp.getId(),
             ppMediaId = ref.pp.getMediaId();
+
+        // register global ready listener
+        window['projekktorOSMFReady' + ppId] = function() {
+            projekktor(ppId).playerModel._OSMFListener(arguments);
+        };
+        
+        // register global error listener
+        window['projekktorOSMFError' + ppId] = function(mediaId, errorCode, errorMessage, errorDetail) {
+            projekktor(ppId).playerModel._OSMFErrorListener(mediaId, errorCode, errorMessage, errorDetail);
+        };
         
         $p.utils.blockSelection(destContainer);        
 
         // create image element
         this.imageElement = this.applyImage(this.getPoster('cover') || this.getPoster('poster'), destContainer);
             
-        var flashContainer = $('#' + ppMediaId + '_flash_container');
+        var destContainer = $('#' + ppMediaId + '_flash_container');
         
-        if (flashContainer.length===0) {
-            flashContainer = $(document.createElement('div'))
+        if (destContainer.length===0) {
+            destContainer = $(document.createElement('div'))
             .css({width: '1px', height: '1px'})
             .attr('id', ppMediaId + "_flash_container")
             .prependTo( this.pp.getDC() );        
         }
-        
-        window['projekktorOSMFReady' + ppId] = function() {
-            projekktor(ppId).playerModel._OSMFListener(arguments);
-        };   
-        
-        // register global error listener
-        window['projekktorOSMFError' + ppId] = function(mediaId, errorCode, errorMessage, errorDetail) {
-            projekktor(ppId).playerModel._OSMFErrorListener(mediaId, errorCode, errorMessage, errorDetail);
-        };
         
         var config = {
             src: this.pp.getConfig('platformsConfig').flash.src,
@@ -947,13 +956,21 @@ $p.newModel({
                 seamlessTabbing: 'false',
                 bgcolor: '#000000'
             },
+            // FlashVars
             initVars: $.extend({
+                src: this.getSource()[0].src,
+                mimeType: this._mimeTypeMap[this.getSource()[0].originalType] || this.getSource()[0].originalType,
+                streamType: this._streamTypeMap[this.pp.getConfig('streamType')],
+                scaleMode: this._scalingMap[this.pp.getConfig('videoScaling')],
+                autoPlay: false,
+                urlIncludesFMSApplicationInstance: this.pp.getConfig('rtmpUrlIncludesApplicationInstance'),
+                enableStageVideo: this._hardwareAcceleration,
                 javascriptCallbackFunction: 'window.projekktorOSMFReady' + ppId,
-                javascriptErrorCallbackFunction: 'window.projekktorOSMFError' + ppId               
+                javascriptErrorCallbackFunction: 'window.projekktorOSMFError' + ppId
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
-        
-        this.mediaElement = $p.utils.embedPlugin(this.platform, flashContainer, config, false);
+
+        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
         this._modelInitTimeoutId = setTimeout(function(){
             ref._modelInitTimeoutHandler();
         }, this._modelInitTimeout);
