@@ -268,6 +268,18 @@ jQuery(function ($) {
 
             return $('#' + attributes.id);
         },
+        /**
+         * script that allows fetching a cached/uncached script
+         * set options to {cache: true} if you want to cache requests
+         */
+        getScript: function(url, options) {
+            options = $.extend(options || {}, {
+                dataType: "script",
+                url: url
+            });
+
+            return jQuery.ajax(options);
+        },
         ieVersion: function () {
             var v = 3,
                     div = document.createElement('div'),
