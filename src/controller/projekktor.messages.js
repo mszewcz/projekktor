@@ -33,6 +33,10 @@ projekktorMessages = {
     "platform_vlc": "VLC Plugin",
     "platform_vlc_info": "",
 
+    // MSE
+    "platform_mse": "MSE",
+    "pplatform_mse_info": "",
+
     // settings
     'ok': 'OK',
     'report': 'Report a bug',

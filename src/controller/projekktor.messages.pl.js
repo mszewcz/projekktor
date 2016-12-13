@@ -25,6 +25,7 @@ projekktorMessages = {
     "platform_flash": "Flash",
     "platform_native": "HTML5",
     "platform_vlc": "VLC Plugin",
+    "platform_mse": "MSE",
     "auto": "auto",
     "quality": "jakość",
     "high": "wysoka",
