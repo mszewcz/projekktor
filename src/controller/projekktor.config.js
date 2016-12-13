@@ -38,7 +38,7 @@ projekktorConfig.prototype = {
     _ns:                            'pp',
     
     /* a prioritized array of available platforms */
-    _platforms:                     ['browser', 'android', 'ios', 'native', 'flash', 'silverlight'],
+    _platforms:                     ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight'],
     
     /* additional platforms config */
     _platformsConfig: {
@@ -61,7 +61,8 @@ projekktorConfig.prototype = {
         android: ['full', 'mediaonly', 'viewport'],
         ios: ['full', 'mediaonly', 'viewport'],
         flash: ['full', 'viewport'],
-        silverlight: ['full', 'viewport']
+        silverlight: ['full', 'viewport'],
+        mse: ['full', 'viewport']
     },
     
     /* if set to true, projekktor assumes to live within an iframe and will act accordingly (used for embedding) */
