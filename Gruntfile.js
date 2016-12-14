@@ -3,11 +3,14 @@ module.exports = function (grunt) {
   "use strict";
   grunt.file.defaultEncoding = 'utf-8';
 
-  var name = grunt.option('name') || '',
+  var 
+    pkg = grunt.file.readJSON("package.json"),
+    ver = pkg.version,
+    name = grunt.option('name') || '',
     dest = grunt.option('dest') || 'dest/',
     pluginspath = grunt.option('pluginspath') || 'plugins/',
-    version = (name!=='') ? (grunt.option('ver') || 'universal') + "." + name : (grunt.option('ver') || 'universal'),
     lang = grunt.option('lang') || 'en', 
+    version = (name!=='') ? (grunt.option('ver') || ver) + "." + name + "." + lang : (grunt.option('ver') || ver) + "." + lang,
     distpaths = [
       "dist/projekktor-" + version + ".js",
       "dist/projekktor-" + version + ".min.map",
@@ -31,7 +34,7 @@ module.exports = function (grunt) {
   grunt.file.mkdir(dest);
   
   grunt.initConfig({
-    pkg: grunt.file.readJSON("package.json"),
+    pkg: pkg,
     dst: readOptionalJSON("dist/.destination.json"),
     compare_size: {
       files: ["dist/projekktor-" + version + ".js", "dist/projekktor-" + version + ".min.js"],
