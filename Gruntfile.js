@@ -10,14 +10,13 @@ module.exports = function (grunt) {
     dest = grunt.option('dest') || 'dest/',
     pluginspath = grunt.option('pluginspath') || 'plugins/',
     lang = grunt.option('lang') || 'en', 
-    version = (name!=='') ? (grunt.option('ver') || ver) + "." + name + "." + lang : (grunt.option('ver') || ver) + "." + lang,
+    version = (name!=='') ? (grunt.option('ver') || ver) + "." + name : (grunt.option('ver') || ver),
     distpaths = [
       "dist/projekktor-" + version + ".js",
       "dist/projekktor-" + version + ".min.map",
       "dist/projekktor-" + version + ".min.js"
     ],
     filesUglify = {},
-    filesPreUglify = {},
     gzip = require("gzip-js"),
     readOptionalJSON = function (filepath) {
       var data = {};
@@ -28,8 +27,7 @@ module.exports = function (grunt) {
     },
     srcHintOptions = readOptionalJSON("src/.jshintrc");
 
-  filesPreUglify["dist/projekktor-" + version + ".pre-min.js"] = ["dist/projekktor-" + version + ".js"];
-  filesUglify["dist/projekktor-" + version + ".min.js"] = ["dist/projekktor-" + version + ".pre-min.js"];
+  filesUglify["dist/projekktor-" + version + ".min.js"] = ["dist/projekktor-" + version + ".js"];
   dest = dest + name + "/";
   grunt.file.mkdir(dest);
   
@@ -115,9 +113,9 @@ module.exports = function (grunt) {
       tasks: "dev"
     },
 
-    "pre-uglify": {
+    uglify: {
       all: {
-        files: filesPreUglify,
+        files: filesUglify,
         options: {
           banner: "/*! Projekktor v<%= pkg.version %>\n" +
                   "* <%= grunt.template.today('yyyy-mm-dd') %> \n" +
@@ -128,18 +126,9 @@ module.exports = function (grunt) {
                   "* \n" +
                   "* under GNU General Public License \n" +
                   "* http://www.projekktor.com/license/\n" + 
-                  "*/"
-        }
-      }
-    },
-    uglify: {
-      all: {
-        files: filesUglify,
-        options: {
-          // Keep our hard-coded banner
-          preserveComments: "some",
-          sourceMap: "dist/projekktor-" + version + ".min.map",
-          sourceMappingURL: "projekktor-" + version + ".min.map",
+                  "*/",
+          sourceMap: true,
+          sourceMapName: "dist/projekktor-" + version + ".min.map",
           report: "min",
           beautify: {
             ascii_only: true
@@ -228,7 +217,7 @@ module.exports = function (grunt) {
 
     grunt.util.spawn({
       grunt: true,
-      args: ["--ver=" + (grunt.option('ver') || 'universal'), "--pluginspath=" + grunt.option('pluginspath') || '', "--dest=" + grunt.option('dest') || '', "--name=" + grunt.option('name') || '', "update_submodules", "build:*:" + modules, "pre-uglify", "uglify", "dist:*", "compare_size", "copy", "readme", "compress"]
+      args: ["--ver=" + (grunt.option('ver') || 'universal'), "--pluginspath=" + grunt.option('pluginspath') || '', "--dest=" + grunt.option('dest') || '', "--name=" + grunt.option('name') || '', "build:*:" + modules, "uglify", "dist:*", "compare_size", "copy", "readme", "compress"]
     }, function (err, result) {
       if (err) {
         grunt.log.writeln(err + " "+ result);
@@ -501,31 +490,12 @@ module.exports = function (grunt) {
     return !nonascii;
   });
 
-  // Work around grunt-contrib-uglify sourceMap issues (jQuery #13776)
-  grunt.registerMultiTask("pre-uglify", function () {
-    var banner = this.options().banner;
-
-    this.files.forEach(function (mapping) {
-      // Join src
-      var input = mapping.src.map(function (file) {
-        var contents = grunt.file.read(file);
-
-        // Strip banners
-        return contents.replace(/^\/\*!(?:.|\n)*?\*\/\n?/gm, "");
-      }).join("\n");
-
-      // Write temp file (with optional banner)
-      grunt.file.write(mapping.dest, (banner || "") + input);
-    });
-  });
-
   // Load grunt tasks from NPM packages  
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-compress");
   grunt.loadNpmTasks("grunt-compare-size");
   grunt.loadNpmTasks("grunt-git-authors");
-  grunt.loadNpmTasks("grunt-update-submodules");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-contrib-uglify");
@@ -533,9 +503,7 @@ module.exports = function (grunt) {
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
     "clean",
-    "update_submodules",
     "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
-    "pre-uglify",
     "uglify",
     "dist:*",
     "compare_size",
@@ -545,14 +513,12 @@ module.exports = function (grunt) {
   ]);
 
   // Build minimal -- only required plugins
-  grunt.registerTask("build-minimal", ["clean", "update_submodules", "build", "pre-uglify", "uglify", "dist:*", "compare_size", "copy", "readme", "compress"]);
+  grunt.registerTask("build-minimal", ["clean", "build", "uglify", "dist:*", "compare_size", "copy", "readme", "compress"]);
 
   // Minimal build
   grunt.registerTask("build-user", [
     "clean",
-    "update_submodules",
     "build:*:*:+plugins/ads:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
-    "pre-uglify",
     "uglify",
     "dist:*",
     "compare_size",
@@ -563,6 +529,10 @@ module.exports = function (grunt) {
 
   // Short list as a high frequency watch task
   grunt.registerTask("dev", ["selector", "build:*:*", "jshint"]);
+
+  grunt.registerTask("bumpver", "Bump projekktor version", function(){
+
+  });
 };
 
 
