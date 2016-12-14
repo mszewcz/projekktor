@@ -6,7 +6,8 @@ module.exports = function (grunt) {
   var name = grunt.option('name') || '',
     dest = grunt.option('dest') || 'dest/',
     pluginspath = grunt.option('pluginspath') || 'plugins/',
-    version = (name!=='') ? (grunt.option('ver') || 'universal') + "." + name : (grunt.option('ver') || 'universal'),  
+    version = (name!=='') ? (grunt.option('ver') || 'universal') + "." + name : (grunt.option('ver') || 'universal'),
+    lang = grunt.option('lang') || 'en', 
     distpaths = [
       "dist/projekktor-" + version + ".js",
       "dist/projekktor-" + version + ".min.map",
@@ -56,7 +57,7 @@ module.exports = function (grunt) {
           "src/controller/projekktor.persistentstorage.js",
           "src/controller/projekktor.platforms.js",
           "src/controller/projekktor.plugininterface.js",
-          "src/controller/projekktor.messages.js",
+          "src/controller/projekktor.messages." + lang + ".js",
           "src/models/player.js",
           "src/models/player.NA.js",
           "src/models/player.audio.video.js",
