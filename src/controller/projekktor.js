@@ -132,7 +132,7 @@ jQuery(function ($) {
 
         function PPlayer (srcNode, cfg, onReady) {
 
-            this.config = new projekktorConfig('1.6.00');
+            this.config = new projekktorConfig();
             
             this.storage = new projekktorPersistentStorage(this);
 
@@ -4561,7 +4561,3 @@ jQuery(function ($) {
         return true;
     };
 });
-
-var projekktorConfig = function (ver) {
-    this._version = ver;
-};
