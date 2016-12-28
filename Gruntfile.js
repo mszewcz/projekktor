@@ -50,6 +50,7 @@ module.exports = function (grunt) {
         dest: "dist/projekktor-" + version + ".js",
         src: [
           "src/controller/projekktor.js",
+          "src/controller/projekktor.config.version.js",
           "src/controller/projekktor.config.js",
           "src/controller/projekktor.utils.js",
           "src/controller/projekktor.useragent.js",
@@ -107,7 +108,25 @@ module.exports = function (grunt) {
         }
       }
     },
-
+    bump: {
+      options: {
+        files: ['package.json', 'src/controller/projekktor.config.version.js'],
+        updateConfigs: [],
+        commit: true,
+        commitMessage: 'Bump version to %VERSION%',
+        commitFiles: ['package.json',  'src/controller/projekktor.config.version.js'],
+        createTag: true,
+        tagName: 'tvplayer-%VERSION%',
+        tagMessage: 'Projekktor for TVPlayer %VERSION%',
+        push: false,
+        pushTo: 'upstream',
+        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
+        globalReplace: false,
+        prereleaseName: false,
+        metadata: '',
+        regExp: /([\"\']?version[\"\']?\s*?[:=]\s*?[\'\"])(\d+\.\d+\.\d+(-\.\d+)?(-\d+)?)[\d||A-a|.|-]*(['|"]?)/i
+      }
+    },
     watch: {
       files: ["<%= jshint.grunt.src %>", "<%= jshint.tests.src %>", "src/**/*.js"],
       tasks: "dev"
@@ -491,6 +510,7 @@ module.exports = function (grunt) {
   });
 
   // Load grunt tasks from NPM packages  
+  grunt.loadNpmTasks("grunt-bump");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-compress");
@@ -529,10 +549,6 @@ module.exports = function (grunt) {
 
   // Short list as a high frequency watch task
   grunt.registerTask("dev", ["selector", "build:*:*", "jshint"]);
-
-  grunt.registerTask("bumpver", "Bump projekktor version", function(){
-
-  });
 };
 
 
