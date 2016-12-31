@@ -531,24 +531,6 @@ module.exports = function (grunt) {
     "readme",
     "compress"
   ]);
-
-  // Build minimal -- only required plugins
-  grunt.registerTask("build-minimal", ["clean", "build", "uglify", "dist:*", "compare_size", "copy", "readme", "compress"]);
-
-  // Minimal build
-  grunt.registerTask("build-user", [
-    "clean",
-    "build:*:*:+plugins/ads:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
-    "uglify",
-    "dist:*",
-    "compare_size",
-    "copy",
-    "readme",
-    "compress"    
-  ]);
-
-  // Short list as a high frequency watch task
-  grunt.registerTask("dev", ["selector", "build:*:*", "jshint"]);
 };
 
 
