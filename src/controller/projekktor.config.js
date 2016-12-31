@@ -38,7 +38,7 @@ projekktorConfig.prototype = {
     _ns:                            'pp',
     
     /* a prioritized array of available platforms */
-    _platforms:                     ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight'],
+    _platforms:                     ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight', 'videojs'],
     
     /* additional platforms config */
     _platformsConfig: {
@@ -52,6 +52,9 @@ projekktorConfig.prototype = {
         },
         mse: {
             src: ''
+        },
+        videojs: {
+            src: ''
         }
     },
     
@@ -62,7 +65,8 @@ projekktorConfig.prototype = {
         ios: ['full', 'mediaonly', 'viewport'],
         flash: ['full', 'viewport'],
         silverlight: ['full', 'viewport'],
-        mse: ['full', 'viewport']
+        mse: ['full', 'viewport'],
+        videojs: ['full', 'viewport']
     },
     
     /* if set to true, projekktor assumes to live within an iframe and will act accordingly (used for embedding) */
