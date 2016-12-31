@@ -87,7 +87,20 @@ module.exports = function (grunt) {
           {user:true, flag: "plugins/vastdemo", src:  "vastdemo", ver: true }        
         ]
       }
-    },    
+    },
+    platforms: {
+        videojs: {
+
+        }
+    },
+    concat: {
+      vpaidvideojs: {
+        files: {
+          'platforms/videojs/videojs.vpaid.css': ['platforms/videojs/video-js.css', 'platforms/videojs/videojs.vast.vpaid.css'],
+          'platforms/videojs/videojs.vpaid.js': ['platforms/videojs/video.js', 'platforms/videojs/videojs_5.vast.vpaid.js']
+        }
+      }
+    },
     jshint: {
       dist: {
         src: ["dist/projekktor-" + version + ".js"],
@@ -191,6 +204,13 @@ module.exports = function (grunt) {
           // flattens results to a single level
           // {expand: true, flatten: true, src: ['path/**'], dest: 'dest/', filter: 'isFile'}
         ]
+      },
+      platforms: {
+        files: [
+          {expand: true, cwd:'lib/hls.js/dist/', src:['*.js', '*.map'], dest: 'platforms/mse/hls.js/'},
+          {expand: true, cwd:'lib/video.js/dist/', src:['*.js', '*.map', '*.css'], dest: 'platforms/videojs/'},
+          {expand: true, cwd:'lib/videojs-vast-vpaid/bin/', src:['videojs_5*.js', 'videojs_5*.js.map', '*.css.map', '*.css', '*.swf'], dest: 'platforms/videojs/'}
+        ]
       }
     },
     compress: {
@@ -236,7 +256,7 @@ module.exports = function (grunt) {
 
     grunt.util.spawn({
       grunt: true,
-      args: ["--ver=" + (grunt.option('ver') || 'universal'), "--pluginspath=" + grunt.option('pluginspath') || '', "--dest=" + grunt.option('dest') || '', "--name=" + grunt.option('name') || '', "build:*:" + modules, "uglify", "dist:*", "compare_size", "copy", "readme", "compress"]
+      args: ["--ver=" + (grunt.option('ver') || 'universal'), "--pluginspath=" + grunt.option('pluginspath') || '', "--dest=" + grunt.option('dest') || '', "--name=" + grunt.option('name') || '', "build:*:" + modules, "uglify", "dist:*", "compare_size", "copy:main", "readme", "compress"]
     }, function (err, result) {
       if (err) {
         grunt.log.writeln(err + " "+ result);
@@ -519,6 +539,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
@@ -527,10 +548,17 @@ module.exports = function (grunt) {
     "uglify",
     "dist:*",
     "compare_size",
-    "copy",
+    "copy:main",
     "readme",
     "compress"
   ]);
+
+  grunt.registerMultiTask("platforms", "prepare platforms for distribution", function(){
+       var target = this.target;
+
+       grunt.task.run("copy:platforms");
+       grunt.task.run("concat:vpaidvideojs");
+  });
 };
 
 
