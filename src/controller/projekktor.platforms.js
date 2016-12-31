@@ -13,6 +13,10 @@
 jQuery(function ($) {
 
     $p.platforms = {
+        VIDEOJS: function() {
+            return "1";
+        },
+
         /**
          * returns 1 if MSE is available 0 otherwise 
          */
