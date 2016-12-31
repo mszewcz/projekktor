@@ -4,3 +4,9 @@
 [submodule "lib/hls.js"]
 	path = lib/hls.js
 	url = https://github.com/fixedmachine/hls.js.git
+[submodule "lib/video.js"]
+	path = lib/video.js
+	url = https://github.com/videojs/video.js.git
+[submodule "lib/videojs-vast-vpaid"]
+	path = lib/videojs-vast-vpaid
+	url = https://github.com/MailOnline/videojs-vast-vpaid.git
