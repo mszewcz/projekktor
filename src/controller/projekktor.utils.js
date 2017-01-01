@@ -280,6 +280,21 @@ jQuery(function ($) {
 
             return jQuery.ajax(options);
         },
+        getCss: function (url, onload) {
+            var css = $("<link>", {
+                "rel": "stylesheet",
+                "type": "text/css",
+                "href": url
+            });
+
+            if (typeof callback === 'function') {
+                css.on('load', onload);
+            }
+
+            if (url) {
+                css.appendTo('head');
+            }
+        },
         ieVersion: function () {
             var v = 3,
                     div = document.createElement('div'),
