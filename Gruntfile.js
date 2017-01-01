@@ -97,7 +97,7 @@ module.exports = function (grunt) {
     concat: {
       vpaidvideojs: {
         files: {
-          'platforms/videojs/videojs.vpaid.css': ['platforms/videojs/video-js.css', 'platforms/videojs/videojs.vast.vpaid.css'],
+          'platforms/videojs/videojs.vpaid.css': ['platforms/videojs/video-js.css', 'platforms/videojs/videojs.vast.vpaid.css', 'platforms/videojs/videojs-projekktor-model-custom.css'],
           'platforms/videojs/videojs.vpaid.js': ['platforms/videojs/video.js', 'platforms/videojs/videojs_5.vast.vpaid.js']
         }
       }

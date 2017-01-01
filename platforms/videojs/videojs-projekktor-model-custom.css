@@ -1,0 +1,5 @@
+/* custom styles for video.js as projekktor player model */
+/* disable video.js loading spinner */
+.vjs-seeking .vjs-loading-spinner, .vjs-waiting .vjs-loading-spinner {
+    display: none;
+}
