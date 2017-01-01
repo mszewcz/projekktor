@@ -71,6 +71,7 @@ module.exports = function (grunt) {
           {flag: "osmfmss", src: "src/models/player.audio.video.osmf.mss.js"},
           {flag: "silverlight", src: "src/models/player.audio.video.silverlight.js"},
           {flag: "msehls", src: "src/models/player.audio.video.mse.hls.js"},
+          {flag: "videojs", src: "src/models/player.videojs.js"},
           {flag: "youtube", src: "src/models/player.youtube.js" }, 
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
