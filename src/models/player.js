@@ -392,6 +392,14 @@ jQuery(function ($) {
         getModelName: function () {
             return this.modelId || null;
         },
+        getMediaElementId: function() {
+            try {
+                return this.pp.getMediaId() + "_" + this.getModelName().toLowerCase();
+            }
+            catch(e){
+                return "";
+            }
+        },
         getHasGUI: function () {
             return (this.hasGUI && !this._isPoster);
         },
