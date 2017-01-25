@@ -354,7 +354,6 @@ $p.newModel({
     
     disableDefaultVideoElementActions: function(evt){
             evt.preventDefault();
-            evt.stopPropagation();
     },
     
     getMediaStatus: function(name){
