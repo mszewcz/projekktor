@@ -76,9 +76,8 @@ jQuery(function ($) {
                 on: ['mousedown', 'touchstart'],
                 call: 'scrubberdragStartDragListener'
             }],
-
             'play': [{
-                on: ['touchstart', 'click'],
+                on: ['touchend', 'click'],
                 call: 'playClk'
             }, {
                 on: ['touchend'],

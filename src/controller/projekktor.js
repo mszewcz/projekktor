@@ -1050,11 +1050,6 @@ jQuery(function ($) {
                 setTimeout(sync, 50);
             };
 
-            this._MD = function (event) {
-
-                projekktor('#' + event.currentTarget.id.replace(/_media$/, ''))._playerFocusListener(event);
-            };
-
             /* attach mouse-listeners to GUI elements */
             this._addGUIListeners = function () {
 
@@ -1062,45 +1057,21 @@ jQuery(function ($) {
 
                 this._removeGUIListeners();
 
-                if (this.getDC().get(0).addEventListener) {
-                    this.getDC().get(0).addEventListener("mousedown", this._MD, true);
-                }
-                else {
-                    // IE *sigh*
-                    this.getDC().mousedown(function (event) {
-                        ref._playerFocusListener(event);
-                    });
-                }
-
-                this.getDC()
-                    .mousemove(function (event) {
-                        ref._playerFocusListener(event);
-                    })
-                    .mouseenter(function (event) {
-                        ref._playerFocusListener(event);
-                    })
-                    .mouseleave(function (event) {
-                        ref._playerFocusListener(event);
-                    })
-                    .focus(function (event) {
-                        ref._playerFocusListener(event);
-                    })
-                    .blur(function (event) {
-                        ref._playerFocusListener(event);
-                    });
-                // .bind('touchstart', function(){ref._MD})
+                this.getDC().on("mousedown mousemove mouseenter mouseleave focus blur", function handler(e){
+                    ref._playerFocusListener(e);
+                });
 
                 $(window)
-                    .bind('resize.projekktor' + this.getId(), function () {
+                    .on('resize.projekktor' + this.getId(), function () {
                         ref.setSize();
                     })
-                    .bind('touchstart', function () {
+                    .on('touchstart.projekktor' + this.getId(), function () {
                         ref._windowTouchListener(event);
                     });
 
                 if (this.config.enableKeyboard === true) {
-                    $(document).unbind('keydown.pp' + this._id);
-                    $(document).bind('keydown.pp' + this._id, function (evt) {
+                    $(document).off('keydown.pp' + this._id);
+                    $(document).on('keydown.pp' + this._id, function (evt) {
                         ref._keyListener(evt);
                     });
                 }
@@ -1109,17 +1080,12 @@ jQuery(function ($) {
             /* remove mouse-listeners */
             this._removeGUIListeners = function () {
 
-                $("#" + this.getId()).unbind();
-                this.getDC().unbind();
+                $("#" + this.getId()).off();
+                this.getDC().off();
 
-                if (this.getDC().get(0).removeEventListener) {
-                    this.getDC().get(0).removeEventListener("mousedown", this._MD, true);
-                }
-                else {
-                    this.getDC().get(0).detachEvent('onmousedown', this._MD);
-                }
 
-                $(window).unbind('resize.projekktor' + this.getId());
+                $(window).off('touchstart.projekktor' + this.getId());
+                $(window).off('resize.projekktor' + this.getId());
             };
 
             /* add plugin objects to the bubble-event queue */
