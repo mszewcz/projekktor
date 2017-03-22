@@ -154,6 +154,16 @@ jQuery(function ($) {
             });
         },
 
+        removeVideoJsEventListeners: function () {
+            var ref = this;
+
+            // remove event listeners
+            $.each(this._eventMap, function (key, value) {
+                var listener = ref[value];
+                ref._videojs.off(key, listener);
+            });
+        },
+
         vjsPlayingListener: function (evt) {
             var ref = this._ppModel;
             ref.playingListener();
@@ -187,7 +197,8 @@ jQuery(function ($) {
         },
 
         vjsEndedListener: function (evt) {
-            var ref = this._ppModel;
+            var ref = this._ppModel || this;
+            ref.removeVideoJsEventListeners();
             ref.endedListener(evt);
         },
 
@@ -221,9 +232,10 @@ jQuery(function ($) {
             ref._setBufferState('EMPTY');
         },
 
-        vjsErrorListener: function (evt) {
-            var ref = this._ppModel,
-                error = this.error();
+        vjsErrorListener: function (evt, vjsRef) {
+            var ref = this._ppModel || this,
+                vjsPlayer = vjsRef || this,
+                error = vjsPlayer.error() || evt.error;
             try {
                 switch (error.code) {
                     case error.MEDIA_ERR_ABORTED:
