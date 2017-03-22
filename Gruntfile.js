@@ -151,17 +151,39 @@ module.exports = function (grunt) {
         files: filesUglify,
         options: {
           banner: "/*! Projekktor v<%= pkg.version %>\n" +
-                  "* <%= grunt.template.today('yyyy-mm-dd') %> \n" +
-                  "* \n" +
-                  "* http://www.projekktor.com \n" + 
-                  "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" + 
-                  "* Copyright 2014-2016 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
-                  "* \n" +
-                  "* under GNU General Public License \n" +
-                  "* http://www.projekktor.com/license/\n" + 
-                  "*/",
+          "* <%= grunt.template.today('yyyy-mm-dd') %> \n" +
+          "* \n" +
+          "* http://www.projekktor.com \n" +
+          "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" +
+          "* Copyright 2014-2016 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
+          "* \n" +
+          "* under GNU General Public License \n" +
+          "* http://www.projekktor.com/license/\n" +
+          "*/",
           sourceMap: true,
           sourceMapName: "dist/projekktor-" + version + ".min.map",
+          report: "min",
+          beautify: {
+            ascii_only: true
+          },
+          compress: {
+            hoist_funs: false,
+            join_vars: false,
+            loops: false,
+            unused: false
+          },
+          mangle: {
+            // saves some bytes when gzipped
+            except: ["undefined"]
+          }
+        }
+      },
+      vpaidvideojs: {
+        files: {
+          'platforms/videojs/videojs.vpaid.min.js': ['platforms/videojs/video.js', 'platforms/videojs/videojs_5.vast.vpaid.js']
+        },
+        options: {
+          sourceMap: false,
           report: "min",
           beautify: {
             ascii_only: true
@@ -546,7 +568,7 @@ module.exports = function (grunt) {
   grunt.registerTask("default", [
     "clean",
     "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
-    "uglify",
+    "uglify:all",
     "dist:*",
     "compare_size",
     "copy:main",
@@ -559,6 +581,7 @@ module.exports = function (grunt) {
 
        grunt.task.run("copy:platforms");
        grunt.task.run("concat:vpaidvideojs");
+       grunt.task.run("uglify:vpaidvideojs");
   });
 };
 
