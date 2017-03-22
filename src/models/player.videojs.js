@@ -17,7 +17,7 @@ jQuery(function ($) {
         modelId: 'VIDEOJS',
         videojsVersion: '1',
 
-        iLove: [{
+        iLove: [{            
             ext: 'js',
             type: 'application/javascript',
             platform: ['videojs'],
@@ -53,19 +53,19 @@ jQuery(function ($) {
         applyMedia: function (destContainer) {
             var ref = this,
                 videoJsLoadSuccess = function () {
-                    if ($('#' + ref.pp.getMediaId() + "_html").length === 0) {
+                    if ($('#' + ref.getMediaElementId()).length === 0) {
 
                         ref.wasPersistent = false;
 
                         destContainer.html('').append(
                             $('<video/>')
                             .attr({
-                                "id": ref.pp.getMediaId() + "_html",
+                                "id": ref.getMediaElementId(),
                                 "poster": $p.utils.imageDummy(),
                                 "src": ref.getSource()[0].src,
                                 "loop": false,
                                 "autoplay": false,
-                                "preload": "auto",
+                                "preload": "none",
                                 "x-webkit-airplay": "allow",
                                 "playsinline": ""
                             }).prop({
@@ -81,7 +81,7 @@ jQuery(function ($) {
                         );
                     }
 
-                    ref.mediaElement = $('#' + ref.pp.getMediaId() + "_html");
+                    ref.mediaElement = $('#' + ref.getMediaElementId());
                     ref.initVideoJs();
                 },
                 videoJsLoadFailed = function (jqxhr, settings, exception) {
