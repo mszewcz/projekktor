@@ -262,7 +262,7 @@ projekktorDisplay.prototype = {
                 ref.clickHandler('displayDbl');
                 }
                 ref.displayClicks = 0;
-            }, 250
+            }, 150
             );    
         }
         return;
