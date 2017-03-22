@@ -134,7 +134,7 @@ jQuery(function ($) {
                 call: 'touchEnd'
             }],
             'fsenter': [{
-                on: ['pointerdown', 'touchstart', 'click'],
+                on: ['touchend', 'click'],
                 call: 'enterFullscreenClk'
             }, {
                 on: ['touchend'],
