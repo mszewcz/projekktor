@@ -1,5 +1,5 @@
 /* 
- * Copyright 2016 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
+ * Copyright 2016-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  * 
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
