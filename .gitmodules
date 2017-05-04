@@ -3,7 +3,7 @@
 	url = https://github.com/fixedmachine/projekktor-StrobeMediaPlayback.git
 [submodule "lib/hls.js"]
 	path = lib/hls.js
-	url = https://github.com/fixedmachine/hls.js.git
+	url = https://github.com/video-dev/hls.js.git
 [submodule "lib/video.js"]
 	path = lib/video.js
 	url = https://github.com/videojs/video.js.git
