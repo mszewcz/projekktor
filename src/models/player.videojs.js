@@ -17,12 +17,7 @@ jQuery(function ($) {
         modelId: 'VIDEOJS',
         videojsVersion: '1',
 
-        iLove: [{            
-            ext: 'js',
-            type: 'application/javascript',
-            platform: ['videojs'],
-            streamType: ['http']
-        }, {
+        iLove: [{
             ext: 'mp4',
             type: 'video/mp4',
             platform: ['videojs'],
@@ -111,6 +106,8 @@ jQuery(function ($) {
 
             ref._videojs = window.videojs(ref.mediaElement[0], vjsConfig, function (event, data) {
                 // on video.js ready
+                ref.mediaElement = $(this.contentEl());
+
                 ref.addVideoJsEventListeners();
                 if (wasAwakening) {
                     ref.displayReady();
