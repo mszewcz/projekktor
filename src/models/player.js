@@ -145,7 +145,7 @@ jQuery(function ($) {
         },
         removeListeners: function () {
             try {
-                this.mediaElement.unbind('.projekktor' + this.pp.getId());
+                this.mediaElement.off('.projekktor' + this.pp.getId());
             } catch (e) {
             }
         },
@@ -621,7 +621,7 @@ jQuery(function ($) {
             if (this.mediaElement instanceof jQuery) { // fix this - make sure all instances are jquery objects
                 if (typeof this.mediaElement.get(0).buffered === 'object') {
                     if (this.mediaElement.get(0).buffered.length > 0) {
-                        this.mediaElement.unbind('progress');
+                        this.mediaElement.off('progress');
                         return;
                     }
                 }
@@ -762,7 +762,7 @@ jQuery(function ($) {
                 return $(currentImageObj[0]);
             }
 
-            imageObj.load(function (event) {
+            imageObj.on("load", function (event) {
                 var target = $(event.currentTarget),
                     imgObj;
 
@@ -813,7 +813,7 @@ jQuery(function ($) {
             // IE<9 trap:
             imageObj.attr('src', url);
 
-            imageObj.error(function (event) {
+            imageObj.on("error", function (event) {
                 $(this).remove();
                 currentImageObj.show();
             });

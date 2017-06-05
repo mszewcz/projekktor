@@ -104,7 +104,7 @@ projekktorDisplay.prototype = {
         this.hideStartButton();
         this.showBufferIcon();
         // the startbutton
-        this.startButton.unbind().click(function(){
+        this.startButton.off().click(function(){
             ref.pp.setPlay();           
         });
     },

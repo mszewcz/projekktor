@@ -137,13 +137,13 @@ $p.newModel({
          * plugin that uses the setPlayPause function. setPlayPause function toggles between 
          * "PAUSED" and "PLAYING" states, so when a video is being played, the function causes its pausing.
          */
-        this.mediaElement.bind('mousedown.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
-        this.mediaElement.bind('click.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
+        this.mediaElement.on('mousedown.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
+        this.mediaElement.on('click.projekktorqs'+this.pp.getId(), this.disableDefaultVideoElementActions);
         
         var func = function(e){
-            ref.mediaElement.unbind('loadstart.projekktorqs'+ref.pp.getId());
-            ref.mediaElement.unbind('loadeddata.projekktorqs'+ref.pp.getId());
-            ref.mediaElement.unbind('canplay.projekktorqs'+ref.pp.getId());
+            ref.mediaElement.off('loadstart.projekktorqs'+ref.pp.getId());
+            ref.mediaElement.off('loadeddata.projekktorqs'+ref.pp.getId());
+            ref.mediaElement.off('canplay.projekktorqs'+ref.pp.getId());
 
             ref.mediaElement = $('#'+ref.pp.getMediaId()+"_html");            
 
@@ -171,9 +171,9 @@ $p.newModel({
             
         };
  
-        this.mediaElement.bind('loadstart.projekktorqs'+this.pp.getId(), func);
-        this.mediaElement.bind('loadeddata.projekktorqs'+this.pp.getId(), func);
-        this.mediaElement.bind('canplay.projekktorqs'+this.pp.getId(), func);
+        this.mediaElement.on('loadstart.projekktorqs'+this.pp.getId(), func);
+        this.mediaElement.on('loadeddata.projekktorqs'+this.pp.getId(), func);
+        this.mediaElement.on('canplay.projekktorqs'+this.pp.getId(), func);
         
         this.mediaElement[0].load(); // important especially for iOS devices
         
@@ -186,7 +186,7 @@ $p.newModel({
     
     detachMedia: function() {
         try {
-            this.mediaElement.unbind('.projekktorqs'+this.pp.getId()); 
+            this.mediaElement.off('.projekktorqs'+this.pp.getId());
             this.mediaElement[0].pause();
         } catch(e){}
     },
@@ -204,7 +204,7 @@ $p.newModel({
 
         $.each(this._eventMap, function(key, value){
             if ((key==evt || evt=='*') && value!=null && ref._eventsBinded.indexOf(key) === -1) {
-                ref.mediaElement.bind(key + id, function(evt) { ref[value](this, evt); });
+                ref.mediaElement.on(key + id, function(evt) { ref[value](this, evt); });
                 ref._eventsBinded.push(key);
             }
         });       
@@ -221,7 +221,7 @@ $p.newModel({
 
         $.each(this._eventMap, function(key, value){
             if (key === evt || evt === '*') {
-                ref.mediaElement.unbind(key + id);
+                ref.mediaElement.off(key + id);
                 var idx = ref._eventsBinded.indexOf(key);
                 if(idx>-1){
                     ref._eventsBinded.splice(idx,1);

@@ -36,7 +36,7 @@ jQuery(function ($) {
                             "user-select": "none"
                         })
                         .attr('unselectable', 'on')
-                        .bind("selectstart", function () {
+                        .on("selectstart", function () {
                             return false;
                         });
             return dest;
@@ -494,7 +494,7 @@ jQuery(function ($) {
                 case 'json':
                     data = responseText;
                     if (typeof data == 'string') {
-                        data = $.parseJSON(data);
+                        data = JSON.parse(data);
                     }
                     break;
                 case 'jsonp':

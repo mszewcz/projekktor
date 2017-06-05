@@ -1346,8 +1346,8 @@ jQuery(function ($) {
                             if ($(evt.target).hasClass('context')) {
                                 break;
                             }
-                            $(document).bind('contextmenu', function (evt) {
-                                $(document).unbind('contextmenu');
+                            $(document).on('contextmenu', function (evt) {
+                                $(document).off('contextmenu');
                                 return false;
                             });
                         }
@@ -2551,11 +2551,6 @@ jQuery(function ($) {
                 }
 
                 if (dataType) {
-
-                    if ($.parseJSON == undefined && dataType.indexOf('json') > -1) {
-                        alert("Projekktor requires at least jQuery 1.4.2 in order to handle JSON playlists.");
-                        return this;
-                    }
                     dataType = (dataType.indexOf('/') > -1) ? dataType.split('/')[1] : dataType;
                 }
 
@@ -3528,7 +3523,7 @@ jQuery(function ($) {
 
                     var ref = this;
 
-                    $(this).unbind();
+                    $(this).off();
                     this.removePlugins();
                     this.playerModel.destroy();
                     this._removeGUIListeners();
@@ -3589,9 +3584,9 @@ jQuery(function ($) {
                         ref = this;
 
                     // this._isReady = false;
-                    $(this).unbind();
-                    $((this.getIframe()) ? parent.window.document : document).unbind(".projekktor");
-                    $(window).unbind('.projekktor' + this.getId());
+                    $(this).off();
+                    $((this.getIframe()) ? parent.window.document : document).off(".projekktor");
+                    $(window).off('.projekktor' + this.getId());
 
                     this.playerModel.destroy();
                     this.playerModel = {};

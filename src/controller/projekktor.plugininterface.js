@@ -77,7 +77,7 @@ projekktorPluginInterface.prototype = {
     deconstruct: function() {
         this.pluginReady = false;
         $.each(this._appliedDOMObj, function() {
-            $(this).unbind(); 
+            $(this).off(); 
         });
     },
     
@@ -219,7 +219,7 @@ projekktorPluginInterface.prototype = {
             tmp,
             storedData;
     
-            tmp = storedData = jQuery.parseJSON(eval(result = new RegExp('(?:^|; )' + encodeURIComponent(this.getConfig('cookieName')+"_"+this.name) + '=([^;]*)').exec(document.cookie)) ? decodeURIComponent(result[1]) : null);
+            tmp = storedData = JSON.parse(eval(result = new RegExp('(?:^|; )' + encodeURIComponent(this.getConfig('cookieName')+"_"+this.name) + '=([^;]*)').exec(document.cookie)) ? decodeURIComponent(result[1]) : null);
     
         if (typeof storedData!='object' || storedData==null) {
             storedData = {};

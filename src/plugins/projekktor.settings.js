@@ -103,14 +103,14 @@ projekktorSettings.prototype = {
         $p.utils.blockSelection(this.dest);
 
         // fade in / out
-        this.dest.bind('mouseleave', function() {
+        this.dest.on('mouseleave', function() {
             clearTimeout(_outDelay);
             _outDelay=setTimeout(function(){
                 ref.setInactive();
             } , 200);
         });
 
-        this.dest.bind('mouseenter', function() {
+        this.dest.on('mouseenter', function() {
             clearTimeout(_outDelay);
         });
 
@@ -126,7 +126,7 @@ projekktorSettings.prototype = {
             return false;
         });
 
-        this.btn.bind('mouseleave', function() {
+        this.btn.on('mouseleave', function() {
             $(this).blur();
             clearTimeout(_outDelay);
             _outDelay=setTimeout(function(){
@@ -134,7 +134,7 @@ projekktorSettings.prototype = {
             } , 200);
         });
 
-        this.btn.bind('mouseenter', function() {
+        this.btn.on('mouseenter', function() {
             clearTimeout(_outDelay);
         });
  
@@ -227,7 +227,7 @@ projekktorSettings.prototype = {
         
         if (data==null) {
             this.tool.find('#message').focus(function(){
-                $(this).html('').unbind('focus').css({color:'#000'});
+                $(this).html('').off('focus').css({color:'#000'});
             });
             this.tool.find('#message').css({color:'#aaa'});
         } else {
@@ -264,18 +264,18 @@ projekktorSettings.prototype = {
                 .val(
                     $p.utils.stringify(debugData)
                 )
-                .unbind()
-                .bind('focus', function() {$(this).select();});
+                .off()
+                .on('focus', function() {$(this).select();});
         }
 
         $(this.pp.getDC().find('.next')).click(function() {
-            $(this).unbind();
+            $(this).off();
             ref.toolSet('debug', parseInt($(this).attr('data-step'), 10), ref.tool.find('#message').val() );
             return false;
         });
 
         $(this.pp.getDC().find('.cancel')).click(function() {
-            $(this).unbind();
+            $(this).off();
             ref.setActive(ref.tool, false);
             if (isPlaying) ref.pp.setPlay();
             return false;

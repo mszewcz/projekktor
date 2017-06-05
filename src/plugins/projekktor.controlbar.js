@@ -439,10 +439,10 @@ jQuery(function ($) {
         deconstruct: function() {
             this.pluginReady = false;
             $.each(this.controlElements, function () {
-                $(this).unbind(); 
+                $(this).off(); 
             });
             $.each(this._appliedDOMObj, function() {
-                $(this).unbind(); 
+                $(this).off(); 
             });            
         },
                 
@@ -480,7 +480,7 @@ jQuery(function ($) {
                         }
 
                         if (isSupported) {
-                            ref.controlElements[key].bind(eventName, function (event) {
+                            ref.controlElements[key].on(eventName, function (event) {
                                 ref.clickCatcher(event, callback, ref.controlElements[key]);
                             });
 
@@ -1233,10 +1233,10 @@ jQuery(function ($) {
                     evt.stopPropagation();
                     evt.preventDefault();
 
-                    ref.playerDom.unbind('mouseup.slider');
+                    ref.playerDom.off('mouseup.slider');
 
-                    slider.unbind('mousemove', mouseMove);
-                    slider.unbind('mouseup', mouseUp);
+                    slider.off('mousemove', mouseMove);
+                    slider.off('mouseup', mouseUp);
                     ref._sSliderAct = false;
 
                     return false;
@@ -1250,7 +1250,7 @@ jQuery(function ($) {
                     return false;
                 };
 
-            this.playerDom.bind('mouseup.slider', mouseUp);
+            this.playerDom.on('mouseup.slider', mouseUp);
             slider.mouseup(mouseUp);
             slider.mousemove(mouseMove);
 
@@ -1273,13 +1273,13 @@ jQuery(function ($) {
                 
                 mouseUp = function (mouseUpEvent) {
                     if(window.onmouseup === undefined){ // IE < 9 has no window mouse events support
-                        $(document).unbind('mousemove', mouseMove);
-                        $(document).unbind('mouseup', mouseUp);
-                        $(document).unbind('mouseleave', mouseUp);
+                        $(document).off('mousemove', mouseMove);
+                        $(document).off('mouseup', mouseUp);
+                        $(document).off('mouseleave', mouseUp);
                     }
                     else {
-                        $(window).unbind('mousemove', mouseMove);
-                        $(window).unbind('mouseup', mouseUp);
+                        $(window).off('mousemove', mouseMove);
+                        $(window).off('mouseup', mouseUp);
                     }
                     
                     ref._vSliderAct = false;
@@ -1377,7 +1377,7 @@ jQuery(function ($) {
                     var e = events[i]['events'].join(' '),
                         d = $.extend({}, events[i]['data'], data) || {},
                         h = (typeof events[i]['handler'] == 'function' ? events[i]['handler'] : function(e){});
-                    blip.bind(e, d, h);
+                    blip.on(e, d, h);
                 }
             }
             else { // otherwise make the blip 'invisible' for mouse events (works everywhere but IE up to 10)

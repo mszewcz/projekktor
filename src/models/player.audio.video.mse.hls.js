@@ -143,15 +143,15 @@ jQuery(function ($) {
              * plugin that uses the setPlayPause function. setPlayPause function toggles between 
              * "PAUSED" and "PLAYING" states, so when a video is being played, the function causes its pausing.
              */
-            this.mediaElement.bind('mousedown.projekktorqs' + this.pp.getId(), this.disableDefaultVideoElementActions);
-            this.mediaElement.bind('click.projekktorqs' + this.pp.getId(), this.disableDefaultVideoElementActions);
+            this.mediaElement.on('mousedown.projekktorqs' + this.pp.getId(), this.disableDefaultVideoElementActions);
+            this.mediaElement.on('click.projekktorqs' + this.pp.getId(), this.disableDefaultVideoElementActions);
         },
 
         detachMedia: function () {
             try {
                 this._hlsjs.detachMedia();
                 this._hlsjs.destroy();
-                this.mediaElement.unbind('.projekktorqs' + this.pp.getId());
+                this.mediaElement.off('.projekktorqs' + this.pp.getId());
             } catch (e) {}
         },
 
