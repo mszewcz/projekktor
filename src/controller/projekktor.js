@@ -831,7 +831,7 @@ jQuery(function ($) {
 
                 if (this._isReady) {
 
-                    if (this.playerModel.init && (this.playerModel._ap === true || forceAutoplay === true)) {
+                    if (this.playerModel.init && (this.playerModel._ap === true || forceAutoplay === true) && this.getState('IDLE')) {
                         this.setPlay();
                     }
                 }
