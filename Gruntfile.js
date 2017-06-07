@@ -130,8 +130,8 @@ module.exports = function (grunt) {
         commitMessage: 'Bump version to %VERSION%',
         commitFiles: ['package.json',  'src/controller/projekktor.config.version.js'],
         createTag: true,
-        tagName: 'tvplayer-%VERSION%',
-        tagMessage: 'Projekktor for TVPlayer %VERSION%',
+        tagName: '%VERSION%',
+        tagMessage: 'Projekktor %VERSION%',
         push: false,
         pushTo: 'upstream',
         gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
@@ -155,7 +155,7 @@ module.exports = function (grunt) {
           "* \n" +
           "* http://www.projekktor.com \n" +
           "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" +
-          "* Copyright 2014-2016 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
+          "* Copyright 2014-2017 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
           "* \n" +
           "* under GNU General Public License \n" +
           "* http://www.projekktor.com/license/\n" +
@@ -221,7 +221,7 @@ module.exports = function (grunt) {
           {expand: true, src: ['platforms/**'], dest: dest},       
           {expand: true, src: ['themes/**'], dest: dest},
           {expand: true, src: ['readme.html'], dest: dest},
-          {expand: true, flatten: true, src: ['lib/jQuery/1.11.2/**'], dest: dest, filter: 'isFile'}
+          {expand: true, flatten: true, src: ['lib/jQuery/3.2.1/**'], dest: dest, filter: 'isFile'}
           // makes all src relative to cwd
           // {expand: true, cwd: 'path/', src: ['**'], dest: 'dest/'},
           // flattens results to a single level
