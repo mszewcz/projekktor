@@ -2341,7 +2341,6 @@ jQuery(function ($) {
 
                 try {
                     return $.extend(true, [], this.getItem().qualities || []);
-                    ;
                 } catch (e) {
                 }
 
@@ -2960,9 +2959,8 @@ jQuery(function ($) {
             };
 
             this._setConfig = function () {
-
                 if (!arguments.length) {
-                    return result;
+                    return;
                 }
 
                 var confObj = arguments[0],
