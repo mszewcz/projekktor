@@ -171,10 +171,6 @@ module.exports = function (grunt) {
             join_vars: false,
             loops: false,
             unused: false
-          },
-          mangle: {
-            // saves some bytes when gzipped
-            except: ["undefined"]
           }
         }
       },
@@ -193,10 +189,6 @@ module.exports = function (grunt) {
             join_vars: false,
             loops: false,
             unused: false
-          },
-          mangle: {
-            // saves some bytes when gzipped
-            except: ["undefined"]
           }
         }
       }
