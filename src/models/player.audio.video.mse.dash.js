@@ -211,19 +211,37 @@ jQuery(function ($) {
          * Metoda `applySrc` ustawia adres źródła mediów.
          */
         applySrc: function () {
+
+            var drmConfig = this.pp.getConfig('drm'),
+                playready = null,
+                widevine = null,
+                buffer = {}
+
+            if (typeof this._file['drm'] === "object") {
+                for (var i = 0; i < this._file['drm'].length; i++) {
+                    var item = this._file['drm'][i];
+
+                    if (typeof drmConfig[item] === "string") {
+                        buffer[item] = drmConfig[item];
+                    }
+                }
+            }
+
             // Inicjuje MediaPlayer z biblioteki "Dash JS":
             this._dashjs.initialize(this._video, null, false);
 
             this._dashjs.setProtectionData({
                 "com.microsoft.playready": {
-                    serverURL: this._file['playready'] || null
+                    serverURL: buffer['playready'] || null
                 },
                 "com.widevine.alpha": {
-                    serverURL: this._file['widevine'] || null
+                    serverURL: buffer['widevine'] || null
                 }
             });
 
             this._dashjs.attachSource(this._file['src']);
+
+
         },
 
         /**
