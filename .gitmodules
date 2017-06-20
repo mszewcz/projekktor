@@ -10,3 +10,6 @@
 [submodule "lib/videojs-vast-vpaid"]
 	path = lib/videojs-vast-vpaid
 	url = https://github.com/MailOnline/videojs-vast-vpaid.git
+[submodule "lib/dash.js"]
+	path = lib/dash.js
+	url = https://github.com/Dash-Industry-Forum/dash.js.git
