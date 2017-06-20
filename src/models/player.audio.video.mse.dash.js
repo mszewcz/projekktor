@@ -25,11 +25,14 @@ jQuery(function ($) {
         _video: null,
         _quality: null,
         _qualityMap: null,
+        _showAudioOnly: null,
 
         mediaElement: null,
 
         applyMedia: function (destContainer) {
             var ref = this;
+
+            this._showAudioOnly = this.pp.getConfig('dynamicStreamShowAudioOnlyQualities');
 
             if (!this._hasInit) {
                 this._hasInit = true;
@@ -260,13 +263,64 @@ jQuery(function ($) {
         },
 
         _getQualityList: function () {
-            var videoList = this._dashjs.getBitrateInfoListFor('video');
-            //var audioList = this._dashjs.getBitrateInfoListFor('audio');
 
-            var buffer = [];
-            for (var i = 0; i < videoList.length; i++) {
-                var e = videoList[i];
-                buffer.push("" + $p.utils.roundNumber((e['bitrate'] / 1024), 0) + "Kbps | " + e['height'] + "p");
+            var avKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioVideo'),
+                aoKeyFormat = this.pp.getConfig('dynamicStreamQualityKeyFormatAudioOnly'),
+                dpc = this.pp.getConfig('dynamicStreamQualityKeyBitrateRoundingDecimalPlacesCount'),
+                bitrateKbps = 0,
+                bitrateMbps = 0,
+                bitrateUnit = 'kbps',
+                bitrate = 0,
+                audioList = null,
+                videoList = null,
+                buffer = [],
+                keyName = null
+
+
+            if (!!this._showAudioOnly) {
+                // Audio:
+                audioList = this._dashjs.getBitrateInfoListFor('audio');
+
+                for (var i = 0; i < audioList.length; i++) {
+                    var item = audioList[i];
+
+                    bitrateKbps = Math.floor(item['bitrate'] / 1000);
+                    bitrateMbps = $p.utils.roundNumber(bitrateKbps / 1000, dpc);
+                    bitrate = bitrateKbps < 1000 ? bitrateKbps : bitrateMbps;
+                    bitrateUnit = bitrateKbps < 1000 ? 'kbps' : 'Mbps';
+
+                    keyName = $p.utils.parseTemplate(aoKeyFormat, {
+                        bitrate: bitrate,
+                        bitrateunit: bitrateUnit,
+                        bitratekbps: bitrateKbps,
+                        bitratembps: bitrateMbps
+                    });
+
+                    buffer.push("" + keyName);
+                }
+            } else {
+                // Video:
+                videoList = this._dashjs.getBitrateInfoListFor('video');
+
+                for (var i = 0; i < videoList.length; i++) {
+                    var item = videoList[i];
+
+                    bitrateKbps = Math.floor(item['bitrate'] / 1000);
+                    bitrateMbps = $p.utils.roundNumber(bitrateKbps / 1000, dpc);
+                    bitrate = bitrateKbps < 1000 ? bitrateKbps : bitrateMbps;
+                    bitrateUnit = bitrateKbps < 1000 ? 'kbps' : 'Mbps';
+
+                    keyName = $p.utils.parseTemplate(avKeyFormat, {
+                        height: item['height'],
+                        width: item['width'],
+                        bitrate: bitrate,
+                        bitrateunit: bitrateUnit,
+                        bitratekbps: bitrateKbps,
+                        bitratembps: bitrateMbps
+                    });
+
+                    buffer.push("" + keyName);
+                }
             }
 
             buffer.push('auto');
@@ -315,11 +369,20 @@ jQuery(function ($) {
                 return;
             }
 
-            if (quality === "auto") {
-                this._dashjs.setAutoSwitchQualityFor('video', true);
+            if (!!this._showAudioOnly) {
+                if (quality === "auto") {
+                    this._dashjs.setAutoSwitchQualityFor('audio', true);
+                } else {
+                    this._dashjs.setAutoSwitchQualityFor('audio', false);
+                    this._dashjs.setQualityFor('audio', this._qualityMap[quality]);
+                }
             } else {
-                this._dashjs.setAutoSwitchQualityFor('video', false);
-                this._dashjs.setQualityFor('video', this._qualityMap[quality]);
+                if (quality === "auto") {
+                    this._dashjs.setAutoSwitchQualityFor('video', true);
+                } else {
+                    this._dashjs.setAutoSwitchQualityFor('video', false);
+                    this._dashjs.setQualityFor('video', this._qualityMap[quality]);
+                }
             }
 
             this._quality = quality;
