@@ -18,11 +18,11 @@ jQuery(function ($) {
             }
         ],
 
+        DASHJS: null,
         _dashJs: null,
         _hasInit: false,
         _file: null,
         _video: null,
-        _mediaPlayer: null,
         _quality: null,
         _qualityMap: null,
 
@@ -35,7 +35,7 @@ jQuery(function ($) {
                 this._hasInit = true;
 
                 this._fetchDashJs(function (dashjs_) {
-                    ref._dashJs = dashjs_;
+                    ref.DASHJS = dashjs_;
                     ref._file = ref.getSource()[0];
                     ref._initMedia(destContainer);
                 });
@@ -56,21 +56,21 @@ jQuery(function ($) {
 
             ///// Etap 1:
             // Tworzę instancję klasy "DashJS > MediaPlayer".
-            this._mediaPlayer = this._dashJs.MediaPlayer().create();
+            this._dashjs = this.DASHJS.MediaPlayer().create();
 
             if (this._isLocalhost()) {
-                this._mediaPlayer.getDebug().setLogToBrowserConsole(true);
+                this._dashjs.getDebug().setLogToBrowserConsole(true);
             } else {
-                this._mediaPlayer.getDebug().setLogToBrowserConsole(false);
+                this._dashjs.getDebug().setLogToBrowserConsole(false);
             }
 
             // Ustawiam bufory:
-            // this._mediaPlayer.setBufferPruningInterval(3);
-            // this._mediaPlayer.setBufferTimeAtTopQuality(3);
-            // this._mediaPlayer.setBufferTimeAtTopQualityLongForm(6);
-            // this._mediaPlayer.setBufferToKeep(3);
-            // this._mediaPlayer.setRichBufferThreshold(2);
-            // this._mediaPlayer.setStableBufferTime(3);
+            // this._dashjs.setBufferPruningInterval(3);
+            // this._dashjs.setBufferTimeAtTopQuality(3);
+            // this._dashjs.setBufferTimeAtTopQualityLongForm(6);
+            // this._dashjs.setBufferToKeep(3);
+            // this._dashjs.setRichBufferThreshold(2);
+            // this._dashjs.setStableBufferTime(3);
 
             this.setQuality('auto');
 
@@ -108,10 +108,10 @@ jQuery(function ($) {
 
 
             ///// Etap 3:
-            // Podpinam zdarzenia do `this._mediaPlayer`.
-            var events = this._dashJs.MediaPlayer.events;
+            // Podpinam zdarzenia do `this._dashjs`.
+            var events = this.DASHJS.MediaPlayer.events;
 
-            this._mediaPlayer.on(events["PLAYBACK_TIME_UPDATED"], function (data) {
+            this._dashjs.on(events["PLAYBACK_TIME_UPDATED"], function (data) {
 
                 ref.timeListener({
                     position: data['time'],
@@ -120,27 +120,27 @@ jQuery(function ($) {
 
             });
 
-            this._mediaPlayer.on(events["PLAYBACK_SEEKED"], function () {
-                ref.seekedListener(ref._mediaPlayer.time());
+            this._dashjs.on(events["PLAYBACK_SEEKED"], function () {
+                ref.seekedListener(ref._dashjs.time());
             });
 
-            this._mediaPlayer.on(events["PLAYBACK_PLAYING"], function () {
+            this._dashjs.on(events["PLAYBACK_PLAYING"], function () {
                 ref.playingListener();
             });
 
-            this._mediaPlayer.on(events["PLAYBACK_PAUSED"], function () {
+            this._dashjs.on(events["PLAYBACK_PAUSED"], function () {
                 ref.pauseListener();
             });
 
-            this._mediaPlayer.on(events["PLAYBACK_PROGRESS"], function () {
+            this._dashjs.on(events["PLAYBACK_PROGRESS"], function () {
                 // ...
             });
 
-            this._mediaPlayer.on(events["PLAYBACK_ENDED"], function () {
+            this._dashjs.on(events["PLAYBACK_ENDED"], function () {
                 ref.endedListener(null);
             });
 
-            this._mediaPlayer.on(events["CAN_PLAY"], function () {
+            this._dashjs.on(events["CAN_PLAY"], function () {
 
                 var qualityList = ref._getQualityList()
 
@@ -159,11 +159,11 @@ jQuery(function ($) {
                 ref.canplayListener(null);
             });
 
-            this._mediaPlayer.on(events["BUFFER_EMPTY"], function () {
+            this._dashjs.on(events["BUFFER_EMPTY"], function () {
                 ref._setBufferState('EMPTY');
             });
 
-            this._mediaPlayer.on(events["MANIFEST_LOADED"], function () {
+            this._dashjs.on(events["MANIFEST_LOADED"], function () {
             });
 
 
@@ -189,9 +189,9 @@ jQuery(function ($) {
                 this.mediaElement = null;
             }
 
-            if (!!this._mediaPlayer) {
-                this._mediaPlayer.reset();
-                this._mediaPlayer = null;
+            if (!!this._dashjs) {
+                this._dashjs.reset();
+                this._dashjs = null;
             }
 
             if (!!this._video) {
@@ -209,9 +209,9 @@ jQuery(function ($) {
          */
         applySrc: function () {
             // Inicjuje MediaPlayer z biblioteki "Dash JS":
-            this._mediaPlayer.initialize(this._video, null, false);
+            this._dashjs.initialize(this._video, null, false);
 
-            this._mediaPlayer.setProtectionData({
+            this._dashjs.setProtectionData({
                 "com.microsoft.playready": {
                     serverURL: this._file['playready'] || null
                 },
@@ -220,7 +220,7 @@ jQuery(function ($) {
                 }
             });
 
-            this._mediaPlayer.attachSource(this._file['src']);
+            this._dashjs.attachSource(this._file['src']);
         },
 
         /**
@@ -234,55 +234,34 @@ jQuery(function ($) {
          *        {null} Brak wywołania zwrotnego!
          */
         _fetchDashJs: function (cb) {
-
             if (typeof window.dashjs === "object") {
-
                 cb(window.dashjs);
-
             } else {
-                var script = document.getElementById('DashJS');
+                var url;
 
-                if (!script) {
-                    this._appendDashJs(null);
+                if (this._isLocalhost()) {
+                    url = "//cdn.dashjs.org/latest/dash.all.debug.js";
+                } else {
+                    url = this.pp.getConfig('platformsConfig').mse.src;
                 }
 
-                var itrv = setInterval(function () {
-
+                $p.utils.getScript(url, {
+                    cache: true
+                }).done(function () {
                     if (typeof window.dashjs === "object") {
-                        clearInterval(itrv);
-
-                        if (!!cb) {
-                            cb(window.dashjs);
-                        }
+                        cb(window.dashjs);
+                    } else {
+                        console.error("Variable `window.dashjs` is not `object` !!!");
                     }
-
-                }, 100);
-
+                }).fail(function () {
+                    console.error("Error load dash.js !!!");
+                });
             }
-        },
-
-        /**
-         * Metoda `_appendDashJs` ładuję bibliotekę 'dash.all.min.js' z oficjalnego serwera CDN.
-         */
-        _appendDashJs: function (cb) {
-            var url = "";
-
-            if (this._isLocalhost()) {
-                url = "//cdn.dashjs.org/latest/dash.all.debug.js";
-            } else {
-                url = this.pp.getConfig('platformsConfig').mse.src;
-            }
-
-            $p.utils.getScript(url, {
-                cache: true
-            }).done(cb).fail(function () {
-                console.error("Error load dash.js !!!");
-            });
         },
 
         _getQualityList: function () {
-            var videoList = this._mediaPlayer.getBitrateInfoListFor('video');
-            //var audioList = this._mediaPlayer.getBitrateInfoListFor('audio');
+            var videoList = this._dashjs.getBitrateInfoListFor('video');
+            //var audioList = this._dashjs.getBitrateInfoListFor('audio');
 
             var buffer = [];
             for (var i = 0; i < videoList.length; i++) {
@@ -298,19 +277,19 @@ jQuery(function ($) {
          * Setters
          ****************************************/
         setPlay: function () {
-            this._mediaPlayer.play();
+            this._dashjs.play();
             this._setState('playing');
         },
 
         setPause: function () {
-            this._mediaPlayer.pause();
+            this._dashjs.pause();
             this._setState('paused');
         },
 
         setSeek: function (newpos) {
             var ref = this;
 
-            ref._mediaPlayer.seek(newpos);
+            ref._dashjs.seek(newpos);
 
             ref.timeListener({
                 position: newpos
@@ -320,8 +299,8 @@ jQuery(function ($) {
 
         setVolume: function (value) {
 
-            if (!!this._mediaPlayer) {
-                this._mediaPlayer.setVolume(value);
+            if (!!this._dashjs) {
+                this._dashjs.setVolume(value);
             }
 
             if (this.mediaElement === null) {
@@ -337,10 +316,10 @@ jQuery(function ($) {
             }
 
             if (quality === "auto") {
-                this._mediaPlayer.setAutoSwitchQualityFor('video', true);
+                this._dashjs.setAutoSwitchQualityFor('video', true);
             } else {
-                this._mediaPlayer.setAutoSwitchQualityFor('video', false);
-                this._mediaPlayer.setQualityFor('video', this._qualityMap[quality]);
+                this._dashjs.setAutoSwitchQualityFor('video', false);
+                this._dashjs.setQualityFor('video', this._qualityMap[quality]);
             }
 
             this._quality = quality;
@@ -354,7 +333,7 @@ jQuery(function ($) {
             var v = 0;
 
             try {
-                v = this._mediaPlayer.getVolume();
+                v = this._dashjs.getVolume();
             } catch (err) {
                 v = this._volume;
             };
