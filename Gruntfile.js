@@ -81,8 +81,8 @@ module.exports = function (grunt) {
           "src/models/player.NA.js",
           "src/models/player.audio.video.js",
           "src/models/player.audio.video.hls.js",
-          "src/models/player.audio.video.mse.dash.js",
           "src/models/player.playlist.js",
+<<<<<<< HEAD
           "src/models/player.image.html.js",
           {
             flag: "osmf",
@@ -112,6 +112,17 @@ module.exports = function (grunt) {
             flag: "youtube",
             src: "src/models/player.youtube.js"
           },
+=======
+          "src/models/player.image.html.js",              
+          {flag: "osmf", src: "src/models/player.audio.video.osmf.js"},
+          {flag: "osmfhls", src: "src/models/player.audio.video.osmf.hls.js"},
+          {flag: "osmfmss", src: "src/models/player.audio.video.osmf.mss.js"},
+          {flag: "silverlight", src: "src/models/player.audio.video.silverlight.js"},
+          {flag: "msehls", src: "src/models/player.audio.video.mse.hls.js"},
+          {flag: "msedash", src: "src/models/player.audio.video.mse.dash.js"},
+          {flag: "videojs", src: "src/models/player.videojs.js"},
+          {flag: "youtube", src: "src/models/player.youtube.js" }, 
+>>>>>>> Update Grunt build script. Add dash.js platform. Fix beautify option for UglifyJS 3.x
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
           "src/plugins/projekktor.contextmenu.js",
@@ -179,7 +190,14 @@ module.exports = function (grunt) {
           sourceMap: true,
           sourceMapName: "dist/projekktor-" + version + ".min.map",
           report: "min",
+<<<<<<< HEAD
           beautify: false,
+=======
+          beautify: {
+            ascii_only: true,
+            beautify: false
+          },
+>>>>>>> Update Grunt build script. Add dash.js platform. Fix beautify option for UglifyJS 3.x
           compress: {
             hoist_funs: false,
             join_vars: false,
@@ -195,7 +213,14 @@ module.exports = function (grunt) {
         options: {
           sourceMap: false,
           report: "min",
+<<<<<<< HEAD
           beautify: false,
+=======
+          beautify: {
+            ascii_only: true,
+            beautify: false
+          },
+>>>>>>> Update Grunt build script. Add dash.js platform. Fix beautify option for UglifyJS 3.x
           compress: {
             hoist_funs: false,
             join_vars: false,
@@ -255,6 +280,7 @@ module.exports = function (grunt) {
         ]
       },
       platforms: {
+<<<<<<< HEAD
         files: [{
             expand: true,
             cwd: 'lib/hls.js/dist/',
@@ -273,6 +299,13 @@ module.exports = function (grunt) {
             src: ['videojs_5*.js', 'videojs_5*.js.map', '*.css.map', '*.css', '*.swf'],
             dest: 'platforms/videojs/'
           }
+=======
+        files: [
+          {expand: true, cwd:'lib/hls.js/dist/', src:['*.js', '*.map'], dest: 'platforms/mse/hls.js/'},
+          {expand: true, cwd:'lib/dash.js/dist/', src:['*.js', '*.map'], dest: 'platforms/mse/dash.js/'},
+          {expand: true, cwd:'lib/video.js/dist/', src:['*.js', '*.map', '*.css'], dest: 'platforms/videojs/'},
+          {expand: true, cwd:'lib/videojs-vast-vpaid/bin/', src:['videojs_5*.js', 'videojs_5*.js.map', '*.css.map', '*.css', '*.swf'], dest: 'platforms/videojs/'}
+>>>>>>> Update Grunt build script. Add dash.js platform. Fix beautify option for UglifyJS 3.x
         ]
       }
     },
@@ -598,6 +631,7 @@ module.exports = function (grunt) {
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
     "clean",
+<<<<<<< HEAD
     "polyfiller",
     "build:*:*:" + defaults,
     "lineending",
@@ -605,6 +639,13 @@ module.exports = function (grunt) {
     "dist:*",
     "compare_size",
     "index",
+=======
+    "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:+msedash:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
+    "uglify:all",
+    "dist:*",
+    "compare_size",
+    "platforms",
+>>>>>>> Update Grunt build script. Add dash.js platform. Fix beautify option for UglifyJS 3.x
     "copy:main",
     "compress"
   ]);
