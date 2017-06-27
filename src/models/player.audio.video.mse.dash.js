@@ -18,7 +18,7 @@ jQuery(function ($) {
         ],
 
         DASHJS: null,
-        _dashJs: null,
+        _dashjs: null,
         _hasInit: false,
         _file: null,
         _video: null,
@@ -53,13 +53,12 @@ jQuery(function ($) {
          *        container element for <video>
          */
         _initMedia: function (destContainer) {
-            var ref = this;
+            var ref = this,
+                wasAwakening = ref.getState('AWAKENING');
 
             ///// Stage 1:
             // Create dash.js MediaPlayer instance.
             this._dashjs = this.DASHJS.MediaPlayer().create();
-
-            this.setQuality('auto');
 
             ///// Stage 2:
             // If there is <video> element in the display container then use it,
@@ -92,42 +91,31 @@ jQuery(function ($) {
 
             this.mediaElement = $(this._video);
 
-
             ///// Stage 3:
             // Attach event listeners `this._dashjs`.
             var events = this.DASHJS.MediaPlayer.events;
 
-            this._dashjs.on(events["PLAYBACK_TIME_UPDATED"], function (data) {
+            this._dashjs.on(events["STREAM_INITIALIZED"], function (data) {
+                if (wasAwakening) {
+                    ref.displayReady();
+                    return;
+                }
 
-                ref.timeListener({
-                    position: data['time'],
-                    duration: (0.0 + data['time'] + data['timeToEnd'])
-                });
+                if (ref.getSeekState('SEEKING')) {
+                    if (ref._isPlaying) {
+                        ref.setPlay();
+                    }
 
+                    ref.seekedListener();
+                    return;
+                }
+
+                if (ref._isPlaying) {
+                    ref.setPlay();
+                }
             });
 
-            this._dashjs.on(events["PLAYBACK_SEEKED"], function () {
-                ref.seekedListener(ref._dashjs.time());
-            });
-
-            this._dashjs.on(events["PLAYBACK_PLAYING"], function () {
-                ref.playingListener();
-            });
-
-            this._dashjs.on(events["PLAYBACK_PAUSED"], function () {
-                ref.pauseListener();
-            });
-
-            this._dashjs.on(events["PLAYBACK_PROGRESS"], function () {
-                // ...
-            });
-
-            this._dashjs.on(events["PLAYBACK_ENDED"], function () {
-                ref.endedListener(null);
-            });
-
-            this._dashjs.on(events["CAN_PLAY"], function () {
-
+            this._dashjs.on(events["PLAYBACK_METADATA_LOADED"], function () {
                 var qualityList = ref._getQualityList();
 
                 if (ref._qualityMap === null) {
@@ -139,17 +127,18 @@ jQuery(function ($) {
                 }
 
                 ref.sendUpdate('availableQualitiesChange', qualityList);
-                ref.displayReady();
-                ref.ready();
-
-                ref.canplayListener(null);
             });
 
-            this._dashjs.on(events["BUFFER_EMPTY"], function () {
-                ref._setBufferState('EMPTY');
+            this._dashjs.on(events["QUALITY_CHANGE_REQUESTED"], function () {
+                ref.qualityChangeListener();
             });
 
-            this._dashjs.on(events["MANIFEST_LOADED"], function () {
+            this._dashjs.on(events["ERROR"], function (error) {
+                ref.sendUpdate('error', 4, error);
+            });
+
+            this._dashjs.on(events["PLAYBACK_ERROR"], function (error) {
+                ref.sendUpdate('error', 5, error);
             });
 
             this.applySrc();
@@ -179,8 +168,6 @@ jQuery(function ($) {
         applySrc: function () {
 
             var drmConfig = this.pp.getConfig('drm'),
-                playready = null,
-                widevine = null,
                 buffer = {}
 
             if (typeof this._file['drm'] === "object") {
@@ -193,9 +180,6 @@ jQuery(function ($) {
                 }
             }
 
-            // Initialize dash.js MediaPlayer
-            this._dashjs.initialize(this._video, null, false);
-
             this._dashjs.setProtectionData({
                 "com.microsoft.playready": {
                     serverURL: buffer['playready'] || null
@@ -205,7 +189,8 @@ jQuery(function ($) {
                 }
             });
 
-            this._dashjs.attachSource(this._file['src']);
+            // Initialize dash.js MediaPlayer
+            this._dashjs.initialize(this._video, this._file['src'], false);
         },
 
         /**
@@ -307,38 +292,6 @@ jQuery(function ($) {
         /*****************************************
          * Setters
          ****************************************/
-        setPlay: function () {
-            this._dashjs.play();
-            this._setState('playing');
-        },
-
-        setPause: function () {
-            this._dashjs.pause();
-            this._setState('paused');
-        },
-
-        setSeek: function (newpos) {
-            var ref = this;
-
-            ref._dashjs.seek(newpos);
-
-            ref.timeListener({
-                position: newpos
-            });
-
-        },
-
-        setVolume: function (value) {
-
-            if (!!this._dashjs) {
-                this._dashjs.setVolume(value);
-            }
-
-            if (this.mediaElement === null) {
-                this.volumeListener(value);
-            }
-
-        },
 
         setQuality: function (quality) {
 
@@ -368,19 +321,6 @@ jQuery(function ($) {
         /************************************************
          * Getters
          ************************************************/
-        getVolume: function () {
-
-            var v = 0;
-
-            try {
-                v = this._dashjs.getVolume();
-            } catch (err) {
-                v = this._volume;
-            };
-
-            return v;
-
-        },
 
         getQuality: function () {
             return this._quality;
