@@ -3,16 +3,20 @@
  * projekktor player
  * http://www.projekktor.com
  *
+<<<<<<< HEAD
  * Copyright 2016 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  *
+=======
+ * Copyright 2016-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
+ * 
+>>>>>>> Fix MSE hls.js model configuration retrieval
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  *
  * This model is interfacing hls.js library
  *
  * hls.js
- * Author: Guillaume du Pontavice
- * Website: https://github.com/dailymotion/hls.js
+ * Website: https://github.com/video-dev/hls.js
  * License: Apache 2.0 License
  *
  */
@@ -89,7 +93,7 @@ jQuery(function ($) {
                 hlsJsLoadSuccess();
             } else {
                 // load hls.js
-                $p.utils.getScript(ref.pp.getConfig('platformsConfig').mse.src, {
+                $p.utils.getScript(ref.pp.getConfig('platformsConfig').mse.hlsjs.src, {
                         cache: true
                     })
                     .done(hlsJsLoadSuccess)
@@ -101,7 +105,7 @@ jQuery(function ($) {
             var ref = this,
                 media = ref.getSource(),
                 wasAwakening = ref.getState('AWAKENING'),
-                hlsConfig = ref.pp.getConfig('platformsConfig').mse.initVars;
+                hlsConfig = ref.pp.getConfig('platformsConfig').mse.hlsjs.initVars;
 
             ref._hlsjs = new Hls(hlsConfig);
 
