@@ -51,7 +51,14 @@ projekktorConfig.prototype = {
             // minPlatformVersion: '' // optional minimal silverlight plugin version rewrite
         },
         mse: {
-            src: ''
+            hlsjs: {
+                src: '',
+                initVars: {}
+            },
+            dashjs: {
+                src: '',
+                initVars: {}
+            }
         },
         videojs: {
             src: ''
