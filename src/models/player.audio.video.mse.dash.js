@@ -1,4 +1,3 @@
-
 jQuery(function ($) {
     $p.newModel({
         modelId: 'MSEVIDEODASH',
@@ -48,39 +47,23 @@ jQuery(function ($) {
         },
 
         /**
-         * Metoda `_initMedia` przygotowywuje odtwarzacz DashJS do działania.
+         *  `_initMedia` setting up DashJS.
          * 
          * @param {object} destContainer
-         *        Kontener dla tagu HTML `video`
+         *        container element for <video>
          */
         _initMedia: function (destContainer) {
             var ref = this;
 
-
-            ///// Etap 1:
-            // Tworzę instancję klasy "DashJS > MediaPlayer".
+            ///// Stage 1:
+            // Create dash.js MediaPlayer instance.
             this._dashjs = this.DASHJS.MediaPlayer().create();
-
-            if (this._isLocalhost()) {
-                this._dashjs.getDebug().setLogToBrowserConsole(true);
-            } else {
-                this._dashjs.getDebug().setLogToBrowserConsole(false);
-            }
-
-            // Ustawiam bufory:
-            // this._dashjs.setBufferPruningInterval(3);
-            // this._dashjs.setBufferTimeAtTopQuality(3);
-            // this._dashjs.setBufferTimeAtTopQualityLongForm(6);
-            // this._dashjs.setBufferToKeep(3);
-            // this._dashjs.setRichBufferThreshold(2);
-            // this._dashjs.setStableBufferTime(3);
 
             this.setQuality('auto');
 
-
-            ///// Etap 2:
-            // Szukam tagu 'video' i przypisuję uchwyt do zmiennej `this._video`,
-            // jeżeli NIE znajdę tagu to go tworzę.
+            ///// Stage 2:
+            // If there is <video> element in the display container then use it,
+            // otherwise create new one. 
             var videoID = this.pp.getMediaId() + "_html";
             this._video = document.getElementById(videoID);
 
@@ -110,8 +93,8 @@ jQuery(function ($) {
             this.mediaElement = $(this._video);
 
 
-            ///// Etap 3:
-            // Podpinam zdarzenia do `this._dashjs`.
+            ///// Stage 3:
+            // Attach event listeners `this._dashjs`.
             var events = this.DASHJS.MediaPlayer.events;
 
             this._dashjs.on(events["PLAYBACK_TIME_UPDATED"], function (data) {
@@ -145,7 +128,7 @@ jQuery(function ($) {
 
             this._dashjs.on(events["CAN_PLAY"], function () {
 
-                var qualityList = ref._getQualityList()
+                var qualityList = ref._getQualityList();
 
                 if (ref._qualityMap === null) {
                     ref._qualityMap = {};
@@ -169,21 +152,7 @@ jQuery(function ($) {
             this._dashjs.on(events["MANIFEST_LOADED"], function () {
             });
 
-
-            ///// Etap 5:
-            // Stosuję (ustawiam) źródło mediów (+ licencji dla DRM)
             this.applySrc();
-
-        },
-
-        _isLocalhost: function () {
-            if (window.location.host === "127.0.0.1") {
-                return true;
-            } else if (window.location.host === "localhost") {
-                return true;
-            } else {
-                return false;
-            }
         },
 
         detachMedia: function () {
@@ -207,9 +176,6 @@ jQuery(function ($) {
 
         },
 
-        /**
-         * Metoda `applySrc` ustawia adres źródła mediów.
-         */
         applySrc: function () {
 
             var drmConfig = this.pp.getConfig('drm'),
@@ -227,7 +193,7 @@ jQuery(function ($) {
                 }
             }
 
-            // Inicjuje MediaPlayer z biblioteki "Dash JS":
+            // Initialize dash.js MediaPlayer
             this._dashjs.initialize(this._video, null, false);
 
             this._dashjs.setProtectionData({
@@ -240,42 +206,35 @@ jQuery(function ($) {
             });
 
             this._dashjs.attachSource(this._file['src']);
-
-
         },
 
         /**
-         * Metoda `_fetchDashJs` zwraca obiekt `window.dashjs` gdy jest dostępny.
-         * W przeciwnym wypadku ładuję bibliotekę DashJS, a po zakończaniu ładowania zwraca `window.dashjs`.
+         * `_fetchDashJs` return `window.dashjs` if it's available.
+         * Otherwise load DashJS lib from URL.
          * 
          * @param {function|null} cb
-         *        {function} Funkcja zwrotna wywoływana gdy biblioteka DashJS zostanie załadowana
-         *                   Wywołanie `cb(dashjs)`
-         *                  `dashjs` zawiera referencję do biblioteki DashJS.
-         *        {null} Brak wywołania zwrotnego!
+         *        {function} Callback function called after successufll load of DashJS lib
+         *                   Usage: `cb(dashjs)`
+         *                  `dashjs` - reference to the DashJS lib
+         *        {null} Callback function not specified.
          */
         _fetchDashJs: function (cb) {
+            var ref = this;
+
             if (typeof window.dashjs === "object") {
                 cb(window.dashjs);
-            } else {
-                var url;
-
-                if (this._isLocalhost()) {
-                    url = "//cdn.dashjs.org/latest/dash.all.debug.js";
-                } else {
-                    url = this.pp.getConfig('platformsConfig').mse.src;
-                }
-
-                $p.utils.getScript(url, {
+            }
+            else {
+                $p.utils.getScript(ref.pp.getConfig('platformsConfig').mse.dashjs.src, {
                     cache: true
                 }).done(function () {
                     if (typeof window.dashjs === "object") {
                         cb(window.dashjs);
                     } else {
-                        console.error("Variable `window.dashjs` is not `object` !!!");
+                        ref.sendUpdate('error', 2);
                     }
                 }).fail(function () {
-                    console.error("Error load dash.js !!!");
+                    ref.sendUpdate('error', 2);
                 });
             }
         },
@@ -427,5 +386,5 @@ jQuery(function ($) {
             return this._quality;
         }
 
-    });
+    }, 'VIDEO');
 });
