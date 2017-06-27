@@ -306,6 +306,32 @@ $p.features = (function (window, document, undefined) {
     tests['mse'] = function(){
         return (!!window.MediaSource);
     };
+    
+    tests['eme'] = function () {
+        var result = false,
+            testVideoEl = document.createElement('video');
+        
+        // EME
+        if (window.navigator.requestMediaKeySystemAccess) {
+            if (typeof window.navigator.requestMediaKeySystemAccess === 'function') {
+                result = true;
+            }
+        }
+        // MS-EME
+        else if (window.MSMediaKeys) {
+            if (typeof window.MSMediaKeys === 'function') {
+                result = true;
+            }
+        }
+        // WEBKIT-EME    
+        else if (testVideoEl.webkitGenerateKeyRequest) {
+            if (typeof testVideoEl.webkitGenerateKeyRequest === 'function') {
+                result = true;
+            }
+        }
+
+        return result;
+    };
 
     tests['hlsjs'] = function(){
         window.MediaSource = window.MediaSource || window.WebKitMediaSource;
