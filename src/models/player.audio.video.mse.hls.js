@@ -3,13 +3,8 @@
  * projekktor player
  * http://www.projekktor.com
  *
-<<<<<<< HEAD
- * Copyright 2016 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
- *
-=======
  * Copyright 2016-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  * 
->>>>>>> Fix MSE hls.js model configuration retrieval
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  *
