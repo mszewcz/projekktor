@@ -35,10 +35,9 @@
     "grunt-contrib-compress": "1.x",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "1.x",
-    "grunt-contrib-jshint": "1.x",
     "grunt-contrib-uglify": "3.x",
-    "grunt-contrib-watch": "1.x",
-    "grunt-git-authors": "3.x",
+    "grunt-lineending": "^1.0.0",
+    "grunt-polyfiller": "0.0.4",
     "gzip-js": "^0.3.0"
   },
   "keywords": []

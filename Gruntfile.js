@@ -3,29 +3,41 @@ module.exports = function (grunt) {
   "use strict";
   grunt.file.defaultEncoding = 'utf-8';
 
-  var 
+  var
     pkg = grunt.file.readJSON("package.json"),
     ver = pkg.version,
     name = grunt.option('name') || '',
     dest = grunt.option('dest') || 'dest/',
     pluginspath = grunt.option('pluginspath') || 'plugins/',
-    lang = grunt.option('lang') || 'en', 
-    version = (name!=='') ? (grunt.option('ver') || ver) + "." + name : (grunt.option('ver') || ver),
+    lang = grunt.option('lang') || 'en',
+    version = (name !== '') ? (grunt.option('ver') || ver) + "." + name : (grunt.option('ver') || ver),
     distpaths = [
       "dist/projekktor-" + version + ".js",
       "dist/projekktor-" + version + ".min.map",
       "dist/projekktor-" + version + ".min.js"
     ],
+    defaults = [
+      "+playlist",
+      "-youtube",
+      "+html",
+      "+osmf",
+      "+osmfhls",
+      "+osmfmss",
+      "+msehls",
+      "-plugins/logo",
+      "-plugins/ima",
+      "-plugins/postertitle",
+      "-plugins/share",
+      "-plugins/tracking"].join(":"),
     filesUglify = {},
     gzip = require("gzip-js"),
     readOptionalJSON = function (filepath) {
       var data = {};
       try {
         data = grunt.file.readJSON(filepath);
-      } catch (e) {}
+      } catch (e) { }
       return data;
-    },
-    srcHintOptions = readOptionalJSON("src/.jshintrc");
+    };
 
   filesUglify["dist/projekktor-" + version + ".min.js"] = ["dist/projekktor-" + version + ".js"];
   dest = dest + name + "/";
@@ -45,10 +57,19 @@ module.exports = function (grunt) {
         cache: "dist/.sizecache.json"
       }
     },
+    polyfiller: {
+      build: {
+        options: {
+          features: ['Promise', 'PointerEvents']
+        },
+        dest: 'dist/polyfills.js'
+      }
+    },
     build: {
       all: {
         dest: "dist/projekktor-" + version + ".js",
         src: [
+          "dist/polyfills.js",
           "src/controller/projekktor.js",
           "src/controller/projekktor.config.version.js",
           "src/controller/projekktor.config.js",
@@ -76,17 +97,19 @@ module.exports = function (grunt) {
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
           "src/plugins/projekktor.contextmenu.js",
-          "src/plugins/projekktor.settings.js", 
-          {user:true, flag: "plugins/ads", src: "ads", ver: true },
-          {user:true, flag: "plugins/ima", src: "ima", ver: true },
-          {user:true, flag: "plugins/logo", src: "logo" , ver: true},
-          {user:true, flag: "plugins/postertitle", src: "postertitle", ver: true },
-          {user:true, flag: "plugins/share", src: "share", ver: true },
-          {user:true, flag: "plugins/tracking", src: "tracking", ver: true },
-          {user:true, flag: "plugins/tracks", src:  "tracks", ver: true },
-          {user:true, flag: "plugins/audioslideshow", src:  "audioslideshow", ver: true },
-          {user:true, flag: "plugins/vastdemo", src:  "vastdemo", ver: true }        
+          "src/plugins/projekktor.settings.js"     
         ]
+      }
+    },
+    lineending: {
+      dist: {
+        options: {
+          eol: 'lf',
+          overwrite: true
+        },
+        files: {
+          '': ["dist/projekktor-" + version + ".js"]
+        }
       }
     },
     platforms: {
@@ -99,26 +122,6 @@ module.exports = function (grunt) {
         files: {
           'platforms/videojs/videojs.vpaid.css': ['platforms/videojs/video-js.css', 'platforms/videojs/videojs.vast.vpaid.css', 'platforms/videojs/videojs-projekktor-model-custom.css'],
           'platforms/videojs/videojs.vpaid.js': ['platforms/videojs/video.js', 'platforms/videojs/videojs_5.vast.vpaid.js']
-        }
-      }
-    },
-    jshint: {
-      dist: {
-        src: ["dist/projekktor-" + version + ".js"],
-        options: srcHintOptions
-      },
-      grunt: {
-        src: ["Gruntfile.js"],
-        options: {
-          jshintrc: ".jshintrc"
-        }
-      },
-      tests: {
-        // TODO: Once .jshintignore is supported, use that instead.
-        // issue located here: https://github.com/gruntjs/grunt-contrib-jshint/issues/1
-        src: ["test/data/{test,testinit,testrunner}.js", "test/unit/**/*.js"],
-        options: {
-          jshintrc: "test/.jshintrc"
         }
       }
     },
@@ -141,11 +144,6 @@ module.exports = function (grunt) {
         regExp: /([\"\']?version[\"\']?\s*?[:=]\s*?[\'\"])(\d+\.\d+\.\d+(-\.\d+)?(-\d+)?)[\d||A-a|.|-]*(['|"]?)/i
       }
     },
-    watch: {
-      files: ["<%= jshint.grunt.src %>", "<%= jshint.tests.src %>", "src/**/*.js"],
-      tasks: "dev"
-    },
-
     uglify: {
       all: {
         files: filesUglify,
@@ -163,9 +161,7 @@ module.exports = function (grunt) {
           sourceMap: true,
           sourceMapName: "dist/projekktor-" + version + ".min.map",
           report: "min",
-          beautify: {
-            ascii_only: true
-          },
+          beautify: false,
           compress: {
             hoist_funs: false,
             join_vars: false,
@@ -181,9 +177,7 @@ module.exports = function (grunt) {
         options: {
           sourceMap: false,
           report: "min",
-          beautify: {
-            ascii_only: true
-          },
+          beautify: false,
           compress: {
             hoist_funs: false,
             join_vars: false,
@@ -195,12 +189,6 @@ module.exports = function (grunt) {
     },
     clean: {
         all: [dest, 'dist/*.js', 'dist/*.map', 'dist/.*.json']
-    },
-    readme: {
-        src: 'dist/readme.html',  // source template file
-        dest: dest + 'readme.html',  // destination file (usually index.html)
-        version: version,
-        name: name
     },
     copy: {
       main: {
@@ -234,57 +222,10 @@ module.exports = function (grunt) {
           archive: dest + "projekktor-" + version + '.zip'
         },
         files: [
-          //{src: ['path/*'], dest: 'internal_folder/', filter: 'isFile'}, // includes files in path
-          // {src: ['dest/**'], dest: ''}, // includes files in path and its subdirs
           {expand: true, cwd: dest, src: ['**'], dest: ''}, // makes all src relative to cwd
-          //{flatten: true, src: ['path/**'], dest: 'internal_folder4/', filter: 'isFile'} // flattens results to a single level
         ]
       }
     }    
-  });
-  
-  
-  grunt.registerTask( "readme", "Generate readme.html depending on configuration", function() {
-      var conf = grunt.config('readme'),
-          tmpl = grunt.file.read(conf.src);
-
-      grunt.file.write(conf.dest, grunt.template.process(tmpl));
-
-      grunt.log.writeln('Generated \'' + conf.dest + '\' from \'' + conf.src + '\'');
-  });  
-
-  // Special "alias" task to make custom build creation less grawlix-y
-  grunt.registerTask("custom", function () {
-    var done = this.async(),
-      args = [].slice.call(arguments),
-      modules = args.length ? args[0].replace(/,/g, ":") : "";
-
-    // Translation example
-    //
-    //   grunt custom:+ajax,-dimensions,-effects,-offset
-    //
-    // Becomes:
-    //
-    //   grunt build:*:*:+ajax:-dimensions:-effects:-offset
-
-    grunt.log.writeln("Creating custom build..." + version + " " + modules + "\n" + "  " + grunt.option('dest')  +"  " + grunt.option('name'));
-
-    grunt.util.spawn({
-      grunt: true,
-      args: ["--ver=" + (grunt.option('ver') || 'universal'), "--pluginspath=" + grunt.option('pluginspath') || '', "--dest=" + grunt.option('dest') || '', "--name=" + grunt.option('name') || '', "build:*:" + modules, "uglify", "dist:*", "compare_size", "copy:main", "readme", "compress"]
-    }, function (err, result) {
-      if (err) {
-        grunt.log.writeln(err + " "+ result);
-        // grunt.verbose.error();
-        // done(err);
-        return;
-      }
-
-      grunt.log.writeln(result.stdout.replace("Done, without errors.", ""));
-
-      done();
-    });
-
   });
 
   // Special concat/build task to handle various build requirements
@@ -327,11 +268,6 @@ module.exports = function (grunt) {
           }
         }
       };
-
-    // append commit id to version
-    if (process.env.COMMIT) {
-      version += " " + process.env.COMMIT;
-    }
 
     // figure out which files to exclude based on these rules in this order:
     //  dependency explicit exclude
@@ -550,145 +486,27 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-compress");
   grunt.loadNpmTasks("grunt-compare-size");
-  grunt.loadNpmTasks("grunt-git-authors");
-  grunt.loadNpmTasks("grunt-contrib-watch");
-  grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-polyfiller');
+  grunt.loadNpmTasks('grunt-lineending');
 
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
     "clean",
-    "build:*:*:+playlist:-youtube:+html:+osmf:+osmfhls:+osmfmss:+msehls:-plugins/logo:-plugins/ima:-plugins/postertitle:-plugins/share:-plugins/tracking",
+    "polyfiller",
+    "build:*:*:" + defaults,
+    "lineending",
     "uglify:all",
     "dist:*",
     "compare_size",
     "copy:main",
-    "readme",
     "compress"
   ]);
 
   grunt.registerMultiTask("platforms", "prepare platforms for distribution", function(){
-       var target = this.target;
-
        grunt.task.run("copy:platforms");
        grunt.task.run("concat:vpaidvideojs");
        grunt.task.run("uglify:vpaidvideojs");
   });
 };
-
-
-function version_compare (v1, v2, operator) {
-  // http://kevin.vanzonneveld.net
-  // +      original by: Philippe Jausions (http://pear.php.net/user/jausions)
-  // +      original by: Aidan Lister (http://aidanlister.com/)
-  // + reimplemented by: Kankrelune (http://www.webfaktory.info/)
-  // +      improved by: Brett Zamir (http://brett-zamir.me)
-  // +      improved by: Scott Baker
-  // +      improved by: Theriault
-  // *        example 1: version_compare('8.2.5rc', '8.2.5a');
-  // *        returns 1: 1
-  // *        example 2: version_compare('8.2.50', '8.2.52', '<');
-  // *        returns 2: true
-  // *        example 3: version_compare('5.3.0-dev', '5.3.0');
-  // *        returns 3: -1
-  // *        example 4: version_compare('4.1.0.52','4.01.0.51');
-  // *        returns 4: 1
-  // BEGIN REDUNDANT
-  this.php_js = this.php_js || {};
-  this.php_js.ENV = this.php_js.ENV || {};
-  // END REDUNDANT
-  // Important: compare must be initialized at 0.
-  var i = 0,
-    x = 0,
-    compare = 0,
-    // vm maps textual PHP versions to negatives so they're less than 0.
-    // PHP currently defines these as CASE-SENSITIVE. It is important to
-    // leave these as negatives so that they can come before numerical versions
-    // and as if no letters were there to begin with.
-    // (1alpha is < 1 and < 1.1 but > 1dev1)
-    // If a non-numerical value can't be mapped to this table, it receives
-    // -7 as its value.
-    vm = {
-      'dev': -6,
-      'alpha': -5,
-      'a': -5,
-      'beta': -4,
-      'b': -4,
-      'RC': -3,
-      'rc': -3,
-      '#': -2,
-      'p': 1,
-      'pl': 1
-    },
-    // This function will be called to prepare each version argument.
-    // It replaces every _, -, and + with a dot.
-    // It surrounds any nonsequence of numbers/dots with dots.
-    // It replaces sequences of dots with a single dot.
-    //    version_compare('4..0', '4.0') == 0
-    // Important: A string of 0 length needs to be converted into a value
-    // even less than an unexisting value in vm (-7), hence [-8].
-    // It's also important to not strip spaces because of this.
-    //   version_compare('', ' ') == 1
-    prepVersion = function (v) {
-      v = ('' + v).replace(/[_\-+]/g, '.');
-      v = v.replace(/([^.\d]+)/g, '.$1.').replace(/\.{2,}/g, '.');
-      return (!v.length ? [-8] : v.split('.'));
-    },
-    // This converts a version component to a number.
-    // Empty component becomes 0.
-    // Non-numerical component becomes a negative number.
-    // Numerical component becomes itself as an integer.
-    numVersion = function (v) {
-      return !v ? 0 : (isNaN(v) ? vm[v] || -7 : parseInt(v, 10));
-    };
-  v1 = prepVersion(v1);
-  v2 = prepVersion(v2);
-  x = Math.max(v1.length, v2.length);
-  for (i = 0; i < x; i++) {
-    if (v1[i] == v2[i]) {
-      continue;
-    }
-    v1[i] = numVersion(v1[i]);
-    v2[i] = numVersion(v2[i]);
-    if (v1[i] < v2[i]) {
-      compare = -1;
-      break;
-    } else if (v1[i] > v2[i]) {
-      compare = 1;
-      break;
-    }
-  }
-  if (!operator) {
-    return compare;
-  }
-
-  // Important: operator is CASE-SENSITIVE.
-  // "No operator" seems to be treated as "<."
-  // Any other values seem to make the function return null.
-  switch (operator) {
-  case '>':
-  case 'gt':
-    return (compare > 0);
-  case '>=':
-  case 'ge':
-    return (compare >= 0);
-  case '<=':
-  case 'le':
-    return (compare <= 0);
-  case '==':
-  case '=':
-  case 'eq':
-    return (compare === 0);
-  case '<>':
-  case '!=':
-  case 'ne':
-    return (compare !== 0);
-  case '':
-  case '<':
-  case 'lt':
-    return (compare < 0);
-  default:
-    return null;
-  }
-}
