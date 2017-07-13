@@ -23,26 +23,22 @@ module.exports = function (grunt) {
       "+osmf",
       "+osmfhls",
       "+osmfmss",
-      "+msehls",
-      "-plugins/logo",
-      "-plugins/ima",
-      "-plugins/postertitle",
-      "-plugins/share",
-      "-plugins/tracking"].join(":"),
+      "+msehls"
+    ].join(":"),
     filesUglify = {},
     gzip = require("gzip-js"),
     readOptionalJSON = function (filepath) {
       var data = {};
       try {
         data = grunt.file.readJSON(filepath);
-      } catch (e) { }
+      } catch (e) {}
       return data;
     };
 
   filesUglify["dist/projekktor-" + version + ".min.js"] = ["dist/projekktor-" + version + ".js"];
   dest = dest + name + "/";
   grunt.file.mkdir(dest);
-  
+
   grunt.initConfig({
     pkg: pkg,
     dst: readOptionalJSON("dist/.destination.json"),
@@ -86,18 +82,39 @@ module.exports = function (grunt) {
           "src/models/player.audio.video.js",
           "src/models/player.audio.video.hls.js",
           "src/models/player.playlist.js",
-          "src/models/player.image.html.js",              
-          {flag: "osmf", src: "src/models/player.audio.video.osmf.js"},
-          {flag: "osmfhls", src: "src/models/player.audio.video.osmf.hls.js"},
-          {flag: "osmfmss", src: "src/models/player.audio.video.osmf.mss.js"},
-          {flag: "silverlight", src: "src/models/player.audio.video.silverlight.js"},
-          {flag: "msehls", src: "src/models/player.audio.video.mse.hls.js"},
-          {flag: "videojs", src: "src/models/player.videojs.js"},
-          {flag: "youtube", src: "src/models/player.youtube.js" }, 
+          "src/models/player.image.html.js",
+          {
+            flag: "osmf",
+            src: "src/models/player.audio.video.osmf.js"
+          },
+          {
+            flag: "osmfhls",
+            src: "src/models/player.audio.video.osmf.hls.js"
+          },
+          {
+            flag: "osmfmss",
+            src: "src/models/player.audio.video.osmf.mss.js"
+          },
+          {
+            flag: "silverlight",
+            src: "src/models/player.audio.video.silverlight.js"
+          },
+          {
+            flag: "msehls",
+            src: "src/models/player.audio.video.mse.hls.js"
+          },
+          {
+            flag: "videojs",
+            src: "src/models/player.videojs.js"
+          },
+          {
+            flag: "youtube",
+            src: "src/models/player.youtube.js"
+          },
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
           "src/plugins/projekktor.contextmenu.js",
-          "src/plugins/projekktor.settings.js"     
+          "src/plugins/projekktor.settings.js"
         ]
       }
     },
@@ -113,9 +130,9 @@ module.exports = function (grunt) {
       }
     },
     platforms: {
-        videojs: {
+      videojs: {
 
-        }
+      }
     },
     concat: {
       vpaidvideojs: {
@@ -131,7 +148,7 @@ module.exports = function (grunt) {
         updateConfigs: [],
         commit: true,
         commitMessage: 'Bump version to %VERSION%',
-        commitFiles: ['package.json',  'src/controller/projekktor.config.version.js'],
+        commitFiles: ['package.json', 'src/controller/projekktor.config.version.js'],
         createTag: true,
         tagName: '%VERSION%',
         tagMessage: 'Projekktor %VERSION%',
@@ -149,15 +166,15 @@ module.exports = function (grunt) {
         files: filesUglify,
         options: {
           banner: "/*! Projekktor v<%= pkg.version %>\n" +
-          "* <%= grunt.template.today('yyyy-mm-dd') %> \n" +
-          "* \n" +
-          "* http://www.projekktor.com \n" +
-          "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" +
-          "* Copyright 2014-2017 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
-          "* \n" +
-          "* under GNU General Public License \n" +
-          "* http://www.projekktor.com/license/\n" +
-          "*/",
+            "* <%= grunt.template.today('yyyy-mm-dd') %> \n" +
+            "* \n" +
+            "* http://www.projekktor.com \n" +
+            "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" +
+            "* Copyright 2014-2017 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
+            "* \n" +
+            "* under GNU General Public License \n" +
+            "* http://www.projekktor.com/license/\n" +
+            "*/",
           sourceMap: true,
           sourceMapName: "dist/projekktor-" + version + ".min.map",
           report: "min",
@@ -188,7 +205,7 @@ module.exports = function (grunt) {
       }
     },
     clean: {
-        all: [dest, 'dist/*.js', 'dist/*.map', 'dist/.*.json']
+      all: [dest, 'dist/*.js', 'dist/*.map', 'dist/.*.json']
     },
     copy: {
       main: {
@@ -196,12 +213,40 @@ module.exports = function (grunt) {
           // includes files within path
           // {expand: true, src: ['path/*'], dest: 'dest/', filter: 'isFile'},
           // includes files within path and its sub-directories
-          {expand: true, flatten: true, src: ['dist/*' + version + '*'], dest: dest},
-          {expand: true, flatten: true, src: ['dist/media/*'], dest: dest + 'media/'},
-          {expand: true, src: ['platforms/**'], dest: dest},       
-          {expand: true, src: ['themes/**'], dest: dest},
-          {expand: true, src: ['readme.html'], dest: dest},
-          {expand: true, flatten: true, src: ['lib/jQuery/3.2.1/**'], dest: dest, filter: 'isFile'}
+          {
+            expand: true,
+            flatten: true,
+            src: ['dist/*' + version + '*'],
+            dest: dest
+          },
+          {
+            expand: true,
+            flatten: true,
+            src: ['dist/media/*'],
+            dest: dest + 'media/'
+          },
+          {
+            expand: true,
+            src: ['platforms/**'],
+            dest: dest
+          },
+          {
+            expand: true,
+            src: ['themes/**'],
+            dest: dest
+          },
+          {
+            expand: true,
+            src: ['index.html'],
+            dest: dest
+          },
+          {
+            expand: true,
+            flatten: true,
+            src: ['lib/jQuery/3.2.1/**'],
+            dest: dest,
+            filter: 'isFile'
+          }
           // makes all src relative to cwd
           // {expand: true, cwd: 'path/', src: ['**'], dest: 'dest/'},
           // flattens results to a single level
@@ -209,10 +254,24 @@ module.exports = function (grunt) {
         ]
       },
       platforms: {
-        files: [
-          {expand: true, cwd:'lib/hls.js/dist/', src:['*.js', '*.map'], dest: 'platforms/mse/hls.js/'},
-          {expand: true, cwd:'lib/video.js/dist/', src:['*.js', '*.map', '*.css'], dest: 'platforms/videojs/'},
-          {expand: true, cwd:'lib/videojs-vast-vpaid/bin/', src:['videojs_5*.js', 'videojs_5*.js.map', '*.css.map', '*.css', '*.swf'], dest: 'platforms/videojs/'}
+        files: [{
+            expand: true,
+            cwd: 'lib/hls.js/dist/',
+            src: ['*.js', '*.map'],
+            dest: 'platforms/mse/hls.js/'
+          },
+          {
+            expand: true,
+            cwd: 'lib/video.js/dist/',
+            src: ['*.js', '*.map', '*.css'],
+            dest: 'platforms/videojs/'
+          },
+          {
+            expand: true,
+            cwd: 'lib/videojs-vast-vpaid/bin/',
+            src: ['videojs_5*.js', 'videojs_5*.js.map', '*.css.map', '*.css', '*.swf'],
+            dest: 'platforms/videojs/'
+          }
         ]
       }
     },
@@ -221,11 +280,47 @@ module.exports = function (grunt) {
         options: {
           archive: dest + "projekktor-" + version + '.zip'
         },
-        files: [
-          {expand: true, cwd: dest, src: ['**'], dest: ''}, // makes all src relative to cwd
+        files: [{
+            expand: true,
+            cwd: dest,
+            src: ['**'],
+            dest: ''
+          }, // makes all src relative to cwd
         ]
       }
-    }    
+    },
+    index: {
+      src: 'dist/index.html', // source template file
+      dest: dest + 'index.html', // destination file (usually index.html)
+      version: version,
+      name: name
+    },
+    watch: {
+      files: [
+        'src/**/*.js',
+        'themes/**/*.css',
+        'themes/**/*.scss'
+      ],
+      tasks: ['build-preview']
+    },
+    browserSync: {
+      dev: {
+        bsFiles: {
+          src: [
+            dest + '/**/*.js',
+            dest + '/**/*.css',
+            dest + '/*.html'
+          ]
+        },
+        options: {
+          watchTask: true,
+          server: {
+            baseDir: [dest],
+            index: "index.html"
+          }
+        }
+      }
+    }
   });
 
   // Special concat/build task to handle various build requirements
@@ -233,168 +328,165 @@ module.exports = function (grunt) {
     "build",
     "Concatenate source (include/exclude modules with +/- flags), embed date/version",
 
-  function () {
-    // Concat specified files.
-    var compiled = "",
-      modules = this.flags,
-      optIn = !modules["*"],
-      explicit = optIn || Object.keys(modules).length > 1,
-      name = this.data.dest,
-      src = this.data.src,
-      deps = {},
-      excluded = {},
-      version = grunt.config("pkg.version"),
-      excluder = function (flag, needsFlag) {
-        // optIn defaults implicit behavior to weak exclusion
-        if (optIn && !modules[flag] && !modules["+" + flag]) {
-          excluded[flag] = false;
+    function () {
+      // Concat specified files.
+      var compiled = "",
+        modules = this.flags,
+        optIn = !modules["*"],
+        explicit = optIn || Object.keys(modules).length > 1,
+        name = this.data.dest,
+        src = this.data.src,
+        deps = {},
+        excluded = {},
+        version = grunt.config("pkg.version"),
+        excluder = function (flag, needsFlag) {
+          // optIn defaults implicit behavior to weak exclusion
+          if (optIn && !modules[flag] && !modules["+" + flag]) {
+            excluded[flag] = false;
+          }
+
+          // explicit or inherited strong exclusion
+          if (excluded[needsFlag] || modules["-" + flag]) {
+            excluded[flag] = true;
+
+            // explicit inclusion overrides weak exclusion
+          } else if (excluded[needsFlag] === false && (modules[flag] || modules["+" + flag])) {
+
+            delete excluded[needsFlag];
+
+            // ...all the way down
+            if (deps[needsFlag]) {
+              deps[needsFlag].forEach(function (subDep) {
+                modules[needsFlag] = true;
+                excluder(needsFlag, subDep);
+              });
+            }
+          }
+        };
+
+      // figure out which files to exclude based on these rules in this order:
+      //  dependency explicit exclude
+      //  > explicit exclude
+      //  > explicit include
+      //  > dependency implicit exclude
+      //  > implicit exclude
+      // examples:
+      //  *                  none (implicit exclude)
+      //  *:*                all (implicit include)
+      //  *:*:-html           all except css and dependents (explicit > implicit)
+      //  *:*:-html:+youtube  same (excludes effects because explicit include is trumped by explicit exclude of dependency)
+      //  *:+youtube         none except effects and its dependencies (explicit include trumps implicit exclude of dependency)
+      src.forEach(function (filepath, index) {
+
+        if (filepath.ver === true) {
+          var versionpath = pluginspath + "/" + filepath.src;
+          var dirs = grunt.file.expand({
+            filter: 'isDirectory'
+          }, [versionpath + "/*"]);
+          filepath.src = dirs[0] + "/projekktor." + filepath.src + ".js";
+        }
+        // check for user plugins
+        var user = filepath.user;
+        if (user && filepath.src) {
+          if (!grunt.file.exists(filepath.src)) {
+            delete src[index];
+            return;
+          }
         }
 
-        // explicit or inherited strong exclusion
-        if (excluded[needsFlag] || modules["-" + flag]) {
-          excluded[flag] = true;
+        var flag = filepath.flag;
 
-          // explicit inclusion overrides weak exclusion
-        } else if (excluded[needsFlag] === false && (modules[flag] || modules["+" + flag])) {
+        if (flag) {
+          excluder(flag);
 
-          delete excluded[needsFlag];
-
-          // ...all the way down
-          if (deps[needsFlag]) {
-            deps[needsFlag].forEach(function (subDep) {
-              modules[needsFlag] = true;
-              excluder(needsFlag, subDep);
+          // check for dependencies
+          if (filepath.needs) {
+            deps[flag] = filepath.needs;
+            filepath.needs.forEach(function (needsFlag) {
+              excluder(flag, needsFlag);
             });
           }
         }
-      };
+      });
 
-    // figure out which files to exclude based on these rules in this order:
-    //  dependency explicit exclude
-    //  > explicit exclude
-    //  > explicit include
-    //  > dependency implicit exclude
-    //  > implicit exclude
-    // examples:
-    //  *                  none (implicit exclude)
-    //  *:*                all (implicit include)
-    //  *:*:-html           all except css and dependents (explicit > implicit)
-    //  *:*:-html:+youtube  same (excludes effects because explicit include is trumped by explicit exclude of dependency)
-    //  *:+youtube         none except effects and its dependencies (explicit include trumps implicit exclude of dependency)
-    src.forEach(function (filepath, index) {
-      
-      if (filepath.ver===true) {
-        var versionpath =  pluginspath + "/" + filepath.src;
-        var dirs = grunt.file.expand({filter: 'isDirectory'}, [versionpath + "/*"]);
-        dirs.sort(
-          function versionSort($a, $b) {
-                  return -1 * version_compare($a, $b);
-          }           
-        )
-      filepath.src = dirs[0] + "/projekktor." + filepath.src + ".js";
-      }
-      // check for user plugins
-      var user = filepath.user;
-      if (user && filepath.src) {
-        if (!grunt.file.exists(filepath.src)) {
-          delete src[index];
-          return;
-        }
+      // append excluded modules to version
+      if (Object.keys(excluded).length) {
+        version += " -" + Object.keys(excluded).join(",-");
+        // set pkg.version to version with excludes, so minified file picks it up
+        grunt.config.set("pkg.version", version);
       }
 
-      var flag = filepath.flag;
- 
-      if (flag) {
-        excluder(flag);
+      // conditionally concatenate source
+      src.forEach(function (filepath) {
 
-        // check for dependencies
-        if (filepath.needs) {
-          deps[flag] = filepath.needs;
-          filepath.needs.forEach(function (needsFlag) {
-            excluder(flag, needsFlag);
-          });
-        }
-      }
-    });
+        var flag = filepath.flag,
+          specified = false,
+          omit = false,
+          messages = [];
 
-    // append excluded modules to version
-    if (Object.keys(excluded).length) {
-      version += " -" + Object.keys(excluded).join(",-");
-      // set pkg.version to version with excludes, so minified file picks it up
-      grunt.config.set("pkg.version", version);
-    }
-
-    // conditionally concatenate source
-    src.forEach(function (filepath) {
-     
-      var flag = filepath.flag,
-        specified = false,
-        omit = false,
-        messages = [];
-
-      if (flag) {
-        if (excluded[flag] !== undefined) {
-          messages.push([
+        if (flag) {
+          if (excluded[flag] !== undefined) {
+            messages.push([
               ("Excluding " + flag).red,
               ("(" + filepath.src + ")").grey
             ]);
-          specified = true;
-          omit = !filepath.alt;
-          if (!omit) {
-            flag += " alternate";
-            filepath.src = filepath.alt;
+            specified = true;
+            omit = !filepath.alt;
+            if (!omit) {
+              flag += " alternate";
+              filepath.src = filepath.alt;
+            }
           }
-        }
-        if (excluded[flag] === undefined) {
-          messages.push([
+          if (excluded[flag] === undefined) {
+            messages.push([
               ("Including " + flag).green,
               ("(" + filepath.src + ")").grey
             ]);
 
-          // If this module was actually specified by the
-          // builder, then set the flag to include it in the
-          // output list
-          if (modules["+" + flag]) {
-            specified = true;
+            // If this module was actually specified by the
+            // builder, then set the flag to include it in the
+            // output list
+            if (modules["+" + flag]) {
+              specified = true;
+            }
+          }
+
+          filepath = filepath.src;
+
+          // Only display the inclusion/exclusion list when handling
+          // an explicit list.
+          //
+          // Additionally, only display modules that have been specified
+          // by the user
+          if (explicit && specified) {
+            messages.forEach(function (message) {
+              grunt.log.writetableln([27, 30], message);
+            });
           }
         }
 
-        filepath = filepath.src;
-
-        // Only display the inclusion/exclusion list when handling
-        // an explicit list.
-        //
-        // Additionally, only display modules that have been specified
-        // by the user
-        if (explicit && specified) {
-          messages.forEach(function (message) {
-            grunt.log.writetableln([27, 30], message);
-          });
+        if (!omit) {
+          compiled += grunt.file.read(filepath);
         }
+      });
+
+      // Embed Version
+      // Embed Date
+      compiled = compiled.replace(/@VERSION/g, version)
+        // yyyy-mm-ddThh:mmZ
+        .replace(/@DATE/g, (new Date()).toISOString().replace(/:\d+\.\d+Z$/, "Z"));
+
+      // Write concatenated source to file
+      grunt.file.write(name, compiled);
+
+      // Fail task if errors were logged.
+      if (this.errorCount) {
+        return false;
       }
 
-      if (!omit) {
-        compiled += grunt.file.read(filepath);
-      }
+      // Otherwise, print a success message.
+      grunt.log.writeln("File '" + name + "' created.");
     });
-
-    // Embed Version
-    // Embed Date
-    compiled = compiled.replace(/@VERSION/g, version)
-    // yyyy-mm-ddThh:mmZ
-    .replace(/@DATE/g, (new Date()).toISOString().replace(/:\d+\.\d+Z$/, "Z"));
-
-    // Write concatenated source to file
-    grunt.file.write(name, compiled);
-
-    // Fail task if errors were logged.
-    if (this.errorCount) {
-      return false;
-    }
-
-    // Otherwise, print a success message.
-    grunt.log.writeln("File '" + name + "' created.");
-  });
 
   // Process files for distribution
   grunt.registerTask("dist", function () {
@@ -418,7 +510,7 @@ module.exports = function (grunt) {
 
     distpaths.forEach(function (filename) {
       var i,
-      text = fs.readFileSync(filename, "utf8"); 
+        text = fs.readFileSync(filename, "utf8");
 
       // Ensure files use only \n for line endings, not \r\n
       if (/\x0d\x0a/.test(text)) {
@@ -454,12 +546,12 @@ module.exports = function (grunt) {
         i = 0;
         text = text.replace(/(?:\/\*|)\n?\/\/@\s*sourceMappingURL=.*(\n\*\/|)/g,
 
-        function (match) {
-          if (i++) {
-            return "";
-          }
-          return match;
-        });
+          function (match) {
+            if (i++) {
+              return "";
+            }
+            return match;
+          });
         fs.writeFileSync(filename, text, "utf-8");
       }
 
@@ -480,7 +572,7 @@ module.exports = function (grunt) {
     return !nonascii;
   });
 
-  // Load grunt tasks from NPM packages  
+  // Load grunt tasks from NPM packages
   grunt.loadNpmTasks("grunt-bump");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-copy");
@@ -490,6 +582,17 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-polyfiller');
   grunt.loadNpmTasks('grunt-lineending');
+  grunt.loadNpmTasks('grunt-browser-sync');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+
+  grunt.registerTask("index", "Generate index.html depending on configuration", function () {
+    var conf = grunt.config('index'),
+      tmpl = grunt.file.read(conf.src);
+
+    grunt.file.write(conf.dest, grunt.template.process(tmpl));
+
+    grunt.log.writeln('Generated \'' + conf.dest + '\' from \'' + conf.src + '\'');
+  });
 
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
@@ -500,13 +603,29 @@ module.exports = function (grunt) {
     "uglify:all",
     "dist:*",
     "compare_size",
+    "index",
     "copy:main",
     "compress"
   ]);
 
-  grunt.registerMultiTask("platforms", "prepare platforms for distribution", function(){
-       grunt.task.run("copy:platforms");
-       grunt.task.run("concat:vpaidvideojs");
-       grunt.task.run("uglify:vpaidvideojs");
+  grunt.registerMultiTask("platforms", "prepare platforms for distribution", function () {
+    grunt.task.run("copy:platforms");
+    grunt.task.run("concat:vpaidvideojs");
+    grunt.task.run("uglify:vpaidvideojs");
   });
+
+  // Build preview
+  grunt.registerTask("build-preview", [
+    "clean",
+    "polyfiller",
+    "build:*:*:" + defaults,
+    "lineending",
+    "uglify:all",
+    "dist:*",
+    "index",
+    "copy:main"
+  ]);
+
+  // preview in browserSync
+  grunt.registerTask('preview', ['browserSync', 'build-preview', 'watch']);
 };

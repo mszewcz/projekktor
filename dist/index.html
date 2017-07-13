@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Projekktor v.
+        <%= grunt.config('index').version %>
+    </title>
+    <meta charset="UTF-8" />
+    <!-- site styles -->
+
+    <!-- Load projekktor css -->
+    <link rel="stylesheet" href="themes/maccaco/projekktor.style.css" type="text/css" media="screen" />
+
+    <!-- Load jquery -->
+    <script src="jquery-3.2.1.min.js"></script>
+
+    <!-- load projekktor js -->
+    <script type="text/javascript" src="projekktor-<%= grunt.config('index').version %>.min.js"></script>
+    <script>
+        $(function () {
+            window.p = projekktor('#player', {
+                title: "Projekktor v.<%= grunt.config('index').version %>",
+                poster: 'media/intro.png',
+                width: 640,
+                height: 380,
+                autoplay: false,
+                debug: true,
+                iframe: false,
+                platforms: ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight',
+                    'videojs'
+                ],
+                platformsConfig: {
+                    flash: {
+                        src: 'platforms/flash/StrobeMediaPlayback/StrobeMediaPlayback.swf',
+                        minPlatformVersion: '11.4',
+                        initVars: {
+                            plugin_hls: 'platforms/flash/StrobeMediaPlayback/plugins/flashls/flashlsOSMF.swf',
+                        }
+                    },
+                    silverlight: {
+                        src: 'platforms/silverlight/mediaelement/silverlightmediaelement.xap',
+                        initVars: {
+                            debug: false
+                        }
+                    },
+                    mse: {
+                        src: 'platforms/mse/hls.js/hls.min.js',
+                        initVars: {
+                            debug: false,
+                            capLevelToPlayerSize: true,
+                            startFragPrefech: true
+                        }
+                    },
+                    videojs: {
+                        src: 'platforms/videojs/videojs.min.js',
+                        css: 'platforms/videojs/videojs.min.css',
+                        initVars: {}
+                    }
+                },
+                playlist: [{
+                    0: {
+                        src: "media/intro.mp4",
+                        type: "video/mp4"
+                    },
+                    1: {
+                        src: "media/intro.ogv",
+                        type: "video/ogg"
+                    },
+                    3: {
+                        src: "media/intro.webm",
+                        type: "video/webm"
+                    }
+                }]
+            }, function (player) {
+                // ready function
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Projekktor v.<%= grunt.config('index').version %></h1>
+
+    <div id="player" class="projekktor">
+        <noscript>
+            <p>No JavaScript support.</p>
+        </noscript>
+    </div>
+</body>
+
+</html>

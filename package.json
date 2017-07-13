@@ -29,6 +29,7 @@
   "devDependencies": {
     "archiver": "1.x",
     "grunt": "^1.0.1",
+    "grunt-browser-sync": "^2.2.0",
     "grunt-bump": "^0.8.0",
     "grunt-compare-size": "^0.4.0",
     "grunt-contrib-clean": "1.x",
