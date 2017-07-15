@@ -1,12 +1,12 @@
 /*
- * this file is part of: 
+ * this file is part of:
  * projekktor zwei
- * http://www.projekktor.com 
+ * http://www.projekktor.com
  *
  * Copyright 2015 Radosław Włodkowski, radoslaw@wlodkowski.net
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
- * 
+ *
  */
 
 jQuery(function ($) {
@@ -811,7 +811,7 @@ $p.userAgent = (function (window, document, undefined) {
         return UAParser;
 
     })(window)();
-    
+
     function isMobile(){
         if(navigator.userAgent.search(/Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/i) > -1){
             return true;
@@ -820,7 +820,7 @@ $p.userAgent = (function (window, document, undefined) {
             return false;
         }
     }
-    
+
     /**
     * Detect Vendor Prefix with JavaScript
     * CREDITS: http://davidwalsh.name/vendor-prefix
@@ -840,7 +840,7 @@ $p.userAgent = (function (window, document, undefined) {
             js: $p.utils.ucfirst(pre)
         };
     }
-    
+
     return {
         browser: UAParser.browser,
         cpu: UAParser.cpu,

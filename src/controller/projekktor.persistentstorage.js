@@ -1,12 +1,12 @@
 /*
- * this file is part of: 
+ * this file is part of:
  * projekktor zwei
- * http://www.projekktor.com 
+ * http://www.projekktor.com
  *
  * Copyright 2015 Radosław Włodkowski, radoslaw@wlodkowski.net
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
- * 
+ *
  */
 var projekktorPersistentStorage = function(pp){
     this.pp = pp;
@@ -15,11 +15,11 @@ var projekktorPersistentStorage = function(pp){
 jQuery(function ($) {
 projekktorPersistentStorage.prototype = (function (window, document, undefined) {
     var persistentStorage = {
-        
+
         save: function (key, value) {
             var ns = this.pp.getNS(),
                 nskey = ns + '_' + key;
-            
+
             if (window.$p.features.localstorage) {
                 try {
                     window.localStorage.setItem(nskey, value);
@@ -29,35 +29,35 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
                 }
             }
         },
-        
+
         restore: function (key) {
             var ns = this.pp.getNS(),
                 nskey = ns + '_' + key;
-            
+
             if (window.$p.features.localstorage){
                 try {
                     return JSON.parse(window.localStorage.getItem(nskey));
                 } catch (e) {}
             }
         },
-        
+
         remove: function(key) {
             var ns = this.pp.getNS(),
                 nskey = ns + '_' + key;
-            
+
             if (window.$p.features.localstorage){
                 try {
                     window.localStorage.removeItem(nskey);
                 } catch (e) {}
             }
         },
-        
+
         list: function() {
             var ns = this.pp.getNS() + '_',
                 regexp = new RegExp('^' + ns),
                 result = {},
                 key;
-        
+
             if (window.$p.features.localstorage){
                 try {
                     for (key in window.localStorage){
@@ -67,15 +67,15 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
                     }
                 } catch (e) {}
             }
-            
+
             return result;
         },
-     
+
         clear: function() {
             var ns = this.pp.getNS() + '_',
                 regexp = new RegExp('^' + ns),
                 key;
-            
+
             if (window.$p.features.localstorage){
                 try {
                     for (key in window.localStorage){
@@ -87,7 +87,7 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
             }
         }
     };
-    
+
     return persistentStorage;
 })(window, document);
 });

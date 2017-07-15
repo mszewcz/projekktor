@@ -1,5 +1,5 @@
 /*
- * this file is part of: 
+ * this file is part of:
  * projekktor zwei
  * http://www.projekktor.com
  *
@@ -12,9 +12,9 @@ $p.newModel({
     modelId: 'NA',
     iLove: [
         {ext:'NaN', type:'none/none', platform: ['browser'], streamType: ['*']}
-    ],    
+    ],
     hasGUI: true,
-    
+
     applyMedia: function(destContainer) {
         var ref = this;
 
@@ -22,9 +22,9 @@ $p.newModel({
         this.displayReady();
 
         this.sendUpdate( 'error', (this.media.file[0].src!=null && this.media.errorCode===7) ? 5 : this.media.errorCode );
-        
+
         if (!this.pp.getConfig('enableTestcard')) {
-            window.location.href = this.media.file[0].src;      
+            window.location.href = this.media.file[0].src;
         }
     }
 });

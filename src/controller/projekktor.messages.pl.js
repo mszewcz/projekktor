@@ -1,6 +1,6 @@
 projekktorMessages = {
-    
-    // controlbar 
+
+    // controlbar
     "play": "odtwarzaj",
     "pause": "pauza",
     "fsexit": "wyłącz widok pełnoekranowy",
@@ -15,8 +15,8 @@ projekktorMessages = {
     "golive": "na żywo",
     "scrubberdrag": "przewiń",
     "subtitlesbtn": "napisy",
-    
-    // settings 
+
+    // settings
     "help": "pomoc:",
     "keyboard controls": "klawiatura",
     "debug": "debug",
@@ -41,11 +41,11 @@ projekktorMessages = {
     'please': 'Opisz błąd, który wystąpił na tyle dokładnie na ile to możliwe.',
     'thanks': 'Dziękujemy.',
     'error': 'Wystąpił błąd',
-    'help1': '<em>spacja</em> odtwarzanie / pauza',  
+    'help1': '<em>spacja</em> odtwarzanie / pauza',
     'help2': '<em>góra</em><em>dół</em> głośność <em>lewo</em><em>prawo</em> przewijanie',
     'help3': '<em>ENTER</em> pełen ekran',
     'help4': 'Aby korzystać ze skrótów klawiaturowych wskaźnik myszy musi być na obszarze odtwarzacza.',
-    
+
     // flash & native:
     "error0": '#0 Wystąpił nieznany błąd. Przepraszamy.',
     "error1": '#1 Anulowałeś odtwarzanie.',
@@ -61,18 +61,18 @@ projekktorMessages = {
     "error11": '#11 Błędny streamType i/lub streamServer dla %{title}.',
     "error12": '#12 Błędne lub niespójne ustawienia jakości dla %{title}.',
     "error13": '#13 Błędna playlista bądź brakujący/nieprawidłowy parser playlisty. Brak plików do odtworzenia.',
-    "error20": '#20 Błędny lub uszkodzony parser.', 
+    "error20": '#20 Błędny lub uszkodzony parser.',
     "error80": '#80 Przepraszamy. Wideo nie może zostać odtworzone. Jeśli korzystasz z programów blokujących reklamy i/lub skrypty, wyłącz je, a następnie odśwież stronę i ponów próbę.',
     "error97": 'Brak multimediów do odtworzenia.',
     "error98": 'Błędne lub niespójne dane playlisty!',
     "error99": 'Kliknij ekran aby kontynuować.',
     "error100": 'Skróty klawiaturowe',
-    
+
     "error200": 'Upłynął limit czasu żądania',
-        
-    // youtube errors: 
+
+    // youtube errors:
     "error500": 'To wideo zostało usunięte albo zostało ustawione jako prywatne',
     "error501": 'Użytkownik Youtube będący właścicielem tego wideo wyłączył możliwość jego załączania na serwisach zewnętrznych.',
     "error502": 'Błędnie ustawione Youtube Video-Id.',
-    
+
 };

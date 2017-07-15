@@ -1,5 +1,5 @@
 /*
- * this file is part of: 
+ * this file is part of:
  * projekktor zwei
  * http://filenew.org/projekktor/
  *
@@ -9,24 +9,24 @@
 */
 jQuery(function($) {
 $p.newModel({
-    
+
     modelId: 'PLAYLIST',
-    
+
     iLove: [
         {ext:'json', type:'text/json', platform: ['browser']},
-        {ext:'jsonp', type:'text/jsonp', platform: ['browser']},        
+        {ext:'jsonp', type:'text/jsonp', platform: ['browser']},
         {ext:'xml', type:'text/xml', platform: ['browser']},
         {ext:'json', type:'application/json', platform: ['browser']},
-        {ext:'jsonp', type:'application/jsonp', platform: ['browser']},        
-        {ext:'xml', type:'application/xml', platform: ['browser']}        
+        {ext:'jsonp', type:'application/jsonp', platform: ['browser']},
+        {ext:'xml', type:'application/xml', platform: ['browser']}
     ],
-    
+
     applyMedia: function(destContainer) {
         this.displayReady();
     },
-        
+
     setPlay: function() {
-        this.sendUpdate('playlist', this.media);          
-    }        
+        this.sendUpdate('playlist', this.media);
+    }
 });
 });

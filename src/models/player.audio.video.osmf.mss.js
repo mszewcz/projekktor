@@ -1,5 +1,5 @@
 /*
- * this file is part of: 
+ * this file is part of:
  * projekktor zwei
  * http://www.projekktor.com
  *

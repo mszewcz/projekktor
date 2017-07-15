@@ -10,9 +10,9 @@ projekktorSettings.prototype = {
 
     reqVer: '1.4.00',
     version: '1.0.00',
-    
+
     _qualities: [],
-    
+
     config: {
         contextTitle: 'Settings',
         feedbackUrl: false,
@@ -31,46 +31,46 @@ projekktorSettings.prototype = {
                 '<li class="first label">%{quality}</li>' +
             '</ul>' +
             '<div class="ppclear"></div>',
-            
+
         versionTpl:
             '<div data-pp-settings-func="toolwindow_version">' +
-                '<p>Projekktor V%{version}</p>' + 
-                '<p><a class="btn cancel" href="#">%{ok}</a></p>' + 
+                '<p>Projekktor V%{version}</p>' +
+                '<p><a class="btn cancel" href="#">%{ok}</a></p>' +
             '</div>',
-            
-            
+
+
         debugTpl:
-            '<div data-pp-settings-func="toolwindow_debug">' + 
-                '<div class="wizzard inactive" id="debug_1">' + 
-                    '<p><b>%{report}</b></p>' + 
-                    '<p><textarea id="message">%{please}</textarea></p>' + 
-                    '<p>' + 
-                        '<a class="btn cancel" href="#">%{cancel}</a>' + 
-                        '<a class="btn next" data-step="2" href="#">%{continue}</a>' + 
-                    '</p>' + 
-                '</div>' + 
-                '<div class="wizzard inactive" id="debug_2">' + 
-                    '<p><b>%{sendto}</b></p>' + 
-                    '<p><textarea id="result">%{please}</textarea></p>' + 
-                    '<p><a class="btn next" href="#" data-step="3">%{ok}</a></p>' + 
-                '</div>' + 
-                '<div class="wizzard inactive" id="debug_3">' + 
-                    '<p>%{thanks}</p>' + 
-                    '<p><a class="btn cancel" href="#">%{ok}</a></p>' + 
-                '</div>' + 
-            '</div>' + 
-            '<div data-pp-settings-func="toolwindow_error">' + 
-                '<div class="wizzard inactive" id="error_1">' + 
-                    '<p><b>%{error}<br/> %{sendto}</b></p>' + 
-                    '<p><textarea id="errortxt"></textarea></p>' + 
-                    '<p><a class="btn next" href="#" data-step="3">%{ok}</a></p>' + 
-                '</div>' + 
-                '<div class="wizzard inactive" id="error_2">' + 
-                    '<p>%{thanks}</p>' + 
-                    '<p><a class="btn cancel" href="#">%{ok}</a></p>' + 
-                '</div>' + 
+            '<div data-pp-settings-func="toolwindow_debug">' +
+                '<div class="wizzard inactive" id="debug_1">' +
+                    '<p><b>%{report}</b></p>' +
+                    '<p><textarea id="message">%{please}</textarea></p>' +
+                    '<p>' +
+                        '<a class="btn cancel" href="#">%{cancel}</a>' +
+                        '<a class="btn next" data-step="2" href="#">%{continue}</a>' +
+                    '</p>' +
+                '</div>' +
+                '<div class="wizzard inactive" id="debug_2">' +
+                    '<p><b>%{sendto}</b></p>' +
+                    '<p><textarea id="result">%{please}</textarea></p>' +
+                    '<p><a class="btn next" href="#" data-step="3">%{ok}</a></p>' +
+                '</div>' +
+                '<div class="wizzard inactive" id="debug_3">' +
+                    '<p>%{thanks}</p>' +
+                    '<p><a class="btn cancel" href="#">%{ok}</a></p>' +
+                '</div>' +
+            '</div>' +
+            '<div data-pp-settings-func="toolwindow_error">' +
+                '<div class="wizzard inactive" id="error_1">' +
+                    '<p><b>%{error}<br/> %{sendto}</b></p>' +
+                    '<p><textarea id="errortxt"></textarea></p>' +
+                    '<p><a class="btn next" href="#" data-step="3">%{ok}</a></p>' +
+                '</div>' +
+                '<div class="wizzard inactive" id="error_2">' +
+                    '<p>%{thanks}</p>' +
+                    '<p><a class="btn cancel" href="#">%{ok}</a></p>' +
+                '</div>' +
             '</div>',
-        
+
         helpTpl:
             '<div data-pp-settings-func="toolwindow_help">' +
                 '<p><b>%{keyboard assignments}</b></p>' +
@@ -79,7 +79,7 @@ projekktorSettings.prototype = {
                 '<p class="key">%{help3}</p>' +
                 '<p>%{help4}</p>' +
                 '<p><a class="btn cancel" href="#">%{ok}</a></p>' +
-            '</div>' 
+            '</div>'
 
     },
 
@@ -137,14 +137,14 @@ projekktorSettings.prototype = {
         this.btn.on('mouseenter', function() {
             clearTimeout(_outDelay);
         });
- 
+
         this.pluginReady = true;
     },
 
-    optionSelect: function(dest, func, value) { 
+    optionSelect: function(dest, func, value) {
         // visual feedback
         if (this[func + 'Set'](value)===true) {
-            dest.parent().find('li').each(function() { 
+            dest.parent().find('li').each(function() {
                 if (!$(this).hasClass('first')) {
                     $(this).addClass('off').removeClass('on');
                 }
@@ -153,31 +153,31 @@ projekktorSettings.prototype = {
         }
         // set automode: delete cookie
     },
-    
+
     /*****************************************************
      * Player Event Handlers
-     * **************************************************/ 
-    
+     * **************************************************/
+
     itemHandler: function() {
         this._qualities = [];
         this.setupSettingsMenu();
     },
-    
+
     plugin_controlbarHideHandler: function(controlBar) {
         this.setInactive();
         this.btn.addClass('off').removeClass('on');
     },
-    
+
     availableQualitiesChangeHandler: function(qualities) {
         this._qualities = qualities.slice().reverse();
         this.setupSettingsMenu();
     },
-    
+
     qualityChangeHandler: function (val) {
         this.qualitySet(val);
         this.setupSettingsMenu();
     },
-    
+
     errorHandler: function(code) {
         var msg = $p.utils.i18n("%{error"+code+"}");
         this.toolSet('error', 1, msg);
@@ -214,17 +214,17 @@ projekktorSettings.prototype = {
 
         if (func=='debug' && this.getConfig('feedbackUrl')) {
             window.location.href = this.getConfig('feedbackUrl');
-            return; 
+            return;
         }
-        
+
         tpl.html($p.utils.i18n(this.getConfig(func + 'Tpl')));
-        
+
         this.tool.html($p.utils.parseTemplate(tpl.html(), this.pp.config) );
         this.tool.find('.wizzard').addClass('inactive').removeClass('active');
         this.tool.find('#' + func + '_' + step).addClass('active').removeClass('inactive');
         this.setActive(this.tool);
 
-        
+
         if (data==null) {
             this.tool.find('#message').focus(function(){
                 $(this).html('').off('focus').css({color:'#000'});
@@ -232,7 +232,7 @@ projekktorSettings.prototype = {
             this.tool.find('#message').css({color:'#aaa'});
         } else {
             var topHref = this.pp.getIframe() && window.top.location.href;
-            
+
             var debugData = {
                 version: this.pp.getPlayerVer(),
                 message: data,
@@ -250,15 +250,15 @@ projekktorSettings.prototype = {
                 platform: this.pp.getPlatform(),
                 platformscfg: this.pp.config._platforms,
                 plugins: this.pp.config._plugins,
-                media: this.pp.media,                
+                media: this.pp.media,
                 compTable: this.pp._testMediaSupport(),
                 rnd: $p.utils.randomId(22)
             };
-            
+
             $.each(this.pp.config._platforms, function(key, value) {
                 debugData[value + 'ver'] = $p.platforms[value.toUpperCase()]();
             });
-                        
+
             this.tool.find((func=='debug') ? '#result' : '#errortxt')
                 .attr({readonly: 'readonly'})
                 .val(
@@ -306,7 +306,7 @@ projekktorSettings.prototype = {
         if (value!==null) {
             this.cookie('quality', value);
         }
-        
+
         if(this.pp.getPlaybackQuality() !== value){
             this.pp.setPlaybackQuality(value);
         }
@@ -346,52 +346,52 @@ projekktorSettings.prototype = {
 
         return true;
     },
-    
+
     _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-    
+
     // public method for encoding
     encode : function (input) {
         var output = "";
         var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
         var i = 0;
-    
+
         input = this._utf8_encode(input);
-    
+
         while (i < input.length) {
-    
+
             chr1 = input.charCodeAt(i++);
             chr2 = input.charCodeAt(i++);
             chr3 = input.charCodeAt(i++);
-    
+
             enc1 = chr1 >> 2;
             enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
             enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
             enc4 = chr3 & 63;
-    
+
             if (isNaN(chr2)) {
                 enc3 = enc4 = 64;
             } else if (isNaN(chr3)) {
                 enc4 = 64;
             }
-    
+
             output = output +
             this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
             this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-    
+
         }
-    
+
         return output;
     },
-    
+
     // private method for UTF-8 encoding
     _utf8_encode : function (string) {
         string = string.replace(/\r\n/g,"\n");
         var utftext = "";
-    
+
         for (var n = 0; n < string.length; n++) {
-    
+
             var c = string.charCodeAt(n);
-    
+
             if (c < 128) {
                 utftext += String.fromCharCode(c);
             }
@@ -404,21 +404,21 @@ projekktorSettings.prototype = {
                 utftext += String.fromCharCode(((c >> 6) & 63) | 128);
                 utftext += String.fromCharCode((c & 63) | 128);
             }
-    
+
         }
-    
+
         return utftext;
     },
-    
+
     setupSettingsMenu: function() {
             var ref = this,
             pCount = 0,
-            menuOptions = [];    
-        
+            menuOptions = [];
+
         // setup quality and platforms menu for current playlist item
         this.setupQualityMenu();
         this.setupPlatformMenu();
-        
+
         $.each(this.dest.find("[" + this.getDA('func') + "]"), function() {
             var func = $(this).attr(ref.getDA('func')).split('_');
 
@@ -445,17 +445,17 @@ projekktorSettings.prototype = {
             }
 
             $(this).click(function(evt) {
-                ref.optionSelect($(this), func[0], func[1]); 
+                ref.optionSelect($(this), func[0], func[1]);
                 evt.stopPropagation();
                 evt.preventDefault();
                 return false;
-            }); 
+            });
 
             return true;
         });
 
         // restore presets:
-        for (var i in menuOptions) {   
+        for (var i in menuOptions) {
             if (menuOptions[i].length<3) {
                 this.dest.find('#' + i).addClass('inactive').removeClass('active');
             } else {
@@ -469,100 +469,100 @@ projekktorSettings.prototype = {
         var classes = this.dest.attr("class").split(" ").filter(function(item) {
             return item.lastIndexOf("column", 0) !== 0;
         });
-        
+
         if(pCount){
             this.setActive(this.btn, true);
         }
         else {
             this.setActive(this.btn, false);
         }
-        
-        this.dest.attr("class", classes.join(" "));        
-        this.dest.addClass('column' + pCount);    
+
+        this.dest.attr("class", classes.join(" "));
+        this.dest.addClass('column' + pCount);
     },
-    
+
     setupQualityMenu: function(){
         var qualities = this._qualities.length ? this._qualities : this.pp.getPlaybackQualities(),
             qualityList = this.createQualityList(qualities);
         // remove all the current quality menu items
         this.removeMenuItems('quality');
-        
+
         // add new items
         this.addMenuItems('quality', qualityList);
     },
-    
+
     setupPlatformMenu: function(){
         // remove all the current quality menu items
         this.removeMenuItems('platform');
-        
+
         // add new items
         this.addMenuItems('platform', this.createPlatformList());
     },
-   
+
     createQualityList: function(qualities){
         var qualityValues = qualities || this.pp.getPlaybackQualities(),
             qualityList = '',
                     val = '';
-        
+
         for(var i=0; i<qualityValues.length; i++){
             val = qualityValues[i];
-            
+
             if(val != 'auto' && val != 'default'){
                 qualityList += '<li data-'+ this.pp.getNS() +'-settings-func="quality_' + val + '"  class="inactive">%{'+ val +'}</li>';
             }
         }
-        
+
         qualityList +=  '<li data-'+ this.pp.getNS() +'-settings-func="quality_auto"  class="auto inactive">%{auto}</li>';
-        
+
         return $p.utils.i18n(qualityList);
     },
-    
+
     createPlatformList: function(platforms){
         var platformValues = platforms || this.pp.getPlatforms(),
             platformList = '',
             val = '';
-    
+
         for(var i=0; i<platformValues.length; i++){
             val = platformValues[i];
-            
+
             if(val != 'auto'){
                 platformList += '<li data-'+ this.pp.getNS() +'-settings-func="platform_' + val + '"  class="inactive">%{platform_'+ val +'}</li>';
             }
         }
-        
+
         platformList +=  '<li data-'+ this.pp.getNS() +'-settings-func="platform_auto"  class="auto inactive">%{auto}</li>';
-        
+
         return $p.utils.i18n(platformList);
     },
-    
+
     addMenuItems: function(menuId, content, prepend){
         var id = menuId || false,
             cont = content || false,
             prep = prepend || false;
-    
+
         if(!(id && cont)) return false;
-        
+
         var menu = this.dest.find('#'+id);
-        
+
         if(prep){
             menu.children('.label').after(content);
         }
         else {
             menu.append(content);
         }
-        
+
         return this.dest.find('#'+id);
     },
-    
+
     /**
      * Removes all the menu items from the selected menu
-     * 
+     *
      * @param {String} menuId - id of the menu
      * @returns {jQuery} - jQuery object containing removed elements
      */
     removeMenuItems: function(menuId){
         var id = menuId || false;
-        
+
         if(!id) return false;
 
         return this.dest.find('#'+id).children().not('.label').remove();

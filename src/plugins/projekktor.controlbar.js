@@ -1,6 +1,6 @@
 /*
  * Projekktor II Plugin: Controlbar
- * 
+ *
  * DESC: Adds a fully features cb element to the player
  * Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
  *
@@ -10,7 +10,7 @@
 var projekktorControlbar = function () {};
 jQuery(function ($) {
     projekktorControlbar.prototype = {
-    
+
         version: '1.2.00',
 
         _cTimer: null,
@@ -19,7 +19,7 @@ jQuery(function ($) {
         _noHide: false,
         _sSliderAct: false,
         _vSliderAct: false,
-        
+
         cb: null,
 
         controlElements: {},
@@ -28,22 +28,22 @@ jQuery(function ($) {
             'sec_dur': null,
             'min_dur': null,
             'sec_abs_dur': null,
-            'min_abs_dur': null,            
+            'min_abs_dur': null,
             'hr_dur': null,
             'sec_elp': null,
             'min_elp': null,
             'sec_abs_elp': null,
-            'min_abs_elp': null,            
+            'min_abs_elp': null,
             'hr_elp': null,
             'sec_rem': null,
             'min_rem': null,
             'sec_abs_rem': null,
-            'min_abs_rem': null,            
+            'min_abs_rem': null,
             'hr_rem': null,
             'sec_tip': null,
             'min_tip': null,
             'sec_abs_tip': null,
-            'min_abs_tip': null,            
+            'min_abs_tip': null,
             'hr_tip': null,
 
             'cb': null,
@@ -261,7 +261,7 @@ jQuery(function ($) {
             showOnStart: false,
             showOnIdle: false,
             hideWhenPaused: false,
-            
+
             /* cuepoints */
             showCuePoints: true,
             showCuePointsImmediately: true, // should the cuepoint be displayed immediately after curent playlist item duration is known or only if the relevant part of the playlist item is buffered and ready to be played
@@ -293,14 +293,14 @@ jQuery(function ($) {
                     url: 'http://www.projekktor.com',
                     target: '_blank'
                 },
-                callback: function(player, e){ // Function called after click on the logo [optional]. It works only if the link config isn't present. 
+                callback: function(player, e){ // Function called after click on the logo [optional]. It works only if the link config isn't present.
                                                // There are two parameters passed to the callback function:
                                                // player - reference to the current projekktor instance
                                                // e - event object
                     alert("projekktor v." + player.getVersion());
                 }*/
             },
-               
+
 
             /* Default layout */
             controlsTemplate: '<ul class="left"><li><div %{play}></div><div %{pause}></div></li></ul><ul class="right"><li><div %{logo}></div></li><li><div %{fsexit}></div><div %{fsenter}></div></li><li><div %{settingsbtn}></div></li><li><div %{tracksbtn}></div></li><li><div %{vmax}></div></li><li><div %{vslider}><div %{vmarker}></div><div %{vknob}></div></div></li><li><div %{mute}></div></li><li><div %{timeleft}>%{hr_elp}:%{min_elp}:%{sec_elp} | %{hr_dur}:%{min_dur}:%{sec_dur}</div></li><li><div %{next}></div></li><li><div %{prev}></div></li></ul><ul class="bottom"><li><div %{scrubber}><div %{loaded}></div><div %{playhead}></div><div %{scrubberknob}></div><div %{scrubberdrag}></div></div></li></ul><div %{scrubbertip}>%{hr_tip}:%{min_tip}:%{sec_tip}</div>'
@@ -313,7 +313,7 @@ jQuery(function ($) {
                 useTemplate = true,
                 classPrefix = this.pp.getNS();
 
-            // check if ANY control element already exists        
+            // check if ANY control element already exists
             for (var i in this.controlElementsConfig) {
                 if (playerHtml.match(new RegExp(classPrefix + i, 'gi'))) {
                     useTemplate = false;
@@ -328,7 +328,7 @@ jQuery(function ($) {
                 this.cb = this.playerDom.find("." + classPrefix + 'controls');
             }
 
-            // find (inter)active elements    
+            // find (inter)active elements
             for (var i in this.controlElementsConfig) {
                 this.controlElements[i] = $(this.playerDom).find('.' + classPrefix + i);
                 $p.utils.blockSelection($(this.controlElements[i]));
@@ -404,7 +404,7 @@ jQuery(function ($) {
             this._active('rewind', state !== 'IDLE');
 
 
-            // fullscreen button    
+            // fullscreen button
             if (this.pp.getIsFullscreen() === true) {
                 this.drawExitFullscreenButton();
             } else {
@@ -428,24 +428,24 @@ jQuery(function ($) {
 
             // init time display
             this.displayTime();
-            
+
             // update progress
             this.displayProgress();
 
             // init volume display
             this.displayVolume(this.pp.getVolume());
         },
-        
+
         deconstruct: function() {
             this.pluginReady = false;
             $.each(this.controlElements, function () {
-                $(this).off(); 
+                $(this).off();
             });
             $.each(this._appliedDOMObj, function() {
-                $(this).off(); 
-            });            
+                $(this).off();
+            });
         },
-                
+
 
         /* assign listener methods to controlbar elements */
         addGuiListeners: function () {
@@ -488,7 +488,7 @@ jQuery(function ($) {
 
                     });
                 }
-                return true;                
+                return true;
             });
             this.cb.mousemove(function (event) {
                 ref.controlsFocus(event);
@@ -501,7 +501,7 @@ jQuery(function ($) {
         /* generic click handler for all controlbar buttons */
         clickCatcher: function (evt, callback, element) {
             var ref = this;
-            
+
             evt.stopPropagation();
             evt.preventDefault();
             // $p.utils.log('Controlbar: Click', element, callback, evt)
@@ -526,12 +526,12 @@ jQuery(function ($) {
         drawTitle: function () {
             this.controlElements['title'].html(this.getConfig('title', ''));
         },
-        
+
         displayLogo: function() {
             var logoConfig = this.pp.getItemConfig('logo') || this.getConfig('logo'),
                 logoElement = this.controlElements['logo'],
                 img;
-            
+
             if(logoElement && logoConfig && logoConfig.src){
                 img = $('<img>')
                         .attr({
@@ -539,11 +539,11 @@ jQuery(function ($) {
                             alt: logoConfig.title,
                             title: logoConfig.title
                         });
-                        
+
                 if((logoConfig.link && logoConfig.link.url) || typeof logoConfig.callback == 'function'){
                     img.css({cursor: 'pointer'});
                 }
-                
+
                 logoElement.empty().append(img);
                 this._active('logo', true);
             }
@@ -551,17 +551,17 @@ jQuery(function ($) {
                 this._active('logo', false);
             }
         },
-        
+
         canHide: function() {
             var state = this.pp.getState(),
                 result = this.cb === null
-                    || this._noHide  
+                    || this._noHide
                     || (state === 'IDLE' && this.getConfig('showOnIdle'))
                     || (state === 'PAUSED' && !this.getConfig('hideWhenPaused'));
-                        
+
                 return !result;
         },
-        
+
         canShow: function() {
             var state = this.pp.getState(),
                 result = this.cb === null
@@ -571,22 +571,22 @@ jQuery(function ($) {
                         || ('AWAKENING|STARTING'.indexOf(state) > -1 && !this.getConfig('showOnStart'))
                         || (state === 'IDLE' && !this.getConfig('showOnIdle'))
                         || false;
-                        
+
                 return !result;
         },
 
         hidecb: function () {
             var wasVisible = this.cb.hasClass('active');
-            
+
             clearTimeout(this._cTimer);
-            
+
             // don't hide
             if (!this.canHide()) {
                 return;
             }
-            
+
             this.cb.removeClass('active').addClass('inactive');
-            
+
             if(wasVisible) {
                 this.sendEvent('hide', this.cb);
             }
@@ -613,10 +613,10 @@ jQuery(function ($) {
                 this.cb.removeClass('inactive').addClass('active');
                 this.sendEvent('show', this.cb);
             }
-            
+
             this.updateDisplay();
         },
-        
+
         displayTime: function (pct, dur, pos) {
             if (this.pp.getHasGUI()) return;
 
@@ -627,7 +627,7 @@ jQuery(function ($) {
 
             // limit updates to one per second
             if (Math.abs(this._lastPos - position) >= 1) {
-                
+
                 // check if there is anything to display
                 if(duration === 0){ // hide time display elements e.g. live streams on Android
                     this._active('scrubber', false);
@@ -637,9 +637,9 @@ jQuery(function ($) {
                     this._active('scrubber', true);
                     this._active('timeleft', true);
                 }
-                
+
                 times = $.extend({}, this._clockDigits(duration, 'dur'), this._clockDigits(position, 'elp'), this._clockDigits(duration - position, 'rem'));
-                
+
                 // update scrubber:
                 this.controlElements['playhead'].css({
                     width: percent + "%"
@@ -647,7 +647,7 @@ jQuery(function ($) {
                 this.controlElements['scrubberknob'].css({
                     left: percent + "%"
                 });
-                
+
                 // update last position value
                 this._lastPos = position;
 
@@ -669,9 +669,9 @@ jQuery(function ($) {
         displayProgress: function () {
             var percent = Math.round(this.pp.getLoadProgress() * 10) / 10,
                 lastUpdatedPercent = this.controlElements['loaded'].data('pct') || undefined;
-            
+
             // limit updates to 1 per 5%
-            if (lastUpdatedPercent === undefined || lastUpdatedPercent !== percent) {                
+            if (lastUpdatedPercent === undefined || lastUpdatedPercent !== percent) {
                 this.controlElements['loaded'].data('pct', percent).css("width", percent + "%");
             };
         },
@@ -707,20 +707,20 @@ jQuery(function ($) {
                 vmarker = this.controlElements['vmarker'],
                 vknob = this.controlElements['vknob'],
                 orientation = vslider.width() > vslider.height() ? "horizontal" : "vertical";
-            
+
             switch(orientation){
                 case "horizontal":
-                    
+
                     vmarker.css('width', volume * 100 + "%");
                     vknob.css('left', Math.round((vslider.width() * volume) - (vknob.width() * volume)) + "px" );
-                    
+
                 break;
-                
+
                 case "vertical":
-                    
+
                     vmarker.css('height', volume * 100 + "%");
                     vknob.css('bottom', Math.round((vslider.height() * volume) - (vknob.height() * volume)) + "px" );
-                    
+
                 break;
             }
 
@@ -752,10 +752,10 @@ jQuery(function ($) {
         },
 
 	displayCuePoints: function(immediately) {
-            
+
             if (!this.getConfig('showCuePoints'))
                 return;
-            
+
             var ref = this,
                 prefix = this.pp.getNS(),
                 duration = this.pp.getDuration();
@@ -860,7 +860,7 @@ jQuery(function ($) {
         Player Event Handlers
         *******************************/
         itemHandler: function (data) {
-            
+
             $(this.cb).find('.' + this.pp.getNS() + 'cuepoint').remove();
             this._lastPos = -1;
             this.updateDisplay();
@@ -884,7 +884,7 @@ jQuery(function ($) {
 
         stateHandler: function (state) {
             this.updateDisplay();
-            
+
             if ('STOPPED|AWAKENING|IDLE|COMPLETED'.indexOf(state) > -1) {
                 this.displayTime(0, 0, 0);
                 this.displayProgress(0);
@@ -897,7 +897,7 @@ jQuery(function ($) {
             if ('ERROR'.indexOf(state) > -1) {
                 this._noHide = false;
             }
-            
+
             this.showcb();
 
             this.displayProgress();
@@ -926,7 +926,7 @@ jQuery(function ($) {
         qualityChangeHandler: function (qual) {
             this.displayQualityToggle(qual);
         },
-        
+
         streamTypeChangeHandler: function (streamType) {
             if (streamType==='dvr' || streamType==='live') {
                 this._isDVR = true;
@@ -937,14 +937,14 @@ jQuery(function ($) {
                 this.setActive(this.controlElements['golive'], false);
             }
         },
-        
+
         isLiveHandler: function (islive) {
             if (islive) {
                 this.controlElements['golive'].addClass('on').removeClass('off');
             } else {
                 this.controlElements['golive'].addClass('off').removeClass('on');
             }
-        },            
+        },
 
         fullscreenHandler: function (inFullscreen) {
 
@@ -963,20 +963,20 @@ jQuery(function ($) {
                 this.cb.removeClass('fullscreen');
                 this.drawEnterFullscreenButton();
             }
-        },        
-        
+        },
+
         durationChangeHandler: function () {
             if(this.pp.getDuration() != 0){
                 this.displayCuePoints( this.getConfig('showCuePointsImmediately') );
             }
         },
-        
+
         cuepointsSyncHandler: function(cuepoints){
             if(this.pp.getDuration() != 0){
                 this.displayCuePoints( this.getConfig('showCuePointsImmediately') );
             }
         },
-        
+
         errorHandler: function (value) {
             this._noHide = false;
             this.hidecb();
@@ -989,27 +989,27 @@ jQuery(function ($) {
         focusHandler: function (evt) {
             this.showcb();
         },
-        
+
         mouseenterHandler: function (evt) {
             this.showcb();
-        },        
+        },
 
         mousemoveHandler: function (evt) {
-            if (this.pp.getState('STARTING')) return;             
+            if (this.pp.getState('STARTING')) return;
             this.showcb();
         },
-        
+
         mouseleaveHandler: function() {},
-        
+
         mousedownHandler: function (evt) {
-            this.showcb();     
+            this.showcb();
         },
-        
+
         /*******************************
         ControlUI Event LISTENERS
         *******************************/
         controlsFocus: function (evt) {
-            
+
                 this._noHide = true;
         },
 
@@ -1024,7 +1024,7 @@ jQuery(function ($) {
         goliveClk: function (evt) {
             this.pp.setSeek(-1);
         },
-        
+
         playClk: function (evt) {
             this.pp.setPlay();
         },
@@ -1099,7 +1099,7 @@ jQuery(function ($) {
                 ref.controlElements['close'].toggle();
             });
         },
-        
+
         logoClk: function(evt){
             var ref = this,
                 logoConfig = this.pp.getConfig('logo') || this.getConfig('logo');
@@ -1145,7 +1145,7 @@ jQuery(function ($) {
                 result = (orientation == 'hor') ? (requested / totalDim) : 1 - (requested / totalDim);
             }
 
-            this.pp.setVolume(result);            
+            this.pp.setVolume(result);
         },
 
         scrubberShowTooltip: function (event) {
@@ -1172,12 +1172,12 @@ jQuery(function ($) {
                 newPos = pageX - slider.offset().left - (tip.outerWidth() / 2),
                 timeIdx = this.pp.getDuration() / 100 * ((pageX - slider.offset().left) * 100 / slider.width()),
                 times = this._clockDigits(timeIdx, 'tip');
-                
-            /*if (this._isDVR) { 
-                timeIdx =  this.pp.getDuration() - timeIdx; 
+
+            /*if (this._isDVR) {
+                timeIdx =  this.pp.getDuration() - timeIdx;
                 var then = new Date( (new Date().getTime() / 1000 - timeIdx) * 1000), // date minus timeidx
                     then = then.getSeconds() + (60 * then.getMinutes()) + (60 * 60 * then.getHours()); // second of today
-                    
+
                 times = this._clockDigits( then , 'tip');
             }*/
 
@@ -1205,7 +1205,7 @@ jQuery(function ($) {
             if (this.getConfig('disallowSkip') === true) {
                 return;
             }
-            
+
             this._sSliderAct = true;
 
             var ref = this,
@@ -1262,15 +1262,15 @@ jQuery(function ($) {
             this._vSliderAct = true;
 
             var ref = this,
-                    
+
                 vslider = ref.controlElements['vslider'],
                 vmarker = ref.controlElements['vmarker'],
                 vknob = ref.controlElements['vknob'],
-                
+
                 orientation = vslider.width() > vslider.height() ? "horizontal" : "vertical",
-                
+
                 volume = 0,
-                
+
                 mouseUp = function (mouseUpEvent) {
                     if(window.onmouseup === undefined){ // IE < 9 has no window mouse events support
                         $(document).off('mousemove', mouseMove);
@@ -1281,7 +1281,7 @@ jQuery(function ($) {
                         $(window).off('mousemove', mouseMove);
                         $(window).off('mouseup', mouseUp);
                     }
-                    
+
                     ref._vSliderAct = false;
 
                     return false;
@@ -1289,21 +1289,21 @@ jQuery(function ($) {
 
                 mouseMove = function (dragEvent) {
                     clearTimeout(ref._cTimer);
-                    
+
                     var newXPos = (dragEvent.clientX - vslider.offset().left),
                         newXPos = (newXPos > vslider.width()) ? vslider.width() : newXPos,
                         newXPos = (newXPos < 0) ? 0 : newXPos,
-                        
-                        newYPos = (dragEvent.clientY - vslider.offset().top),                        
+
+                        newYPos = (dragEvent.clientY - vslider.offset().top),
                         newYPos = (newYPos > vslider.height()) ? vslider.height() : newYPos,
                         newYPos = (newYPos < 0) ? 0 : newYPos;
-                        
-                       
-            
+
+
+
                     switch(orientation){
                         case "horizontal":
                             volume = Math.abs(newXPos / vslider.width());
-                            
+
                             vmarker.css('width', volume * 100 + "%");
                             vknob.css('left', Math.round((vslider.width() * volume) - (vknob.width() * volume)) + "px" );
 
@@ -1311,13 +1311,13 @@ jQuery(function ($) {
 
                         case "vertical":
                             volume = 1 - Math.abs(newYPos / vslider.height());
-                            
+
                             vmarker.css('height', volume * 100 + "%");
                             vknob.css('bottom', Math.round((vslider.height() * volume) - (vknob.height()* volume)) + "px" );
 
                         break;
                     }
-                    
+
                     ref.pp.setVolume(volume);
                     return false;
                 };
@@ -1362,13 +1362,13 @@ jQuery(function ($) {
                 sec = Math.floor(divisor_for_seconds),
                 sec_abs = secs,
                 result = {};
-                
+
             result['min_' + postfix] = (min < 10) ? "0" + min : min;
             result['min_abs_' + postfix] = (min_abs < 10) ? "0" + min_abs : min_abs;
             result['sec_' + postfix] = (sec < 10) ? "0" + sec : sec;
-            result['sec_abs_' + postfix] = (sec_abs < 10) ? "0" + sec_abs : sec_abs;            
+            result['sec_abs_' + postfix] = (sec_abs < 10) ? "0" + sec_abs : sec_abs;
             result['hr_' + postfix] = (hr < 10) ? "0" + hr : hr;
-            
+
             return result;
         },
         _bindCuePointBlipEvents: function(blip, events, data){

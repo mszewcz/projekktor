@@ -1,15 +1,15 @@
-/* 
+/*
  * Copyright 2016-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
- * 
+ *
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
- * 
+ *
  * This model is interfacing video.js library
  *
  * video.js
  * Website: http://videojs.com/
  * License: Apache 2.0 License
- * 
+ *
  */
 
 jQuery(function ($) {

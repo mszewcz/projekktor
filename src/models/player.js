@@ -85,7 +85,7 @@ jQuery(function ($) {
             this.pp.removeListener('fullscreen.poster');
             this.pp.removeListener('resize.poster');
 
-            // poster 
+            // poster
             if (showMedia !== true || this.getState('STOPPED')) {
                 this._setState('idle');
                 this.applyImage(this.getPoster(), this.pp.getMediaContainer().html(''));
@@ -131,9 +131,9 @@ jQuery(function ($) {
             if (!this.getState('STOPPED')) {
                 this.addListeners();
             }
-            
+
             this.applyCommand('volume', this.pp.getVolume());
-            
+
             this.setPlay();
         },
         addListeners: function () {
@@ -233,7 +233,7 @@ jQuery(function ($) {
                     this.setSeek(value);
                     break;
                 case 'fullscreen':
-                    /* 
+                    /*
                      * It is vital to first tell the controller what happened in order to have an already altered DOM
                      * before processing further scaling processes.
                      * This is a break in the logic but seems to work.
@@ -305,7 +305,7 @@ jQuery(function ($) {
             this.qualityChangeListener();
         },
         /*******************************
-         ELEMENT GETTERS 
+         ELEMENT GETTERS
          *******************************/
         getId: function () {
             return this.mediaId;
@@ -449,7 +449,7 @@ jQuery(function ($) {
                 if (ref._quality !== this.quality && ref._quality !== null)
                     return true;
 
-                // nothing todo 
+                // nothing todo
                 if (!pseudoQuery || !offset) {
                     resultSrc.push(this);
                     return true;
@@ -487,15 +487,15 @@ jQuery(function ($) {
             if (typeof obj !== 'object' || obj === null) {
                 return;
             }
-            
+
             var position = parseFloat((obj.position || obj.currentTime || this.media.position || 0).toFixed(2)),
                 duration = null;
-            
+
             /*
              * When the duration is POSITIVE_INFINITY then we're dealing with a native live stream (e.g. HLS)
              */
             if (obj.duration === Number.POSITIVE_INFINITY && obj.seekable && obj.seekable.length) {
-                
+
                 /*
                  * When the seekable.end(0) === POSITIVE_INFINITY we don't have any option to determine DVR window,
                  * so we set _isLive to true and propagate streamTypeChange event with 'live' value
@@ -519,14 +519,14 @@ jQuery(function ($) {
                         this.sendUpdate('streamTypeChange', 'dvr');
                     }
                     /*
-                     * When seekable.start(0) is >0 the seekable.start is probably set properly (e.g. Safari 7.0.5 on OS X 10.9.4) 
-                     * so we could use it to derermine DVR window duration 
+                     * When seekable.start(0) is >0 the seekable.start is probably set properly (e.g. Safari 7.0.5 on OS X 10.9.4)
+                     * so we could use it to derermine DVR window duration
                      */
                     if (obj.seekable.start(0) > 0) {
                         duration = parseFloat((obj.seekable.end(0) - obj.seekable.start(0)).toFixed(2));
                     }
                     /*
-                     * When seekable.start(0) == 0 then the only way to determine DVR window is to get the first known seekable.end(0) 
+                     * When seekable.start(0) == 0 then the only way to determine DVR window is to get the first known seekable.end(0)
                      * value and store it for the whole live session (e.g. Safari 7.0 on iOS 7.1.2).
                      * It's not 100% reliable method, but it's the best estimation we could possibly get.
                      */
@@ -549,7 +549,7 @@ jQuery(function ($) {
                 duration = obj.duration > position ? parseFloat((obj.duration || 0).toFixed(2)) : 0; // Android native browsers tend to report bad duration (1-100s)
             }
 
-            // duration has changed:	
+            // duration has changed:
             if (duration !== null && ((duration !== this.media.duration && !this.isPseudoStream) || (this.isPseudoStream && this.media.duration === 0))) {
                 this.media.duration = duration;
                 this.sendUpdate('durationChange', duration);
@@ -612,7 +612,7 @@ jQuery(function ($) {
         progressListener: function (obj, evt) {
 
             // we prefer timeranges but keep catching "progress" events by default
-            // for historical and compatibility reasons:	
+            // for historical and compatibility reasons:
             if (this.mediaElement instanceof jQuery) { // fix this - make sure all instances are jquery objects
                 if (typeof this.mediaElement.get(0).buffered === 'object') {
                     if (this.mediaElement.get(0).buffered.length > 0) {

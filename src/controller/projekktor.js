@@ -133,7 +133,7 @@ jQuery(function ($) {
         function PPlayer (srcNode, cfg, onReady) {
 
             this.config = new projekktorConfig();
-            
+
             this.storage = new projekktorPersistentStorage(this);
 
             this.env = {
@@ -177,11 +177,11 @@ jQuery(function ($) {
 
             /**
              * Add items to the playlist on provided index
-             * 
+             *
              * @param {array} items - playlist items to add
              * @param {number} [index=this.media.length] - index on which the items should be added
              * @param {boolean} [replace=false] - should the items on specyfied index be replaced
-             * @returns {object} object with affected index, added and replaced (removed) items. 
+             * @returns {object} object with affected index, added and replaced (removed) items.
              * For example when nothing was added the object will look like: {added: [], removed: [], index: -1}
              */
             this.addItems = function (items, index, replace) {
@@ -211,7 +211,7 @@ jQuery(function ($) {
 
                 // chcek if items are not the reference to the actual media array (for example when result of getPlaylist() is passed)
                 if (items === this.media) {
-                    items = items.slice(); // clone 
+                    items = items.slice(); // clone
                 }
 
                 // check if items is an array and if it's not push it to the array
@@ -231,7 +231,7 @@ jQuery(function ($) {
                             errorCode: this.errorCode || 0
                         });
                     }
-                    
+
                     // check if the id is unique in currently added array
                     if($.inArray(item.id, itemIds)>-1){
                         item.id = item.id + '_' + $p.utils.randomId(8);
@@ -241,13 +241,13 @@ jQuery(function ($) {
                     if (this.getItemById(item.id)) {
                         item = $.extend(true, {}, item);
                         item.id = $p.utils.randomId(8);
-                    }             
-                    
+                    }
+
                     // set cuepoints if there are some
                     if (item.hasOwnProperty('cuepoints') && !!item.cuepoints) {
                         this.setCuePoints(item.cuepoints, item.id, true);
                     }
-                    
+
                     itemIds.push(item.id);
                     items[i] = item;
                 }
@@ -266,9 +266,9 @@ jQuery(function ($) {
 
             /**
              * Shortcut function to remove item from playlist at given index
-             * 
+             *
              * @param {number} [index=this.media.length-1] - index of item to remove. Default is the last one on the playlist.
-             * @returns {object} - object with affected index, removed item  e.g.: {added: [], removed: [], index: -1} 
+             * @returns {object} - object with affected index, removed item  e.g.: {added: [], removed: [], index: -1}
              */
             this.removeItemAtIndex = function (index) {
 
@@ -281,7 +281,7 @@ jQuery(function ($) {
                     func = function(itm, idx) {
                         return idx === index;
                     };
-                
+
                 // check if we could remove something
                 if (typeof index !== 'number' ||
                     this.media.length === 0 ||
@@ -295,7 +295,7 @@ jQuery(function ($) {
 
                 return result;
             };
-            
+
             /**
              * Shortcut function to remove item by id
              * @param {string} itemId
@@ -311,7 +311,7 @@ jQuery(function ($) {
                     func = function(itm, idx) {
                         return itm.id === itemId;
                     };
-                
+
                 // check if we could remove something
                 if (typeof itemId !== 'string' ||
                     this.media.length === 0) {
@@ -322,7 +322,7 @@ jQuery(function ($) {
 
                 return result;
             };
-            
+
             this.removeItemsCategory = function (catName) {
                 var result = {
                         added: [],
@@ -333,7 +333,7 @@ jQuery(function ($) {
                     func = function(itm, idx) {
                         return itm.cat === catName;
                     };
-                
+
                 // check if we could remove something
                 if (typeof catName !== 'string' ||
                     this.media.length === 0) {
@@ -344,13 +344,13 @@ jQuery(function ($) {
 
                 return result;
             };
-            
+
             /**
              * Remove playlist items which satisfy a filter function. If no function provided then all items are removed
-             * @param {function} [which] - function( Object elementOfArray, Integer indexInArray ) => Boolean; 
-             * The function to process each playlist item against. The first argument to the function is the item, 
+             * @param {function} [which] - function( Object elementOfArray, Integer indexInArray ) => Boolean;
+             * The function to process each playlist item against. The first argument to the function is the item,
              * and the second argument is the index. The function should return a Boolean value.
-             * @returns {object} - object with affected index, removed item  e.g.: {added: [], removed: [], index: -1} 
+             * @returns {object} - object with affected index, removed item  e.g.: {added: [], removed: [], index: -1}
              */
             this.removeItems = function (which) {
 
@@ -378,20 +378,20 @@ jQuery(function ($) {
                 if (this.media.length === 0) {
                     return result;
                 }
-                
+
                 toRemove = $.grep(this.media, which);
-                
+
                 for (i = 0, l = toRemove.length; i < l; i++) {
                     toRemoveIndexes.push($.inArray(toRemove[i], this.media));
                 }
-                
+
                 for (i = 0, l = toRemoveIndexes.length; i < l; i++) {
                     result.removed.push(this.media.splice(toRemoveIndexes[i] - i, 1)[0]);
                 }
-                
+
                 result.indexes = toRemoveIndexes;
                 result.currentItemAffected = $.inArray(currentItem, result.removed) > -1;
-                
+
                 this._promote('scheduleModified', result);
 
                 return result;
@@ -408,29 +408,29 @@ jQuery(function ($) {
                     return (catName === item.cat);
                 }) || [];
             };
-            
+
             this._canPlayOnPlatforms = function(mimeType) {
                 if(!$p.mmap.length){
                     return [];
                 }
-                
+
                 var result = [],
                     platformsObj = {},
                     mmap = $p.mmap,
                     i,l,key;
-                
+
                 $.each(mmap, function(idx, iLove){
                    if(iLove.type === mimeType){
                     for(i=0,l=iLove.platform.length; i<l; i++){
                         platformsObj[iLove.platform[i]] = true;
                     }
-                   } 
+                   }
                 });
-                
+
                 for(key in platformsObj){
                     result.push(key);
                 }
-                
+
                 return result;
             };
 
@@ -771,8 +771,8 @@ jQuery(function ($) {
 
                 return result;
             };
-            
-            
+
+
 
 
             /********************************************************************************************
@@ -836,7 +836,7 @@ jQuery(function ($) {
                     }
                 }
             };
-            
+
             this.scheduleModifiedHandler = function(event) {
                 if (event.currentItemAffected) {
                     this.setActiveItem('next');
@@ -897,23 +897,23 @@ jQuery(function ($) {
                         break;
                 };
             };
-            
+
             this.volumeHandler = function (value) {
                 var muted;
 
                 if (value <= 0) {
                     muted = true;
-                } 
+                }
                 else {
                     muted = false;
                 }
-                
+
                 if(muted !== this.env.muted){
                     this.env.muted = muted;
                     this.storage.save('muted', muted);
                     this._promote('mute', muted);
                 }
-                
+
                 this.storage.save('volume', value);
                 this.env.volume = value;
             };
@@ -997,19 +997,19 @@ jQuery(function ($) {
                 else {
                     this._isLive = false;
                 }
-                
+
                 switch(value){
                     case 'dvr':
                         this.getDC().addClass(this.getNS() + 'dvr');
                         this.getDC().addClass(this.getNS() + 'live');
                         break;
                     case 'live':
-                        this.getDC().removeClass(this.getNS() + 'dvr'); 
+                        this.getDC().removeClass(this.getNS() + 'dvr');
                         this.getDC().addClass(this.getNS() + 'live');
                         break;
                     default:
-                        this.getDC().removeClass(this.getNS() + 'dvr'); 
-                        this.getDC().removeClass(this.getNS() + 'live'); 
+                        this.getDC().removeClass(this.getNS() + 'dvr');
+                        this.getDC().removeClass(this.getNS() + 'live');
                         break;
                 }
             };
@@ -1449,10 +1449,10 @@ jQuery(function ($) {
             /*******************************
              DOM manipulations
              *******************************/
-            
+
             /* make player fill actual viewport */
             this._expandView = function(win, target, targetParent) {
-                
+
                 var winBody = $(win[0].document).find('body'),
                     overflow = winBody.css('overflow'),
                     isSelf = (win[0] === window.self),
@@ -1499,10 +1499,10 @@ jQuery(function ($) {
                         })
                         .attr('style', (!targetParent.attr('style') ? '' : targetParent.attr('style') + '; ') + 'overflow: visible!important;'); // that fixes IE issues with visibility of the element
                 }
-                
+
                 // prepare parent window
                 win.scrollTop(0).scrollLeft(0);
-                
+
                 winBody.css({
                         overflow: 'hidden',
                         overflowX: 'hidden',
@@ -1511,7 +1511,7 @@ jQuery(function ($) {
 
                 return true;
             };
-            
+
             /* make player back to original size */
             this._collapseView = function(win, target, targetParent) {
                 var isSelf = (win[0] === window.self),
@@ -1521,7 +1521,7 @@ jQuery(function ($) {
                 // reset
                 if (fsData !== null) {
 
-                    
+
 
                     $(win[0].document.body)
                         .css({
@@ -1551,11 +1551,11 @@ jQuery(function ($) {
                             .attr('style', !fsTargetParentData.styles ? '' : fsTargetParentData.styles)
                             .data('fsdata', null);
                     }
-                    
+
                     // rebuild parent window state
                     win.scrollTop(fsData.scrollTop)
                        .scrollLeft(fsData.scrollLeft);
-                    
+
                     return true;
                 }
 
@@ -1572,17 +1572,17 @@ jQuery(function ($) {
 
                 // set isFullViewport flag
                 this._isFullViewport = true;
-                
+
                 // add class to eventually create more specific rules for site elements with high z-indexes
                 winDocument.find('body').addClass(this.getNS() + 'fullviewport');
-                
+
                 // prevent Android 4.x Browser from scrolling
                 $(document).on('touchmove.fullviewport', function(e) {
                     e.preventDefault();
                 });
-                
+
                 this._expandView(win, target, targetParent);
-                
+
                 return true;
             };
 
@@ -1594,11 +1594,11 @@ jQuery(function ($) {
                     target = iframeCfg? this.getIframe() || this.getDC() : this.getDC(),
                     targetParent = target.parent() || null,
                     winDocument = $(win[0].document);
-                
+
                 this._isFullViewport = false;
-                
+
                 winDocument.find('body').removeClass(this.getNS() + 'fullviewport');
-                
+
                 $(document).off('.fullviewport');
 
                 this._collapseView(win, target, targetParent);
@@ -1847,16 +1847,16 @@ jQuery(function ($) {
             };
 
             this.getItemId = function (idx) {
-                
+
                 try {
                     return this.playerModel.getId();
                 } catch (e) {
                     return this.getItemAtIdx(idx).id;
                 }
             };
-            
+
             this.getItemIdx = function (itm) {
-                
+
                 var item = itm || {
                     id: false
                 },
@@ -1909,14 +1909,14 @@ jQuery(function ($) {
             this.getVolume = function () {
                 var volume = ('getIsReady' in this.playerModel && this.playerModel.getIsReady()) ? this.playerModel.getVolume() : this.env.volume,
                     fixedVolume = this.getConfig('fixedVolume');
-                
+
                 if(fixedVolume === true){
                     volume = this.getConfig('volume');
                 }
-                
+
                 return volume;
             };
-            
+
             this.getMuted = function () {
                 return this.env.muted;
             };
@@ -1963,7 +1963,7 @@ jQuery(function ($) {
                     return 0;
                 }
             };
-            
+
             this.getIsLiveOrDvr = function() {
                 try {
                     return this._isLive || this.playerModel._isDVR || this.playerModel._isLive;
@@ -2013,9 +2013,9 @@ jQuery(function ($) {
                 }
             };
             /**
-             * Basing on fullscreen prioritized array config, curently used platform and device abilities 
+             * Basing on fullscreen prioritized array config, curently used platform and device abilities
              * it detects fullscreen type/mode to use.
-             * 
+             *
              * @returns string - full | mediaonly | viewport | none
              */
             this.getFullscreenType = function() {
@@ -2027,27 +2027,27 @@ jQuery(function ($) {
                     available = [],
                     result = 'none',
                     i;
-                
+
                 switch(availableFullscreenApiType){
                     case 'full':
                         fullscreenTypeAvailableForApi = ['full','mediaonly'];
                         break;
-                        
+
                     case 'mediaonly':
                         fullscreenTypeAvailableForApi = ['mediaonly'];
                         break;
-                    
+
                     case 'none':
                         break;
                 }
-                
+
                 // if device has support for inlinevideo then there is full viewport mode available
                 if($p.features.inlinevideo){
                     fullscreenTypeAvailableForApi.push('viewport');
                 }
-                
+
                 available = $p.utils.intersect($p.utils.intersect(config, fullscreenTypesAvailableForUsedPlatform), fullscreenTypeAvailableForApi);
-                
+
                 // select one from the available fullscreen types with highest configured priority
                 for(i=0; i<config.length; i++){
                     if(available.indexOf(config[i]) > -1){
@@ -2055,20 +2055,20 @@ jQuery(function ($) {
                         break;
                     }
                 }
-                
+
                 return result;
             };
-            
+
             this.getFullscreenEnabled = function() {
                 var fsType = this.getFullscreenType(),
                     apiType = $p.fullscreenApi.type,
                     result = false;
-                
+
                 switch(fsType){
                     case 'full':
                         result = this._getFullscreenEnabledApi();
                         break;
-                    
+
                     case 'mediaonly':
                         /**
                          * there could be 3 cases in this situation:
@@ -2084,12 +2084,12 @@ jQuery(function ($) {
                             result = this._getFullscreenEnabledApi(apiType);
                         }
                         break;
-                    
+
                     case 'viewport':
                         /**
-                         * In this case we just need to check if the player is inside the <iframe> 
+                         * In this case we just need to check if the player is inside the <iframe>
                          * and if the <iframe> attributes allowing fullscreen. We respect this even if it's
-                         * possible to set fullviewport when the <iframe> is from the same domain. 
+                         * possible to set fullviewport when the <iframe> is from the same domain.
                          * If the player isn't inside the <iframe> then we assume that it's possible to
                          * put the player into fullviewport mode when requested.
                          */
@@ -2100,7 +2100,7 @@ jQuery(function ($) {
                             result = true;
                         }
                         break;
-                        
+
                         /**
                          * The fullscreen functionality is disabled in configuration
                          */
@@ -2108,16 +2108,16 @@ jQuery(function ($) {
                         result = false;
                         break;
                 }
-                
+
                 return result;
             };
-            
+
             this._getFullscreenEnabledApi = function(apiType){
                 var apiType = apiType || $p.fullscreenApi.type,
                     fsFullscreenEnabledPropName = $p.fullscreenApi[apiType]['fullscreenEnabled'] || false,
                     fsSupportsFullscreenPropName = $p.fullscreenApi[apiType]['supportsFullscreen'] || false,
                     result = false;
-                
+
                 switch(apiType){
                     case 'full':
                         // we need to check if the document fullscreenEnabled value is true or false
@@ -2130,7 +2130,7 @@ jQuery(function ($) {
                         /**
                          * if the detected fullscreen API is 'mediaonly' then we need to check the status
                          * of current player model media element supportsFullscreen value. This value is
-                         * reliable only after HTML <video> metadataloaded event was fired. If there is 
+                         * reliable only after HTML <video> metadataloaded event was fired. If there is
                          * no player model media element available at the function execution time we return
                          * false.
                          */
@@ -2139,20 +2139,20 @@ jQuery(function ($) {
                         }
                         break;
                 }
-                
+
                 return result;
             };
-            
+
             this.getIsFullscreen = function () {
                 var fsType = this.getFullscreenType(),
                     apiType = $p.fullscreenApi.type,
                     result = false;
-                
+
                 switch(fsType){
                     case 'full':
                         result = this._getIsFullscreenApi();
                         break;
-                    
+
                     case 'mediaonly':
                         /**
                          * there could be 2 cases in this situation:
@@ -2161,11 +2161,11 @@ jQuery(function ($) {
                          */
                         result = this._getIsFullscreenApi(apiType);
                         break;
-                    
+
                     case 'viewport':
                         result = this._isFullViewport;
                         break;
-                        
+
                         /**
                          * The fullscreen functionality is disabled in configuration
                          */
@@ -2173,17 +2173,17 @@ jQuery(function ($) {
                         result = false;
                         break;
                 }
-                
+
                 return result;
             };
-            
+
             this._getIsFullscreenApi = function(apiType){
                 var apiType = apiType || $p.fullscreenApi.type,
                     fsElementPropName = $p.fullscreenApi[apiType]['fullscreenElement'] || false,
                     fsIsFullscreenPropName = $p.fullscreenApi[apiType]['isFullscreen'] || false,
                     fsDisplayingFullscreenPropName = $p.fullscreenApi[apiType]['isFullscreen'] || false,
                     result = false;
-                
+
                 switch(apiType){
                     case 'full':
                         // NOTE: IE11 and IEMobile on Windows Phone 8.1 don't have isFullscreen property implemented,
@@ -2200,7 +2200,7 @@ jQuery(function ($) {
                         }
                         break;
                 }
-                
+
                 return result;
             };
 
@@ -2303,7 +2303,7 @@ jQuery(function ($) {
             this.getIframeAllowFullscreen = function () {
 
                 var result = false;
-                
+
                 try {
                     result = window.frameElement.attributes.allowFullscreen || window.frameElement.attributes.mozallowFullscreen || window.frameElement.attributes.webkitallowFullscreen || false;
                 } catch (e) {
@@ -2372,7 +2372,7 @@ jQuery(function ($) {
 
                 return this._canPlay(type, 'native');
             };
-            
+
             this.getCanPlayOnPlatforms = function(mimeType){
                 return this._canPlayOnPlatforms(mimeType);
             };
@@ -2649,8 +2649,8 @@ jQuery(function ($) {
                     // nothing to do
                     return this;
                 }
-                
-                // 
+
+                //
 
                 // item change requested
                 if (newItem.id !== lastItem.id) {
@@ -2660,12 +2660,12 @@ jQuery(function ($) {
                         return this;
                     }
                 }
-                
+
                 // do we have an continuous play situation?
                 if (!this.getState('IDLE')) {
                     ap = this.config._continuous;
                 }
-                
+
                 this._detachplayerModel();
 
                 // reset player class
@@ -2689,7 +2689,7 @@ jQuery(function ($) {
                 // start model
                 this.playerModel = new playerModel();
                 $.extend(this.playerModel, new $p.models[newModel]());
-                
+
                 this.__promote('synchronizing', 'display');
 
                 this.initPlayerModel({
@@ -2702,9 +2702,9 @@ jQuery(function ($) {
                     fullscreen: wasFullscreen
                     // persistent: (ap || this.config._continuous) && (newModel==nextUp)
                 });
-                
+
                 this.syncCuePoints();
-                
+
                 return this;
             };
 
@@ -2852,10 +2852,10 @@ jQuery(function ($) {
 
                 return this;
             };
-            
+
             this.setMuted = function(value) {
                 var value = value === void(0) ? !this.env.muted : value;
-                
+
                 if(value){
                     this.env.lastVolume = this.getVolume();
                     this.setVolume(0);
@@ -2864,7 +2864,7 @@ jQuery(function ($) {
                     this.setVolume(typeof this.env.lastVolume === 'number' ? this.env.lastVolume : this.getVolume());
                     this.env.lastVolume = null;
                 }
-                
+
                 return this;
             };
 
@@ -3017,23 +3017,23 @@ jQuery(function ($) {
 
             this.setFullscreen = function (goFullscreen) {
                 var goFullscreen = goFullscreen === void(0) ? !this.getIsFullscreen() : goFullscreen; // toggle or use argument value
-                
+
                 // inform player model about going fullscreen
                 this.playerModel.applyCommand('fullscreen', goFullscreen);
 
                 return this;
             };
-            
+
             this._requestFullscreen = function() {
                 var fsType = this.getFullscreenType(),
                     apiType = $p.fullscreenApi.type,
                     result = false;
-                
+
                 switch(fsType){
                     case 'full':
                         result = this._requestFullscreenApi(apiType, fsType);
                         break;
-                    
+
                     case 'mediaonly':
                         /**
                          * there could be 2 cases in this situation:
@@ -3042,11 +3042,11 @@ jQuery(function ($) {
                          */
                         result = this._requestFullscreenApi(apiType, fsType);
                         break;
-                    
+
                     case 'viewport':
                         result = this._enterFullViewport();
                         break;
-                        
+
                         /**
                          * The fullscreen functionality is disabled in configuration
                          */
@@ -3054,10 +3054,10 @@ jQuery(function ($) {
                         result = false;
                         break;
                 }
-                
+
                 return result;
             };
-            
+
             this._requestFullscreenApi = function(apiType, fsType){
                 var apiType = apiType || $p.fullscreenApi.type,
                     fsElement,
@@ -3068,7 +3068,7 @@ jQuery(function ($) {
                     fsEventsNS = '.' + this.getNS() + 'fullscreen',
                     result = false,
                     ref = this;
-                
+
                 switch(apiType){
                     case 'full':
                         if(fsType === 'full'){
@@ -3077,7 +3077,7 @@ jQuery(function ($) {
                         else if (fsType === 'mediaonly') {
                             if(!!this.playerModel.mediaElement){
                                 fsElement = this.playerModel.mediaElement;
-                                
+
                                 // add native controls
                                 fsElement.attr('controls', true);
                                 result = true;
@@ -3086,19 +3086,19 @@ jQuery(function ($) {
                                 return false;
                             }
                         }
-                        
+
                         // remove all previous event listeners
                         $(document).off(fsEventsNS);
-                        
+
                         // add event listeners
                         if(fsChangeEventName) {
-                            
+
                             $(document).on(fsChangeEventName + fsEventsNS, function(event){
-                                
+
                                 if(!ref.getIsFullscreen()){
-                                    
+
                                     if(fsType === 'mediaonly'){
-                                        
+
                                         // remove native controls
                                         fsElement.attr('controls', false);
                                     }
@@ -3112,14 +3112,14 @@ jQuery(function ($) {
                         else {
                             $p.utils.log('No fullscreenchange event defined.');
                         }
-                        
+
                         if(fsErrorEventName) {
-                            
+
                             $(document).on(fsErrorEventName + fsEventsNS, function(event){
-                                
+
                                 $p.utils.log('fullscreenerror', event);
                                 ref.setFullscreen(false);
-                                
+
                                 // remove fullscreen event listeners
                                 $(document).off(fsEventsNS);
                             });
@@ -3127,7 +3127,7 @@ jQuery(function ($) {
                         else {
                             $p.utils.log('No fullscreenerror event defined.');
                         }
-                        
+
                         // request fullscreen
                         fsElement[0][fsRequestFunctionName]();
                         result = true;
@@ -3135,7 +3135,7 @@ jQuery(function ($) {
 
                     case 'mediaonly':
                         if(!!this.playerModel.mediaElement){
-                            
+
                             fsElement = this.playerModel.mediaElement;
                             fsElement[0][fsEnterFunctionName]();
                             result = true;
@@ -3145,21 +3145,21 @@ jQuery(function ($) {
                         }
                         break;
                 }
-                
+
                 return result;
             };
-            
+
             this._exitFullscreen = function() {
-                
+
                 var fsType = this.getFullscreenType(),
                     apiType = $p.fullscreenApi.type,
                     result = false;
-                
+
                 switch(fsType){
                     case 'full':
                         result = this._exitFullscreenApi();
                         break;
-                    
+
                     case 'mediaonly':
                         /**
                          * there could be 2 cases in this situation:
@@ -3168,11 +3168,11 @@ jQuery(function ($) {
                          */
                         result = this._exitFullscreenApi(apiType);
                         break;
-                    
+
                     case 'viewport':
                         result = this._exitFullViewport();
                         break;
-                        
+
                         /**
                          * The fullscreen functionality is disabled in configuration
                          */
@@ -3180,17 +3180,17 @@ jQuery(function ($) {
                         result = false;
                         break;
                 }
-                
+
                 return result;
             };
-            
+
             this._exitFullscreenApi = function() {
-                
+
                 var apiType = apiType || $p.fullscreenApi.type,
                     fsElement,
                     fsExitFunctionName = $p.fullscreenApi[apiType]['exitFullscreen'] ? $p.fullscreenApi[apiType]['exitFullscreen'] : false,
                     result = false;
-                
+
                 switch(apiType){
                     case 'full':
                         fsElement = document;
@@ -3209,7 +3209,7 @@ jQuery(function ($) {
                         }
                         break;
                 }
-                
+
                 return result;
             };
 
@@ -3334,9 +3334,9 @@ jQuery(function ($) {
             };
             /**
              * @deprecated since 1.4.00
-             * 
+             *
              * Adds, removes, replaces item
-             * 
+             *
              * @param {type} item
              * @param {number} [index]
              * @param {boolean} [replace=false]
@@ -3407,7 +3407,7 @@ jQuery(function ($) {
                     $p.utils.log('Failed to set improperly defined parser.');
                 }
             };
-            
+
             this.getParser = function(parserId){
                 if(typeof parserId === 'string') {
                     return this._parsers[parserId.toUpperCase()];
@@ -4059,9 +4059,9 @@ jQuery(function ($) {
              GENERAL Tools
              *********************************************************************************************/
             /**
-             * 
+             *
              * @param {string} url or filename containing file extension for which mimeType we want to get
-             * @returns {string} one of defined mimeTypes from available models iLove definitions 
+             * @returns {string} one of defined mimeTypes from available models iLove definitions
              * or 'none/none' if there is no such a type or url attribute was other than 'string'
              */
             this._getTypeFromFileExtension = function (url) {
@@ -4073,7 +4073,7 @@ jQuery(function ($) {
                     plt = null,
                     on = true,
                     result = 'none/none';
-                
+
                 if(typeof url === 'string') {
                     // build regex string and filter dublicate extensions:
                     for (var i in $p.mmap) {
@@ -4151,7 +4151,7 @@ jQuery(function ($) {
                             streamType = $p.mmap[i]['streamType'] || ['http'];
 
                             $.each(streamType, function (key, st) {
-                                
+
                                 var configPlatformVersion,
                                     reqPlatformVersion;
 
@@ -4167,11 +4167,11 @@ jQuery(function ($) {
                                 if ($.inArray($p.mmap[i]['type'], result[st][platform]) > -1) {
                                     return true;
                                 }
-                                                                
+
                                 if(platformsConfig.hasOwnProperty(platform.toLowerCase())) {
                                     configPlatformVersion = platformsConfig[platform.toLowerCase()].minPlatformVersion || false;
                                 }
-                                
+
                                 // requested platform version is minPlatformVersion from platformsConfig or model prototype
                                 reqPlatformVersion = configPlatformVersion || ($p.models[ $p.mmap[i]['model'].toUpperCase() ].prototype[(platform.toLowerCase()) + 'Version'] || "1").toString();
 
@@ -4335,7 +4335,7 @@ jQuery(function ($) {
                 // -----------------------------------------------------------------------------
                 // - 1. GENERAL CONFIG ---------------------------------------------------------
                 // -----------------------------------------------------------------------------
-                
+
                 // remember original node HTML for reset and reference purposes:
                 this.env.srcNode = theNode.wrap('<div></div>').parent().html();
                 theNode.unwrap();
@@ -4387,19 +4387,19 @@ jQuery(function ($) {
                         }
                     }
                 }
-                
+
                 // turn debug mode on/off
                 this.setDebug(this.getConfig('debug'));
-                
+
                 // check platforms config is valid
                 // should be array with at least 1 platform 'browser' defined
                 if(!$.isArray(this.config['_platforms'])){
-                    $p.utils.log('ERROR: platforms config must be an array. Reset platforms config to the defaults.'); 
+                    $p.utils.log('ERROR: platforms config must be an array. Reset platforms config to the defaults.');
                     this.config['_platforms'] = Object.getPrototypeOf(this.config)['_platforms'] || [];
                 }
                 // add BROWSER platform if it's not defined in config
                 if($.inArray('browser', this.config['_platforms']) === -1){
-                    $p.utils.log('ERROR: "browser" platform not present in platforms config. Adding it.'); 
+                    $p.utils.log('ERROR: "browser" platform not present in platforms config. Adding it.');
                     this.config._platforms.unshift('browser');
                 }
 
@@ -4411,7 +4411,7 @@ jQuery(function ($) {
                     this.config._autoplay = false;
                     this.config.fixedVolume = true;
                 }
-                
+
                 // set initial volume and muted values
                 if(this.getConfig('forceMuted')){
                     this.env.muted = true;
@@ -4426,7 +4426,7 @@ jQuery(function ($) {
                 else {
                     this.env.volume = this.storage.restore('volume') !== null ? this.storage.restore('volume') : this.getConfig('volume');
                 }
-                
+
                 // -----------------------------------------------------------------------------
                 // - TRIM DEST --------------------------------------------------------------
                 // -----------------------------------------------------------------------------

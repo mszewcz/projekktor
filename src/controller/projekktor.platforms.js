@@ -5,7 +5,7 @@
  *
  * Copyright 2010, 2011, Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
  * Copyright 2014 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
- * 
+ *
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  */
@@ -18,7 +18,7 @@ jQuery(function ($) {
         },
 
         /**
-         * returns 1 if MSE is available 0 otherwise 
+         * returns 1 if MSE is available 0 otherwise
          */
         MSE: function() {
             return $p.features.hlsjs ? "1" : "0";
@@ -39,7 +39,7 @@ jQuery(function ($) {
 
             return result.join(".");
         },
-        
+
         SILVERLIGHT: function () {
             var result = $p.utils.detectPlugin('Silverlight Plug-In', 'application/x-silverlight-2', 'AgControl.AgControl', function (ax) {
                 // Silverlight cannot report its version number to IE
@@ -66,7 +66,7 @@ jQuery(function ($) {
 
             return result.join(".");
         },
-        
+
         ANDROID: function () {
             try {
                 return (navigator.userAgent.toLowerCase().match(/android\s+(([\d\.]+))?/)[1]).toString();
@@ -74,17 +74,17 @@ jQuery(function ($) {
             }
             return "0";
         },
-        
+
         IOS: function () {
             var agent = navigator.userAgent.toLowerCase(),
                 start = agent.indexOf('os ');
-            
+
             if ((agent.indexOf('iphone') > -1 || agent.indexOf('ipad') > -1) && start > -1) {
                 return (agent.substr(start + 3, 3).replace('_', '.')).toString();
             }
             return "0";
         },
-        
+
         NATIVE: function (type) {
             try {
                 var testObject = $((type.indexOf('video') > -1) ? '<video/>' : '<audio/>').get(0);
@@ -96,7 +96,7 @@ jQuery(function ($) {
                         case "no":
                         case "":
                             return "0";
-                            // case "maybe":			
+                            // case "maybe":
                             // case "probably":
                         default:
                             return "1";
@@ -106,7 +106,7 @@ jQuery(function ($) {
             }
             return "0";
         },
-        
+
         BROWSER: function () {
             return "1";
         }

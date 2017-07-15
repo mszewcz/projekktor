@@ -7,19 +7,19 @@
 var projekktorRSS = function(){};
 jQuery(function($) {
 projekktorRSS.prototype = {
-    
+
     parserId: 'RSS',
     version: '1.0.00',
-    reqVer: '1.4.00', 
-    
+    reqVer: '1.4.00',
+
     initialize: function() {
         this.pluginReady = true;
     },
-    
+
     scheduleLoadingHandler: function() {
         this.pluginReady = false;
     },
-    
+
     scheduleLoadedHandler: function(xmlDocument) {
         var node = null;
         try {
@@ -29,23 +29,23 @@ projekktorRSS.prototype = {
                     this.pp.addParser(this.parserId, this.parse);
                 }
             }
-            
+
         } catch(e) {console.log(e)}
-        this.pluginReady = true;  
+        this.pluginReady = true;
     },
-    
+
     parse: function(xmlDocument) {
         var result = {},
             itm=0;
-            
+
         result.playlist = [];
-        
-        $(xmlDocument).find("item").each(function() {            
+
+        $(xmlDocument).find("item").each(function() {
             try {
                 result['playlist'].push({
                     0:{
-                        src:  $(this).find('enclosure').attr('url'),            
-                        type: $(this).find('enclosure').attr('type')            
+                        src:  $(this).find('enclosure').attr('url'),
+                        type: $(this).find('enclosure').attr('type')
                     },
                     config: {
                         poster: $(this).find('media\\:thumbnail').attr('url'),
@@ -55,7 +55,7 @@ projekktorRSS.prototype = {
                 });
             } catch(e){}
         });
-        
+
         return result;
     }
 }

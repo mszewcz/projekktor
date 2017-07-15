@@ -4,17 +4,17 @@
  * http://www.projekktor.com
  *
  * Copyright 2016 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
- * 
+ *
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
- * 
+ *
  * This model is interfacing hls.js library
  *
  * hls.js
  * Author: Guillaume du Pontavice
  * Website: https://github.com/dailymotion/hls.js
  * License: Apache 2.0 License
- * 
+ *
  */
 
 jQuery(function ($) {
@@ -133,14 +133,14 @@ jQuery(function ($) {
             });
 
             /*
-             * Some of the mobile browsers (e.g. Android native browsers <= 4.2.x, Opera Mobile) 
+             * Some of the mobile browsers (e.g. Android native browsers <= 4.2.x, Opera Mobile)
              * have by default play/pause actions bound directly to click/mousedown events of <video>.
-             * That causes conflict with display plugin play/pause actions, which makes it impossible 
-             * to pause the currently playing video. Precisely _setState is called twice: 
-             * first by pauseListener triggered by <video> default click/mousedown action, 
-             * secondly by display plugin actions bound to mousedown events. The result is that 
-             * the video is paused by native <video> events and then immediately started by display 
-             * plugin that uses the setPlayPause function. setPlayPause function toggles between 
+             * That causes conflict with display plugin play/pause actions, which makes it impossible
+             * to pause the currently playing video. Precisely _setState is called twice:
+             * first by pauseListener triggered by <video> default click/mousedown action,
+             * secondly by display plugin actions bound to mousedown events. The result is that
+             * the video is paused by native <video> events and then immediately started by display
+             * plugin that uses the setPlayPause function. setPlayPause function toggles between
              * "PAUSED" and "PLAYING" states, so when a video is being played, the function causes its pausing.
              */
             this.mediaElement.on('mousedown.projekktorqs' + this.pp.getId(), this.disableDefaultVideoElementActions);
@@ -158,17 +158,17 @@ jQuery(function ($) {
         /**
          * Update projekktor internal quality keys for currently active playlist item
          * with hls.js dynamic stream item values
-         * 
+         *
          * To use different quality keys format than default:
          * audio/video key: '%{height}p | %{bitrate}kbps'
          * audio-only key: 'audio | %{bitrate}kbps'
-         * 
+         *
          * set 'dynamicStreamQualityKeyFormatAudioVideo', 'dynamicStreamQualityKeyFormatAudioOnly' config options respectively.
-         * 
+         *
          * To show audio-only qualities set 'dynamicStreamShowAudioOnlyQualities' config option to true (default: false)
-         * 
+         *
          * Note: Quality keys must have unique names, otherwise they will be overwriten.
-         * 
+         *
          * @returns {Array} - returns available dynamic streams quality keys in the projekktor's format
          */
         updateAvailableDynamicStreamsQualities: function (data) {
@@ -240,14 +240,14 @@ jQuery(function ($) {
 
         /**
          * Switch to a specific dynamic stream index.
-         * 
-         * @param {int} index - if < 0 then the automatic stream switch will be enabled, 
+         *
+         * @param {int} index - if < 0 then the automatic stream switch will be enabled,
          * otherwise if the index value is a valid stream index the manual switch will be performed
-         * 
+         *
          * @returns {mixed} - if the requested index is invalid, is the same as current index or is out of valid range function returns false
-         * otherwise it returns requested index value. 
+         * otherwise it returns requested index value.
          * Note: Always use strict comparison when using return value cause the lowes valid index could be 0.
-         * 
+         *
          * Note:  If the media is paused, switching will not take place until after play resumes.
          */
         switchDynamicStreamIndex: function (index) {
@@ -272,7 +272,7 @@ jQuery(function ($) {
                 // auto dynamic stream switch must be set to false before any attempt of manual index switching
                 this.setAutoDynamicStreamSwitch(false);
 
-                // if there is atempt to manual switch but after disabling auto switching 
+                // if there is atempt to manual switch but after disabling auto switching
                 // current index is already the requested one (without that check the player tend to hang)
                 if (index !== this.getCurrentDynamicStreamIndex()) {
                     this._hlsjs.currentLevel = index;
@@ -293,11 +293,11 @@ jQuery(function ($) {
         },
 
         /**
-         * The maximum allowed index. This can be set at run-time to 
+         * The maximum allowed index. This can be set at run-time to
          * provide a ceiling for the switching profile, for example,
-         * to keep from switching up to a higher quality stream when 
+         * to keep from switching up to a higher quality stream when
          * the current video is too small to handle a higher quality stream.
-         * 
+         *
          * The default is the highest stream index.
          */
         getMaxAllowedDynamicStreamIndex: function () {
@@ -324,7 +324,7 @@ jQuery(function ($) {
         },
 
         /**
-         * Defines whether or not the model should be in manual 
+         * Defines whether or not the model should be in manual
          * or auto-switch mode. If in manual mode the switchDynamicStreamIndex
          * method can be used to manually switch to a specific stream index.
          */

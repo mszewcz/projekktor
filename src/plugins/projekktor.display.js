@@ -1,6 +1,6 @@
 /*
  * Projekktor II Plugin: Display
- * 
+ *
  * DESC: Provides a standard display for cover-art, video or html content
  * features startbutton, logo-overlay and buffering indicator
  * Copyright 2010-2013, Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
@@ -11,36 +11,36 @@
 var projekktorDisplay = function(){};
 jQuery(function($) {
 projekktorDisplay.prototype = {
-    
+
     version: '1.1.00',
-    
+
     logo: null,
     logoIsFading: false,
-    
+
     display: null,
-    
+
     displayClicks: 0,
-    
+
     buffIcn: null,
     buffIcnSprite: null,
     buffIcnHangWatcher: null,
     bufferDelayTimer: null,
-    
-    
+
+
     _controlsDims: null,
-    
+
     config: {
         displayClick: {callback: 'setPlayPause', value: null},
         displayPlayingClick: {callback: 'setPlayPause', value: null},
         displayDblClick: {callback: null, value: null},
-            
+
         staticControls:     false,
-        
+
         /* time to delay buffering-icon-overlay once "waiting" event has been triggered */
         bufferIconDelay:    1000,
-        
+
         bufferIconHangWatcherInterval: 5000,
-            
+
         /* if set the indicator animation is tinkered from a cssprite - must be horizontal */
         spriteUrl:          '',
         spriteWidth:        50,
@@ -49,16 +49,16 @@ projekktorDisplay.prototype = {
         spriteOffset:       1,
         spriteCountUp:      false
     },
-    
-  
+
+
     /* triggered on plugin-instanciation */
     initialize: function() {
         // create the display container itself
         this.display = this.applyToPlayer($('<div/>'));
-        
+
         // create the startbutton
         this.startButton =  this.applyToPlayer( $('<div/>').addClass('start'), 'startbtn');
-    
+
         // create buffericon
         this.buffIcn = this.applyToPlayer( $('<div/>').addClass('buffering'), 'buffericn');
 
@@ -79,8 +79,8 @@ projekktorDisplay.prototype = {
                     backgroundPosition: '0 0'
                 })
                 .addClass('inactive');
-        }    
-        
+        }
+
         // create a dedicated media container (if none exists)
         this.pp.getMediaContainer();
 
@@ -93,33 +93,33 @@ projekktorDisplay.prototype = {
         EVENT HANDLERS
     *****************************************/
     displayReadyHandler: function() {
-        
+
         if(this.pp.playerModel.getBufferState('FULL')){
             this.hideBufferIcon();
         }
     },
-   
-    synchronizingHandler: function() {        
+
+    synchronizingHandler: function() {
         var ref = this;
         this.hideStartButton();
         this.showBufferIcon();
         // the startbutton
         this.startButton.off().click(function(){
-            ref.pp.setPlay();           
+            ref.pp.setPlay();
         });
     },
 
     synchronizedHandler: function() {
-        this.readyHandler();  
+        this.readyHandler();
     },
-    
+
     readyHandler: function() {
         this.hideBufferIcon();
         if (this.pp.getState('IDLE')) {
-            this.showStartButton();        
+            this.showStartButton();
         }
-    },    
-    
+    },
+
     bufferHandler: function(state) {
         if (this.pp.playerModel.getBufferState('EMPTY') && !this.pp.getState('PAUSED')) {
             this.showBufferIcon();
@@ -127,13 +127,13 @@ projekktorDisplay.prototype = {
         else {
             this.hideBufferIcon();
         }
-    },    
-    
+    },
+
     stateHandler: function(state) {
         var bufferState = this.pp.playerModel.getBufferState();
-        
+
         switch(state) {
-        
+
             case 'IDLE':
                 clearTimeout(this._cursorTimer);
                 this.display.css('cursor', 'pointer');
@@ -143,63 +143,63 @@ projekktorDisplay.prototype = {
                 this.bufferHandler(bufferState);
                 this.hideStartButton();
                 break;
-            
+
             case 'IDLE':
                 this.showStartButton();
                 this.hideBufferIcon();
                 break;
-            
+
             case 'STARTING':
             case 'AWAKENING':
                 this.showBufferIcon();
                 this.hideStartButton();
                 break;
-            
+
             case 'COMPLETED':
                 this.hideBufferIcon();
-                break;            
-            
+                break;
+
             default:
                 this.hideStartButton();
         }
     },
-    
+
     errorHandler: function(errorCode) {
         this.hideBufferIcon();
         this.hideStartButton();
         if (!this.getConfig('skipTestcard')) {
             this.testCard(errorCode);
         }
-       
+
     },
-    
+
     startHandler: function() {
-        this.mousemoveHandler();  
+        this.mousemoveHandler();
     },
-  
+
     stoppedHandler: function() {
         this.hideBufferIcon();
     },
-  
+
     scheduleLoadingHandler: function() {
         this.hideStartButton();
-        this.showBufferIcon(); 
+        this.showBufferIcon();
     },
-    
+
     scheduledHandler: function() {
         if (!this.getConfig('autoplay')) {
             this.showStartButton();
         }
         this.hideBufferIcon();
     },
- 
+
     plugineventHandler: function(data) {
         if (data.PLUGIN=='controlbar' && data.EVENT=='show' && this.getConfig('staticControls')) {
             var pctCtrl = data.height * 100 / this.pp.getDC().height();
             this.display.height( (100 - pctCtrl) + "%").data('sc', true);
         }
     },
-    
+
     qualityChangeHandler: function() {
         var bufferState = this.pp.playerModel.getBufferState();
         this.bufferHandler(bufferState);
@@ -207,7 +207,7 @@ projekktorDisplay.prototype = {
 
     /*****************************************,
         DISPLAY: Mouse Handling
-    *****************************************/    
+    *****************************************/
     mousemoveHandler: function(evt) {
         var dest = this.display;
         if (this.pp.getState('IDLE')) {
@@ -219,18 +219,18 @@ projekktorDisplay.prototype = {
         if ("AWAKENING|ERROR|PAUSED".indexOf(this.pp.getState())==-1)
             this._cursorTimer=setTimeout(function(){dest.css('cursor', 'none');}, 3000);
     },
-    
+
     mousedownHandler: function(evt) {
-        var ref = this;     
+        var ref = this;
 
         if( ($(evt.target).attr('id') || '').indexOf('_media')==-1 && !$(evt.target).hasClass(this.pp.getNS() + 'testcard') )
             return;
-    
+
         clearTimeout(this._cursorTimer);
-        this.display.css('cursor', 'auto');                    
-                
+        this.display.css('cursor', 'auto');
+
         if(evt.which!=1)
-            return;            
+            return;
 
         switch(this.pp.getState()) {
             case 'ERROR':
@@ -242,59 +242,59 @@ projekktorDisplay.prototype = {
                 this.pp.setPlay();
                 return;
         }
-    
-        if (this.pp.getHasGUI()===true)         
+
+        if (this.pp.getHasGUI()===true)
             return;
 
         this.displayClicks++;
-        
+
         this.pp._promote('displayClick');
-    
+
         if (this.displayClicks > 0) {
             setTimeout(
-            function(){            
+            function(){
                 if(ref.displayClicks == 1) {
                 if (ref.pp.getState()=='PLAYING')
-                    ref.clickHandler('displayPlaying');            
-                else 
+                    ref.clickHandler('displayPlaying');
+                else
                     ref.clickHandler('display');
                 } else if(ref.displayClicks == 2) {
                 ref.clickHandler('displayDbl');
                 }
                 ref.displayClicks = 0;
             }, 150
-            );    
+            );
         }
         return;
     },
-    
-    
+
+
     /*****************************************
         STARTBUTTON
-    *****************************************/      
+    *****************************************/
     showStartButton: function() {
-        this.startButton.addClass('active').removeClass('inactive');    
+        this.startButton.addClass('active').removeClass('inactive');
     },
-    
+
     hideStartButton: function() {
-        this.startButton.addClass('inactive').removeClass('active');    
+        this.startButton.addClass('inactive').removeClass('active');
     },
-    
-    
+
+
     /*****************************************
         BUFFERICON: fader and animator
-    *****************************************/       
+    *****************************************/
     hideBufferIcon: function() {
         clearTimeout(this.bufferDelayTimer);
         clearInterval(this.buffIcnHangWatcher);
         this.buffIcn.addClass('inactive').removeClass('active');
     },
-        
+
     showBufferIcon: function(instant) {
         var ref=this;
 
         clearTimeout(this.bufferDelayTimer);
-        
+
         /* setup buffer icon hang watcher */
         clearInterval(this.buffIcnHangWatcher);
         if(this.getConfig('bufferIconHangWatcherInterval')){
@@ -304,16 +304,16 @@ projekktorDisplay.prototype = {
                 }
             }, this.getConfig('bufferIconHangWatcherInterval'));
         }
-        
+
         if (this.pp.getHasGUI() || this.pp.getState('IDLE')) {
             return;
         }
-    
+
         if ( (this.pp.getModel()==='YTAUDIO' || this.pp.getModel()==='YTVIDEO') && !this.pp.getState('IDLE'))
             instant=true;
 
         if (instant!==true && this.getConfig('bufferIconDelay')>0) {
-            this.bufferDelayTimer=setTimeout(function(){ref.showBufferIcon(true);},this.getConfig('bufferIconDelay'));        
+            this.bufferDelayTimer=setTimeout(function(){ref.showBufferIcon(true);},this.getConfig('bufferIconDelay'));
             return;
         }
 
@@ -321,7 +321,7 @@ projekktorDisplay.prototype = {
         this.buffIcn.addClass('active').removeClass('inactive');
 
         if (ref.buffIcnSprite===null) return;
-        
+
         var startOffset=(ref.config.spriteCountUp===true) ? 0 : (ref.config.spriteHeight + ref.config.spriteOffset)*(ref.config.spriteTiles-1),
             spriteOffset = startOffset;
         ref.buffIcnSprite.addClass('active').removeClass('inactive');
@@ -329,19 +329,19 @@ projekktorDisplay.prototype = {
 
             if (!ref.buffIcn.is(':visible')) return;
             ref.buffIcnSprite.css('backgroundPosition', '0px -'+spriteOffset+"px");
-            
+
             if (ref.config.spriteCountUp===true)
                 spriteOffset += ref.config.spriteHeight + ref.config.spriteOffset;
             else
                 spriteOffset -= ref.config.spriteHeight + ref.config.spriteOffset;
-                
+
             if (spriteOffset > (startOffset+ref.config.spriteHeight)*ref.config.spriteTiles || spriteOffset<ref.config.spriteOffset) spriteOffset = startOffset;
-            
-    
+
+
             setTimeout(arguments.callee,60);
-        })(); 
+        })();
     },
-    
+
     testCard: function(errorCode) {
         var msgTxt = $p.utils.errorMessage(errorCode, this.pp);
 
@@ -359,7 +359,7 @@ projekktorDisplay.prototype = {
             .addClass(this.pp.getNS() + 'testcard')
             .html('<p>' + msgTxt + '</p>');
     }
-    
+
 
 };
 });

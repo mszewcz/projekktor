@@ -1,18 +1,18 @@
 /*
- * this file is part of: 
+ * this file is part of:
  * projekktor zwei
- * http://www.projekktor.com 
+ * http://www.projekktor.com
  *
  * Copyright 2015 Radosław Włodkowski, radoslaw@wlodkowski.net
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
- * 
+ *
  * Code borrowed from:
  * Modernizr 2.8.3 (Custom Build) | MIT & BSD
  *
  */
 jQuery(function ($) {
-    
+
 $p.features = (function (window, document, undefined) {
 
     var Modernizr = {},
@@ -114,7 +114,7 @@ $p.features = (function (window, document, undefined) {
             return isEventSupported;
         })(),
         _hasOwnProperty = ({}).hasOwnProperty, hasOwnProp;
-        
+
     Modernizr._prefixes = prefixes;
     Modernizr._domPrefixes = domPrefixes;
     Modernizr._cssomPrefixes = cssomPrefixes;
@@ -253,11 +253,11 @@ $p.features = (function (window, document, undefined) {
         return !!(Modernizr['canvas'] && is(document.createElement('canvas')
             .getContext('2d').fillText, 'function'));
     };
-    
+
     tests['csstransitions'] = function() {
         return testPropsAll('transition');
     };
-    
+
     tests['touch'] = function () {
         var bool;
 
@@ -281,17 +281,17 @@ $p.features = (function (window, document, undefined) {
         div.innerHTML = '<svg/>';
         return (div.firstChild && div.firstChild.namespaceURI) == ns.svg;
     };
-    
+
     tests['inlinevideo'] = function() {
         var isIPhone = $p.userAgent.device.model === 'iPhone',
             isWindowsPhone = $p.userAgent.os.name === 'Windows Phone',
             isAndroid = $p.userAgent.os.name === 'Android',
             ieMobileVer = ($p.userAgent.browser.name === 'IEMobile') ? parseInt($p.userAgent.browser.major) : 0,
             osVer = parseFloat($p.userAgent.os.version);
-            
+
         return !isIPhone && (!isWindowsPhone || (isWindowsPhone && osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || isAndroid && osVer >= 3);
     };
-    
+
     tests['localstorage'] = function () {
         var mod = 'modernizr';
         try {
@@ -302,18 +302,18 @@ $p.features = (function (window, document, undefined) {
             return false;
         }
     };
-    
+
     tests['mse'] = function(){
         return (!!window.MediaSource);
     };
-    
+
     tests['hlsjs'] = function(){
         window.MediaSource = window.MediaSource || window.WebKitMediaSource;
         return (window.MediaSource &&
             typeof window.MediaSource.isTypeSupported === 'function' &&
             window.MediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"'));
     };
-    
+
     for (var feature in tests) {
         if (hasOwnProp(tests, feature)) {
             featureName = feature.toLowerCase();
