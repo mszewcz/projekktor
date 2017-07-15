@@ -47,8 +47,6 @@ $p.newModel({
         webkitendfullscreen: "webkitfullscreenListener"
     },    
     _eventsBinded: [],
-    isGingerbread: false,
-    isAndroid: false, 
     allowRandomSeek: false,
     videoWidth: 0,
     videoHeight: 0,
@@ -59,13 +57,6 @@ $p.newModel({
     _lastPosition: null,
     
     init: function() {
-        var ua = navigator.userAgent; // TODO: global platform and feature detection
-        if( ua.indexOf("Android") >= 0 ) {
-            this.isAndroid = true;
-          if (parseFloat(ua.slice(ua.indexOf("Android")+8)) < 3) {
-            this.isGingerbread = true;
-          }
-        }
         this._lastPosition = null;
         this._eventsBinded = [];
         this.ready();
@@ -118,13 +109,7 @@ $p.newModel({
          * instead of <video> 'src' attribute.
          */
         this.mediaElement.attr('src', media[0].src);
-        
-        /* Some Android Gingerbread devices will not play video when
-         * the <video> 'type' attribute is set explicitly 
-         */
-        if (!this.isGingerbread) {
-            this.mediaElement.attr('type', media[0].originalType );
-        }
+        this.mediaElement.attr('type', media[0].originalType );
         
         /*
          * Some of the mobile browsers (e.g. Android native browsers <= 4.2.x, Opera Mobile) 
@@ -176,12 +161,6 @@ $p.newModel({
         this.mediaElement.on('canplay.projekktorqs'+this.pp.getId(), func);
         
         this.mediaElement[0].load(); // important especially for iOS devices
-        
-        if (this.isGingerbread)
-        {
-            func();
-        }
-        
     },
     
     detachMedia: function() {
@@ -280,20 +259,18 @@ $p.newModel({
     
     playingListener: function(obj) {
         var ref = this;
-        if (!this.isGingerbread) {
-            (function() {
-                try{
-                    if (ref.getDuration()===0) {
-                        if(ref.mediaElement.get(0).currentSrc!=='' && ref.mediaElement.get(0).networkState==ref.mediaElement.get(0).NETWORK_NO_SOURCE) {
-                            ref.sendUpdate('error', 80);
-                            return;
-                        }
-                        setTimeout(arguments.callee, 500);
+        (function() {
+            try{
+                if (ref.getDuration()===0) {
+                    if(ref.mediaElement.get(0).currentSrc!=='' && ref.mediaElement.get(0).networkState==ref.mediaElement.get(0).NETWORK_NO_SOURCE) {
+                        ref.sendUpdate('error', 80);
                         return;
                     }
-                } catch(e) {}
-            })();
-        }
+                    setTimeout(arguments.callee, 500);
+                    return;
+                }
+            } catch(e) {}
+        })();
         
         this._setState('playing'); 
     },
@@ -563,7 +540,7 @@ $p.newModel({
         if ($('#'+this.pp.getMediaId()+"_html").length===0) {
             this.wasPersistent = false;
             destContainer.append(
-                $((this.isGingerbread) ? '<video/>' : '<audio/>')
+                $('<audio/>')
                 .attr({
                     "id": this.pp.getMediaId()+"_html",         
                     "poster": $p.utils.imageDummy(),

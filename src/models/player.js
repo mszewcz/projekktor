@@ -134,11 +134,6 @@ jQuery(function ($) {
             
             this.applyCommand('volume', this.pp.getVolume());
             
-            if (this.pp.getIsMobileClient('ANDROID') && !this.getState('PLAYING')) {
-                setTimeout(function () {
-                    ref.setPlay();
-                }, 50);
-            }
             this.setPlay();
         },
         addListeners: function () {
