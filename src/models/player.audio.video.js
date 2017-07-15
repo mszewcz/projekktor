@@ -11,8 +11,8 @@ jQuery(function($) {
 $p.newModel({
     
     modelId: 'VIDEO',
-    androidVersion: "2",
-    iosVersion: "3",
+    androidVersion: "4",
+    iosVersion: "5",
     nativeVersion: "1",
     iLove: [
         {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'pseudo', 'httpVideo'], fixed: 'maybe'},
