@@ -126,6 +126,16 @@ jQuery(function ($) {
                 return;
             }
 
+            // check if there is start position configured
+            // and try to seek to it before play
+            // TODO: this is definitely sub-optimal solution
+            // and probably not working on some platform
+            // We need to use per-platform/model approach
+            // using Temporal Dimension of Media Fragments URI etc.
+            if($.isNumeric(this.media.config.start)){
+                this.setSeek(this.media.config.start);
+            }
+
             this._setState('STARTING');
 
             if (!this.getState('STOPPED')) {
