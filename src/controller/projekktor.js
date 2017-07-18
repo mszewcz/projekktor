@@ -12,19 +12,6 @@
 jQuery(function ($) {
     var projekktors = [];
 
-// apply IE8 html5 fix - thanx to Remy Sharp - http://remysharp.com/2009/01/07/html5-enabling-script/
-    if (!!document.createElement('video').canPlayType) {
-        (function () {
-            if (!/*@cc_on!@*/0)
-                return;
-            var e = "audio,video,track,source".split(',');
-            for (var i = 0; i < e.length; i++) {
-                document.createElement(e[i]);
-            }
-        }
-        )();
-    }
-
 // this object is returned in case multiple player's are requested
     function Iterator (arr) {
         this.length = arr.length;
@@ -33,14 +20,6 @@ jQuery(function ($) {
         };
         this.size = function () {
             return arr.length;
-        };
-    }
-    ;
-
-// make sure projekktor works with jquery 1.3, 1.4, 1.5, 1.6:
-    if (!$.fn.prop) {
-        $.fn.prop = function (arga, argb) {
-            return $(this).attr(arga, argb);
         };
     }
 
