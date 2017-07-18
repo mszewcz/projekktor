@@ -4,64 +4,65 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorRSS = (function(){
-    
-    function projekktorPluginInterface(){     
-    }
+var projekktorRSS = (function () {
+
+    function projekktorPluginInterface() {}
 
     projekktorRSS.prototype = {
 
-    parserId: 'RSS',
-    version: '1.0.00',
-    reqVer: '1.4.00',
+        parserId: 'RSS',
+        version: '1.0.00',
+        reqVer: '1.4.00',
 
-    initialize: function() {
-        this.pluginReady = true;
-    },
+        initialize: function () {
+            this.pluginReady = true;
+        },
 
-    scheduleLoadingHandler: function() {
-        this.pluginReady = false;
-    },
+        scheduleLoadingHandler: function () {
+            this.pluginReady = false;
+        },
 
-    scheduleLoadedHandler: function(xmlDocument) {
-        var node = null;
-        try {
-            node = $(xmlDocument).find("rss");
-            if (node.length>0) {
-                if (node.attr("version")==2) {
-                    this.pp.addParser(this.parserId, this.parse);
-                }
-            }
-
-        } catch(e) {console.log(e)}
-        this.pluginReady = true;
-    },
-
-    parse: function(xmlDocument) {
-        var result = {},
-            itm=0;
-
-        result.playlist = [];
-
-        $(xmlDocument).find("item").each(function() {
+        scheduleLoadedHandler: function (xmlDocument) {
+            var node = null;
             try {
-                result['playlist'].push({
-                    0:{
-                        src:  $(this).find('enclosure').attr('url'),
-                        type: $(this).find('enclosure').attr('type')
-                    },
-                    config: {
-                        poster: $(this).find('media\\:thumbnail').attr('url'),
-                        title: $(this).find('title').text(),
-                        desc: $(this).find('description').text()
+                node = $(xmlDocument).find("rss");
+                if (node.length > 0) {
+                    if (node.attr("version") == 2) {
+                        this.pp.addParser(this.parserId, this.parse);
                     }
-                });
-            } catch(e){}
-        });
+                }
 
-        return result;
-    }
-};
+            } catch (e) {
+                console.log(e)
+            }
+            this.pluginReady = true;
+        },
 
-return projekktorRSS;
+        parse: function (xmlDocument) {
+            var result = {},
+                itm = 0;
+
+            result.playlist = [];
+
+            $(xmlDocument).find("item").each(function () {
+                try {
+                    result['playlist'].push({
+                        0: {
+                            src: $(this).find('enclosure').attr('url'),
+                            type: $(this).find('enclosure').attr('type')
+                        },
+                        config: {
+                            poster: $(this).find('media\\:thumbnail').attr('url'),
+                            title: $(this).find('title').text(),
+                            desc: $(this).find('description').text()
+                        }
+                    });
+                } catch (e) {}
+            });
+
+            return result;
+        }
+    };
+
+    return projekktorRSS;
 }());

@@ -7,10 +7,9 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorControlbar = (function(){
+var projekktorControlbar = (function () {
 
-    function projekktorControlbar(){     
-    }
+    function projekktorControlbar() {}
 
     projekktorControlbar.prototype = {
 
@@ -27,7 +26,7 @@ var projekktorControlbar = (function(){
 
         controlElements: {},
         controlElementsConfig: {
-            'timeleft':null,
+            'timeleft': null,
             'sec_dur': null,
             'min_dur': null,
             'sec_abs_dur': null,
@@ -271,17 +270,17 @@ var projekktorControlbar = (function(){
             showCuePointGroups: [],
             minCuePointSize: '2px', // minimal cuepoint size
             cuePointEvents: [
-               /* { // Sample global blip events config. You can set individual events for every blip within cuepoint blipEvents object.
-                 'events': ['click', 'mouseover'],
-                 'handler': function(e){ // the event parameter passed to the event handler has data property which contains:
-                                         // pp - reference to the current projekktor instance
-                                         // cuepoint - reference to the cuepoint represented by current blip
-                                         // any other custom data which was passed inside 'data' property described below
-                    e.data.pp.setGotoCuePoint(e.data.cuepoint.id);
-                    console.log(e.data.test);
-                 },
-                 'data': {test:'data test'} // you can add any custom data you want
-                } */
+                /* { // Sample global blip events config. You can set individual events for every blip within cuepoint blipEvents object.
+                  'events': ['click', 'mouseover'],
+                  'handler': function(e){ // the event parameter passed to the event handler has data property which contains:
+                                          // pp - reference to the current projekktor instance
+                                          // cuepoint - reference to the cuepoint represented by current blip
+                                          // any other custom data which was passed inside 'data' property described below
+                     e.data.pp.setGotoCuePoint(e.data.cuepoint.id);
+                     console.log(e.data.test);
+                  },
+                  'data': {test:'data test'} // you can add any custom data you want
+                 } */
             ],
             /**
              * displays logo on the controlbar
@@ -359,7 +358,7 @@ var projekktorControlbar = (function(){
                             // replace with span markup
                             templateString = templateString.replace(value, '<span class="' + classPrefix + cn + '"></span>');
                         } else {
-                            templateString = templateString.replace(value, 'class="' + classPrefix + cn + '"' + $p.utils.i18n(' aria-label="%{' + cn + '}" title="%{' + cn + '}" ') );
+                            templateString = templateString.replace(value, 'class="' + classPrefix + cn + '"' + $p.utils.i18n(' aria-label="%{' + cn + '}" title="%{' + cn + '}" '));
                         }
                     });
                 }
@@ -383,8 +382,8 @@ var projekktorControlbar = (function(){
                 this._active('prev', false);
                 this._active('next', false);
             } else {
-                this._active('prev', this.pp.getPreviousItem()!==false);
-                this._active('next', this.pp.getNextItem()!==false);
+                this._active('prev', this.pp.getPreviousItem() !== false);
+                this._active('next', this.pp.getNextItem() !== false);
             }
 
             // play / pause button
@@ -423,8 +422,8 @@ var projekktorControlbar = (function(){
             // loop button
             this._active('loop', true);
             this.controlElements.loop
-                .addClass( this.pp.getConfig('loop') ? 'on' : 'off' )
-                .removeClass( !this.pp.getConfig('loop') ? 'on' : 'off' );
+                .addClass(this.pp.getConfig('loop') ? 'on' : 'off')
+                .removeClass(!this.pp.getConfig('loop') ? 'on' : 'off');
 
             // hd / sd toggl
             this.displayQualityToggle();
@@ -439,12 +438,12 @@ var projekktorControlbar = (function(){
             this.displayVolume(this.pp.getVolume());
         },
 
-        deconstruct: function() {
+        deconstruct: function () {
             this.pluginReady = false;
             $.each(this.controlElements, function () {
                 $(this).off();
             });
-            $.each(this._appliedDOMObj, function() {
+            $.each(this._appliedDOMObj, function () {
                 $(this).off();
             });
         },
@@ -530,52 +529,53 @@ var projekktorControlbar = (function(){
             this.controlElements['title'].html(this.getConfig('title', ''));
         },
 
-        displayLogo: function() {
+        displayLogo: function () {
             var logoConfig = this.pp.getItemConfig('logo') || this.getConfig('logo'),
                 logoElement = this.controlElements['logo'],
                 img;
 
-            if(logoElement && logoConfig && logoConfig.src){
+            if (logoElement && logoConfig && logoConfig.src) {
                 img = $('<img>')
-                        .attr({
-                            src: logoConfig.src,
-                            alt: logoConfig.title,
-                            title: logoConfig.title
-                        });
+                    .attr({
+                        src: logoConfig.src,
+                        alt: logoConfig.title,
+                        title: logoConfig.title
+                    });
 
-                if((logoConfig.link && logoConfig.link.url) || typeof logoConfig.callback == 'function'){
-                    img.css({cursor: 'pointer'});
+                if ((logoConfig.link && logoConfig.link.url) || typeof logoConfig.callback == 'function') {
+                    img.css({
+                        cursor: 'pointer'
+                    });
                 }
 
                 logoElement.empty().append(img);
                 this._active('logo', true);
-            }
-            else {
+            } else {
                 this._active('logo', false);
             }
         },
 
-        canHide: function() {
+        canHide: function () {
             var state = this.pp.getState(),
-                result = this.cb === null
-                    || this._noHide
-                    || (state === 'IDLE' && this.getConfig('showOnIdle'))
-                    || (state === 'PAUSED' && !this.getConfig('hideWhenPaused'));
+                result = this.cb === null ||
+                this._noHide ||
+                (state === 'IDLE' && this.getConfig('showOnIdle')) ||
+                (state === 'PAUSED' && !this.getConfig('hideWhenPaused'));
 
-                return !result;
+            return !result;
         },
 
-        canShow: function() {
+        canShow: function () {
             var state = this.pp.getState(),
-                result = this.cb === null
-                        || !this.getConfig('controls')
-                        || this.pp.getHasGUI()
-                        || ('ERROR|COMPLETED|DESTROYING'.indexOf(state) > -1)
-                        || ('AWAKENING|STARTING'.indexOf(state) > -1 && !this.getConfig('showOnStart'))
-                        || (state === 'IDLE' && !this.getConfig('showOnIdle'))
-                        || false;
+                result = this.cb === null ||
+                !this.getConfig('controls') ||
+                this.pp.getHasGUI() ||
+                ('ERROR|COMPLETED|DESTROYING'.indexOf(state) > -1) ||
+                ('AWAKENING|STARTING'.indexOf(state) > -1 && !this.getConfig('showOnStart')) ||
+                (state === 'IDLE' && !this.getConfig('showOnIdle')) ||
+                false;
 
-                return !result;
+            return !result;
         },
 
         hidecb: function () {
@@ -590,7 +590,7 @@ var projekktorControlbar = (function(){
 
             this.cb.removeClass('active').addClass('inactive');
 
-            if(wasVisible) {
+            if (wasVisible) {
                 this.sendEvent('hide', this.cb);
             }
         },
@@ -602,17 +602,17 @@ var projekktorControlbar = (function(){
             // always clear timeout, stop animations
             clearTimeout(this._cTimer);
             this._cTimer = setTimeout(
-                function() {
+                function () {
                     ref.hidecb();
                 }, this.getConfig('fadeDelay')
             );
 
-            if(!this.canShow()){
+            if (!this.canShow()) {
                 return;
             }
 
             // show up:
-            if(!isVisible){
+            if (!isVisible) {
                 this.cb.removeClass('inactive').addClass('active');
                 this.sendEvent('show', this.cb);
             }
@@ -632,11 +632,10 @@ var projekktorControlbar = (function(){
             if (Math.abs(this._lastPos - position) >= 1) {
 
                 // check if there is anything to display
-                if(duration === 0){ // hide time display elements e.g. live streams on Android
+                if (duration === 0) { // hide time display elements e.g. live streams on Android
                     this._active('scrubber', false);
                     this._active('timeleft', false);
-                }
-                else { // show time display elements
+                } else { // show time display elements
                     this._active('scrubber', true);
                     this._active('timeleft', true);
                 }
@@ -711,20 +710,20 @@ var projekktorControlbar = (function(){
                 vknob = this.controlElements['vknob'],
                 orientation = vslider.width() > vslider.height() ? "horizontal" : "vertical";
 
-            switch(orientation){
+            switch (orientation) {
                 case "horizontal":
 
                     vmarker.css('width', volume * 100 + "%");
-                    vknob.css('left', Math.round((vslider.width() * volume) - (vknob.width() * volume)) + "px" );
+                    vknob.css('left', Math.round((vslider.width() * volume) - (vknob.width() * volume)) + "px");
 
-                break;
+                    break;
 
                 case "vertical":
 
                     vmarker.css('height', volume * 100 + "%");
-                    vknob.css('bottom', Math.round((vslider.height() * volume) - (vknob.height() * volume)) + "px" );
+                    vknob.css('bottom', Math.round((vslider.height() * volume) - (vknob.height() * volume)) + "px");
 
-                break;
+                    break;
             }
 
             // "li" hack
@@ -739,22 +738,22 @@ var projekktorControlbar = (function(){
 
             if (toggleMute) {
                 switch (parseFloat(volume)) {
-                case 0:
-                    this._active('mute', false);
-                    this._active('unmute', true);
-                    this._active('vmax', true);
-                    break;
+                    case 0:
+                        this._active('mute', false);
+                        this._active('unmute', true);
+                        this._active('vmax', true);
+                        break;
 
-                default:
-                    this._active('mute', true);
-                    this._active('unmute', false);
-                    this._active('vmax', false);
-                    break;
+                    default:
+                        this._active('mute', true);
+                        this._active('unmute', false);
+                        this._active('vmax', false);
+                        break;
                 }
             }
         },
 
-	displayCuePoints: function(immediately) {
+        displayCuePoints: function (immediately) {
 
             if (!this.getConfig('showCuePoints'))
                 return;
@@ -765,14 +764,14 @@ var projekktorControlbar = (function(){
 
             ref.controlElements['scrubber'].children().remove('.' + prefix + 'cuepoint');
 
-            $.each(this.pp.getCuePoints(this.pp.getItemId(), true) || [], function() {
+            $.each(this.pp.getCuePoints(this.pp.getItemId(), true) || [], function () {
 
                 // display cuepoins only from given groups or all cuepoints if there are no specyfic groups defined (showCuePointGroups array is empty)
                 if (ref.getConfig('showCuePointGroups').length && ref.getConfig('showCuePointGroups').indexOf(this.group) == -1) {
                     return;
                 }
 
-                var blipWidth = this.on != this.off ? (((this.off - this.on) / duration) * 100) + '%'  : ref.getConfig('minCuePointSize'),
+                var blipWidth = this.on != this.off ? (((this.off - this.on) / duration) * 100) + '%' : ref.getConfig('minCuePointSize'),
                     blipPos = (this.on / duration) * 100,
                     blip = $(document.createElement('div'))
                     .addClass(prefix + 'cuepoint')
@@ -787,13 +786,18 @@ var projekktorControlbar = (function(){
                     blip.attr('title', this.title);
 
                 if (!immediately) {
-                    this.addListener('unlock', function() {
+                    this.addListener('unlock', function () {
                         $(blip).removeClass('inactive').addClass('active');
-                        ref._bindCuePointBlipEvents(blip, blipEvents, {pp:ref.pp, cuepoint:this});
+                        ref._bindCuePointBlipEvents(blip, blipEvents, {
+                            pp: ref.pp,
+                            cuepoint: this
+                        });
                     });
-                }
-                else {
-                    ref._bindCuePointBlipEvents(blip, blipEvents, {pp:ref.pp, cuepoint:this});
+                } else {
+                    ref._bindCuePointBlipEvents(blip, blipEvents, {
+                        pp: ref.pp,
+                        cuepoint: this
+                    });
                 }
 
                 ref.controlElements['scrubber'].append(blip);
@@ -931,11 +935,10 @@ var projekktorControlbar = (function(){
         },
 
         streamTypeChangeHandler: function (streamType) {
-            if (streamType==='dvr' || streamType==='live') {
+            if (streamType === 'dvr' || streamType === 'live') {
                 this._isDVR = true;
                 this.setActive(this.controlElements['golive'], true);
-            }
-            else {
+            } else {
                 this._isDVR = false;
                 this.setActive(this.controlElements['golive'], false);
             }
@@ -969,14 +972,14 @@ var projekktorControlbar = (function(){
         },
 
         durationChangeHandler: function () {
-            if(this.pp.getDuration() != 0){
-                this.displayCuePoints( this.getConfig('showCuePointsImmediately') );
+            if (this.pp.getDuration() != 0) {
+                this.displayCuePoints(this.getConfig('showCuePointsImmediately'));
             }
         },
 
-        cuepointsSyncHandler: function(cuepoints){
-            if(this.pp.getDuration() != 0){
-                this.displayCuePoints( this.getConfig('showCuePointsImmediately') );
+        cuepointsSyncHandler: function (cuepoints) {
+            if (this.pp.getDuration() != 0) {
+                this.displayCuePoints(this.getConfig('showCuePointsImmediately'));
             }
         },
 
@@ -1002,7 +1005,7 @@ var projekktorControlbar = (function(){
             this.showcb();
         },
 
-        mouseleaveHandler: function() {},
+        mouseleaveHandler: function () {},
 
         mousedownHandler: function (evt) {
             this.showcb();
@@ -1013,7 +1016,7 @@ var projekktorControlbar = (function(){
         *******************************/
         controlsFocus: function (evt) {
 
-                this._noHide = true;
+            this._noHide = true;
         },
 
         controlsBlur: function (evt) {
@@ -1103,17 +1106,16 @@ var projekktorControlbar = (function(){
             });
         },
 
-        logoClk: function(evt){
+        logoClk: function (evt) {
             var ref = this,
                 logoConfig = this.pp.getConfig('logo') || this.getConfig('logo');
-                if(logoConfig){
-                    if(logoConfig.link && logoConfig.link.url){
-                        window.open(logoConfig.link.url,logoConfig.link.target);
-                    }
-                    else if(typeof logoConfig.callback === 'function'){
-                        logoConfig.callback(this.pp, evt);
-                    }
+            if (logoConfig) {
+                if (logoConfig.link && logoConfig.link.url) {
+                    window.open(logoConfig.link.url, logoConfig.link.target);
+                } else if (typeof logoConfig.callback === 'function') {
+                    logoConfig.callback(this.pp, evt);
                 }
+            }
         },
 
         volumeBtnHover: function (evt) {
@@ -1275,12 +1277,11 @@ var projekktorControlbar = (function(){
                 volume = 0,
 
                 mouseUp = function (mouseUpEvent) {
-                    if(window.onmouseup === undefined){ // IE < 9 has no window mouse events support
+                    if (window.onmouseup === undefined) { // IE < 9 has no window mouse events support
                         $(document).off('mousemove', mouseMove);
                         $(document).off('mouseup', mouseUp);
                         $(document).off('mouseleave', mouseUp);
-                    }
-                    else {
+                    } else {
                         $(window).off('mousemove', mouseMove);
                         $(window).off('mouseup', mouseUp);
                     }
@@ -1303,34 +1304,33 @@ var projekktorControlbar = (function(){
 
 
 
-                    switch(orientation){
+                    switch (orientation) {
                         case "horizontal":
                             volume = Math.abs(newXPos / vslider.width());
 
                             vmarker.css('width', volume * 100 + "%");
-                            vknob.css('left', Math.round((vslider.width() * volume) - (vknob.width() * volume)) + "px" );
+                            vknob.css('left', Math.round((vslider.width() * volume) - (vknob.width() * volume)) + "px");
 
-                        break;
+                            break;
 
                         case "vertical":
                             volume = 1 - Math.abs(newYPos / vslider.height());
 
                             vmarker.css('height', volume * 100 + "%");
-                            vknob.css('bottom', Math.round((vslider.height() * volume) - (vknob.height()* volume)) + "px" );
+                            vknob.css('bottom', Math.round((vslider.height() * volume) - (vknob.height() * volume)) + "px");
 
-                        break;
+                            break;
                     }
 
                     ref.pp.setVolume(volume);
                     return false;
                 };
 
-            if(window.onmouseup === undefined){
+            if (window.onmouseup === undefined) {
                 $(document).mousemove(mouseMove);
                 $(document).mouseup(mouseUp);
                 $(document).mouseleave(mouseUp);
-            }
-            else {
+            } else {
                 $(window).mousemove(mouseMove);
                 $(window).mouseup(mouseUp);
             }
@@ -1343,8 +1343,7 @@ var projekktorControlbar = (function(){
             var dest = this.controlElements[elmName];
             if (on == true) {
                 dest.addClass('active').removeClass('inactive');
-            }
-            else {
+            } else {
                 dest.addClass('inactive').removeClass('active');
             }
             return dest;
@@ -1374,16 +1373,15 @@ var projekktorControlbar = (function(){
 
             return result;
         },
-        _bindCuePointBlipEvents: function(blip, events, data){
-            if(events.length){ // bind events if there are some
-                for(var i=0; i < events.length; i++){
+        _bindCuePointBlipEvents: function (blip, events, data) {
+            if (events.length) { // bind events if there are some
+                for (var i = 0; i < events.length; i++) {
                     var e = events[i]['events'].join(' '),
                         d = $.extend({}, events[i]['data'], data) || {},
-                        h = (typeof events[i]['handler'] == 'function' ? events[i]['handler'] : function(e){});
+                        h = (typeof events[i]['handler'] == 'function' ? events[i]['handler'] : function (e) {});
                     blip.on(e, d, h);
                 }
-            }
-            else { // otherwise make the blip 'invisible' for mouse events (works everywhere but IE up to 10)
+            } else { // otherwise make the blip 'invisible' for mouse events (works everywhere but IE up to 10)
                 blip.css('pointer-events', 'none');
             }
         }
