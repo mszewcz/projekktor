@@ -1,4 +1,6 @@
-projekktorMessages = {
+var projekktorMessages = (function(window, document, $, $p){
+    
+    return {
 
     // controlbar
     "play": "odtwarzaj",
@@ -76,3 +78,5 @@ projekktorMessages = {
     "error502": 'Błędnie ustawione Youtube Video-Id.',
 
 };
+
+}(window, document, jQuery, projekktor));

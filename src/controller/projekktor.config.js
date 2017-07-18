@@ -7,6 +7,8 @@
 * under GNU General Public License
 * http://www.filenew.org/projekktor/license/
 */
+(function (window, document, $, $p, projekktorConfig){
+    
 projekktorConfig.prototype = {
     /**************************************************************
         Config options to be customized prior initialization only:
@@ -284,3 +286,5 @@ projekktorConfig.prototype = {
     /* add this CSS classes on startup */
     className:                      ''
 };
+
+}(window, document, jQuery, projekktor, projekktorConfig));

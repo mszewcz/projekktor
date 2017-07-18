@@ -8,8 +8,9 @@
  * http://www.filenew.org/projekktor/license/
  *
  */
-jQuery(function ($) {
-$p.fullscreenApi = (function (window, document, undefined) {
+(function(window, document, $, $p){
+
+$p.fullscreenApi = (function () {
 
     var videoElement = document.createElement('video'),
     fsApiVersionsMap = {
@@ -141,5 +142,6 @@ $p.fullscreenApi = (function (window, document, undefined) {
     }
 
     return fullscreenApi;
-})(window, document);
-});
+})();
+
+}(window, document, jQuery, projekktor));

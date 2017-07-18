@@ -8,12 +8,13 @@
  * http://www.filenew.org/projekktor/license/
  *
  */
-var projekktorPersistentStorage = function(pp){
-    this.pp = pp;
-};
+var projekktorPersistentStorage = (function (window, document, $, $p){
 
-jQuery(function ($) {
-projekktorPersistentStorage.prototype = (function (window, document, undefined) {
+function projekktorPersistentStorage(pp){
+    this.pp = pp;
+}
+
+projekktorPersistentStorage.prototype = (function () {
     var persistentStorage = {
 
         save: function (key, value) {
@@ -89,5 +90,8 @@ projekktorPersistentStorage.prototype = (function (window, document, undefined) 
     };
 
     return persistentStorage;
-})(window, document);
-});
+})();
+
+return projekktorPersistentStorage;
+
+}(window, document, jQuery, projekktor));

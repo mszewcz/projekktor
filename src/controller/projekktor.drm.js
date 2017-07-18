@@ -1,5 +1,7 @@
-jQuery(function ($) {
-    $p.drm = (function (window, document, undefined) {
+(function(window, document, $, $p){
+
+    $p.drm = (function () {
+        
         var drm = {},
             drmSystems = {
                 widevine: ['com.widevine.alpha'],
@@ -121,5 +123,6 @@ jQuery(function ($) {
 
         return drm;
 
-    })(window, window.document);
-});
+    })();
+
+}(window, document, jQuery, projekktor));

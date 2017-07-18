@@ -1,4 +1,6 @@
-projekktorMessages = {
+var projekktorMessages = (function(window, document, $, $p){
+
+return {
 
     // controlbar
     "play": "start playback",
@@ -81,3 +83,5 @@ projekktorMessages = {
     "error502": 'Invalid Youtube Video-Id specified.'
 
 };
+
+}(window, document, jQuery, projekktor));

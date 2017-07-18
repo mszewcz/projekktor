@@ -1,4 +1,4 @@
-jQuery(function ($) {
+(function(window, document, $, $p){
 
     $p.utils = {
         imageDummy: function () {
@@ -733,4 +733,4 @@ jQuery(function ($) {
         logging: false
     };
 
-});
+}(window, document, jQuery, projekktor));

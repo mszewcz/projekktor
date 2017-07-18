@@ -11,9 +11,9 @@
  * Modernizr 2.8.3 (Custom Build) | MIT & BSD
  *
  */
-jQuery(function ($) {
+(function(window, document, $, $p){
 
-$p.features = (function (window, document, undefined) {
+$p.features = (function () {
 
     var Modernizr = {},
         features = {},
@@ -353,5 +353,6 @@ $p.features = (function (window, document, undefined) {
 
     return features;
 
-})(window, window.document);
-});
+})();
+
+}(window, document, jQuery, projekktor));

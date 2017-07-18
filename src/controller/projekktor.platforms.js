@@ -10,7 +10,7 @@
  * http://www.filenew.org/projekktor/license/
  */
 
-jQuery(function ($) {
+(function(window, document, $, $p){
 
     $p.platforms = {
         VIDEOJS: function() {
@@ -111,4 +111,5 @@ jQuery(function ($) {
             return "1";
         }
     };
-});
+    
+}(window, document, jQuery, projekktor));

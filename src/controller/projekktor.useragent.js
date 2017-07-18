@@ -9,8 +9,9 @@
  *
  */
 
-jQuery(function ($) {
-$p.userAgent = (function (window, document, undefined) {
+(function(window, document, $, $p){
+
+$p.userAgent = (function () {
 
    /*
     * Modified version of:
@@ -851,5 +852,6 @@ $p.userAgent = (function (window, document, undefined) {
         prefix: vendorPrefix(),
         isMobile: isMobile()
     };
-})(window, document);
-});
+})();
+
+}(window, document, jQuery, projekktor));

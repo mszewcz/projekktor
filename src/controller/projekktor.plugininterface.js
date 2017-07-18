@@ -7,7 +7,7 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  */
-var projekktorPluginInterface = (function () {
+var projekktorPluginInterface = (function (window, document, $, $p){
 
     function projekktorPluginInterface() {}
 
@@ -277,4 +277,5 @@ var projekktorPluginInterface = (function () {
     };
 
     return projekktorPluginInterface;
-}());
+
+}(window, document, jQuery, projekktor));
