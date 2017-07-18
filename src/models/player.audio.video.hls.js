@@ -7,8 +7,8 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
 */
-jQuery(function($) {
-
+(function(window, document, $, $p){
+    
 $p.newModel({
     modelId: 'VIDEOHLS',
     androidVersion: 4,
@@ -37,4 +37,4 @@ $p.newModel({
     ]
 }, 'AUDIO');
 
-});
+}(window, document, jQuery, projekktor));

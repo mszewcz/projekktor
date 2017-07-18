@@ -7,9 +7,10 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  */
-var playerModel = function () {
-};
-jQuery(function ($) {
+var playerModel  = (function(window, document, $, $p){
+
+    function playerModel() {}
+
     playerModel.prototype = {
         modelId: 'player',
         iLove: [],
@@ -902,4 +903,7 @@ jQuery(function ($) {
             }
         }
     };
-});
+
+    return playerModel;
+    
+}(window, document, jQuery, projekktor));

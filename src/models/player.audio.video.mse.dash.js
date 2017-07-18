@@ -1,4 +1,5 @@
-jQuery(function ($) {
+(function(window, document, $, $p){
+
     $p.newModel({
         modelId: 'MSEVIDEODASH',
 
@@ -327,4 +328,5 @@ jQuery(function ($) {
         }
 
     }, 'VIDEO');
-});
+    
+}(window, document, jQuery, projekktor));

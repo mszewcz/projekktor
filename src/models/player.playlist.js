@@ -7,7 +7,8 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
 */
-jQuery(function($) {
+(function(window, document, $, $p){
+
 $p.newModel({
 
     modelId: 'PLAYLIST',
@@ -29,4 +30,5 @@ $p.newModel({
         this.sendUpdate('playlist', this.media);
     }
 });
-});
+
+}(window, document, jQuery, projekktor));

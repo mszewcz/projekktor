@@ -8,7 +8,8 @@
  * http://www.filenew.org/projekktor/license/
 */
 // http://code.google.com/apis/youtube/js_api_reference.html#Embedding
-jQuery(function($) {
+(function(window, document, $, $p){
+
 $p.newModel({
 
     modelId: 'YTVIDEO',
@@ -349,4 +350,5 @@ $p.newModel({
     ]
 
 }, 'YTVIDEO');
-});
+
+}(window, document, jQuery, projekktor));

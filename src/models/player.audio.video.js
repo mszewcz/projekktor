@@ -7,7 +7,8 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
 */
-jQuery(function($) {
+(function(window, document, $, $p){
+    
 $p.newModel({
 
     modelId: 'VIDEO',
@@ -586,4 +587,4 @@ $p.newModel({
 
 }, 'VIDEO');
 
-});
+}(window, document, jQuery, projekktor));

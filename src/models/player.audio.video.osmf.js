@@ -9,7 +9,8 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  */
-jQuery(function($) {
+(function(window, document, $, $p){
+
 $p.newModel({
 
     modelId: 'OSMFVIDEO',
@@ -977,4 +978,5 @@ $p.newModel({
     }
 
 }, 'OSMFVIDEO');
-});
+
+}(window, document, jQuery, projekktor));

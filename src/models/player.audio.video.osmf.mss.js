@@ -8,7 +8,7 @@
  * http://www.filenew.org/projekktor/license/
 */
 
-jQuery(function($) {
+(function(window, document, $, $p){
 
 $p.newModel({
     modelId: 'OSMFVIDEOMSS',
@@ -24,4 +24,4 @@ $p.newModel({
     ]
 }, 'OSMFAUDIO');
 
-});
+}(window, document, jQuery, projekktor));

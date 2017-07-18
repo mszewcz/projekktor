@@ -7,7 +7,9 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
 */
-jQuery(function($) {
+
+(function(window, document, $, $p){
+
 $p.newModel({
 
     browserVersion: "1",
@@ -120,4 +122,5 @@ $p.newModel({
         this.mediaElement.remove();
     }
 }, 'IMAGE');
-});
+
+}(window, document, jQuery, projekktor));

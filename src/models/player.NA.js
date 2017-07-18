@@ -7,7 +7,8 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
 */
-jQuery(function($) {
+(function(window, document, $, $p){
+
 $p.newModel({
     modelId: 'NA',
     iLove: [
@@ -28,4 +29,5 @@ $p.newModel({
         }
     }
 });
-});
+
+}(window, document, jQuery, projekktor));

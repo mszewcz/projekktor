@@ -17,7 +17,8 @@
  *
  */
 
-jQuery(function($) {
+(function(window, document, $, $p){
+
 $p.newModel({
 
     modelId: 'SILVERLIGHTVIDEO',
@@ -315,4 +316,5 @@ $p.newModel({
     }
 
 }, 'SILVERLIGHTVIDEO');
-});
+
+}(window, document, jQuery, projekktor));

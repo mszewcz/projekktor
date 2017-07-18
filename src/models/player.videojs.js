@@ -12,7 +12,8 @@
  *
  */
 
-jQuery(function ($) {
+(function(window, document, $, $p){
+
     $p.newModel({
         modelId: 'VIDEOJS',
         videojsVersion: '1',
@@ -309,4 +310,5 @@ jQuery(function ($) {
             return this._videojs.volume();
         }
     });
-});
+    
+}(window, document, jQuery, projekktor));

@@ -16,7 +16,8 @@
  *
  */
 
-jQuery(function ($) {
+(function(window, document, $, $p){
+
     $p.newModel({
 
         modelId: 'MSEVIDEOHLS',
@@ -478,4 +479,5 @@ jQuery(function ($) {
             }
         }
     }, 'MSEVIDEOHLS');
-});
+    
+}(window, document, jQuery, projekktor));
