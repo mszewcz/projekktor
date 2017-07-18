@@ -7,8 +7,11 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorControlbar = function () {};
-jQuery(function ($) {
+var projekktorControlbar = (function(){
+
+    function projekktorControlbar(){     
+    }
+
     projekktorControlbar.prototype = {
 
         version: '1.2.00',
@@ -1384,5 +1387,7 @@ jQuery(function ($) {
                 blip.css('pointer-events', 'none');
             }
         }
-    }
-});
+    };
+
+    return projekktorControlbar;
+}());

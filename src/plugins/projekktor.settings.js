@@ -4,9 +4,12 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorSettings = function(){};
-jQuery(function($) {
-projekktorSettings.prototype = {
+var projekktorSettings = (function(){
+    
+    function projekktorSettings(){     
+    }
+
+    projekktorSettings.prototype = {
 
     reqVer: '1.4.00',
     version: '1.0.00',
@@ -568,4 +571,6 @@ projekktorSettings.prototype = {
         return this.dest.find('#'+id).children().not('.label').remove();
     }
 };
-});
+
+return projekktorSettings;
+}());

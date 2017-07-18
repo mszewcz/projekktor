@@ -4,9 +4,12 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorRSS = function(){};
-jQuery(function($) {
-projekktorRSS.prototype = {
+var projekktorRSS = (function(){
+    
+    function projekktorPluginInterface(){     
+    }
+
+    projekktorRSS.prototype = {
 
     parserId: 'RSS',
     version: '1.0.00',
@@ -58,5 +61,7 @@ projekktorRSS.prototype = {
 
         return result;
     }
-}
-});
+};
+
+return projekktorRSS;
+}());

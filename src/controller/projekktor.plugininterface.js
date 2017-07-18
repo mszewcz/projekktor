@@ -7,9 +7,12 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
 */
-var projekktorPluginInterface = function(){};
-jQuery(function($) {
-projekktorPluginInterface.prototype = {
+var projekktorPluginInterface = (function(){
+    
+    function projekktorPluginInterface(){     
+    }
+
+    projekktorPluginInterface.prototype = {
 
     pluginReady: false,
     reqVer: null,
@@ -268,5 +271,7 @@ projekktorPluginInterface.prototype = {
 
     // important
     eventHandler: function() {}
-}
-});
+};
+
+return projekktorPluginInterface;
+}());

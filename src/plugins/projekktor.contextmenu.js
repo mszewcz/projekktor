@@ -4,9 +4,12 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorContextmenu = function(){};
-jQuery(function($) {
-projekktorContextmenu.prototype = {
+var projekktorContextmenu = (function(){
+    
+    function projekktorContextmenu(){     
+    }
+
+    projekktorContextmenu.prototype = {
 
     version: '1.1.00',
     reqVer: '1.2.13',
@@ -111,5 +114,7 @@ projekktorContextmenu.prototype = {
         centeredX = window.screenX + (((window.outerWidth/2) - (width/2)));
         window.open(url, 'projekktor', 'height=' + height +',width=' + width +',toolbar=0,scrollbars=0,status=0,resizable=1,location=0,menuBar=0'+',left=' + centeredX +',top=' + centeredY).focus();
     }
-}
-});
+};
+
+return projekktorContextmenu;
+}());

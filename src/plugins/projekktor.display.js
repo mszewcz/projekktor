@@ -8,9 +8,12 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorDisplay = function(){};
-jQuery(function($) {
-projekktorDisplay.prototype = {
+var projekktorDisplay = (function(){
+
+    function projekktorDisplay(){     
+    }
+
+    projekktorDisplay.prototype = {
 
     version: '1.1.00',
 
@@ -362,4 +365,6 @@ projekktorDisplay.prototype = {
 
 
 };
-});
+
+return projekktorDisplay;
+}());
