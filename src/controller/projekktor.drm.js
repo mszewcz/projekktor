@@ -1,23 +1,20 @@
-(function(window, document, $, $p){
+(function (window, document, $, $p) {
 
     $p.drm = (function () {
-        
-        var drm = {},
-            drmSystems = {
+
+        var drmSystems = {
                 widevine: ['com.widevine.alpha'],
                 playready: ['com.microsoft.playready', 'com.youtube.playready'],
                 clearkey: ['webkit-org.w3.clearkey', 'org.w3.clearkey'],
                 primetime: ['com.adobe.primetime', 'com.adobe.access'],
                 fairplay: ['com.apple.fairplay']
             },
-            testVideoEl = document.createElement('video'),
             supportedDrmSystems = [],
-            emeType = undefined,
+            emeType = getEmeType(),
             testConfig = [{
                 initDataTypes: ['cenc', 'webm'],
                 sessionTypes: ['temporary'],
-                audioCapabilities: [
-                    {
+                audioCapabilities: [{
                         contentType: 'audio/mp4; codecs="mp4a.40.5"',
                         robustness: 'SW_SECURE_CRYPTO'
                     },
@@ -30,8 +27,7 @@
                         robustness: 'SW_SECURE_CRYPTO'
                     },
                 ],
-                videoCapabilities: [
-                    {
+                videoCapabilities: [{
                         contentType: 'video/webm; codecs="vp9"',
                         robustness: 'HW_SECURE_ALL'
                     },
@@ -58,71 +54,78 @@
                 ],
             }];
 
-        function getSupportedDrmSystems() {
-            if (window.navigator.requestMediaKeySystemAccess) {
-                if (typeof window.navigator.requestMediaKeySystemAccess === 'function') {
-                    emeType = 'eme';
-                    var isKeySystemSupported = function (keySystem) {
-                        if (window.navigator.requestMediaKeySystemAccess) {
-                            window.navigator.requestMediaKeySystemAccess(keySystem, testConfig)
-                                .then(function (keySystemAccess) {
-                                    supportedDrmSystems.push(keySystem);
-                                })
-                                .catch(function (keySystemAccess) {  
-                                    // ignore
-                                });
-                        }
-                    };
-                    var keysys, dummy;
-                    for (keysys in drmSystems) {
-                        if (drmSystems.hasOwnProperty(keysys)) {
-                            for (dummy in drmSystems[keysys]) {
-                                isKeySystemSupported(drmSystems[keysys][dummy]);
-                            }
-                        }
-                    }
-                }
+        function getEmeType() {
+
+            if (navigator.requestMediaKeySystemAccess &&
+                MediaKeySystemAccess.prototype.getConfiguration) {
+                return 'eme'; // current EME as of 16 March 2017
+            } else if (HTMLMediaElement.prototype.webkitGenerateKeyRequest) {
+                return 'webkit'; // webkit-prefixed EME v0.1b
+            } else if (HTMLMediaElement.prototype.generateKeyRequest) {
+                return 'oldunprefixed'; // nonprefixed EME v0.1b
             } else if (window.MSMediaKeys) {
-                if (typeof window.MSMediaKeys === 'function') {
-                    emeType = 'ms';
-                    var keysys, dummy;
-                    for (keysys in drmSystems) {
-                        if (drmSystems.hasOwnProperty(keysys)) {
-                            for (dummy in drmSystems[keysys]) {
-                                if (window.MSMediaKeys.isTypeSupported(drmSystems[keysys][dummy])) {
-                                    supportedDrmSystems.push(drmSystems[keysys][dummy]);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (testVideoEl.webkitGenerateKeyRequest) {
-                if (typeof testVideoEl.webkitGenerateKeyRequest === 'function') {
-                    emeType = 'webkit';
-                    var keysys, dummy;
-                    for (keysys in drmSystems) {
-                        if (drmSystems.hasOwnProperty(keysys)) {
-                            for (dummy in drmSystems[keysys]) {
-                                if (testVideoEl.canPlayType('video/mp4', drmSystems[keysys][dummy])) {
-                                    supportedDrmSystems.push(drmSystems[keysys][dummy]);
-                                }
-                            }
-                        }
-                    }
-                }
+                return 'ms'; // ms-prefixed EME v20140218
+            } else {
+                return 'none'; // EME unavailable
             }
         }
 
-       getSupportedDrmSystems();
-
-        drm = {
-            supportedDrmSystems: supportedDrmSystems,
-            drmSystems: drmSystems,
-            emeType: emeType
+        function msIsTypeSupportedPromissified(keySystem) {
+            return new Promise(function (resolve, reject) {
+                var e;
+                if (window.MSMediaKeys.isTypeSupported && window.MSMediaKeys.isTypeSupported(keySystem)) {
+                    resolve({
+                        keySystem: keySystem
+                    });
+                } else {
+                    e = new Error('Unsupported keySystem');
+                    e.name = 'NotSupportedError';
+                    e.code = DOMException.NOT_SUPPORTED_ERR;
+                    reject(e);
+                    throw e;
+                }
+            });
         }
 
-        return drm;
+        function getSupportedDrmSystems() {
+            var ref = this,
+                isKeySupported,
+                promises = [];
 
+            if (emeType === 'eme') {
+                isKeySupported = window.navigator.requestMediaKeySystemAccess.bind(window.navigator);
+            } 
+            else if (emeType === 'ms') {
+                isKeySupported = msIsTypeSupportedPromissified;
+            }
+            else {
+                // if there is no EME then resolve promise immediately
+                return Promise.resolve();
+            }
+
+            $.each(drmSystems, function (keySystem, keySystemNS) {
+                keySystemNS.forEach(function (ks) {
+                    promises.push(isKeySupported(ks, testConfig).then(
+                        function (val) {
+                            supportedDrmSystems.push(keySystem);
+                        },
+                        function (error) {
+                            // skip
+                        }
+                    ));
+                }, ref);
+            });
+            return Promise.all(promises);
+        };
+
+        return getSupportedDrmSystems().then(function (val) {
+            console.warn("DRM DONE", supportedDrmSystems);
+            return {
+                supportedDrmSystems: supportedDrmSystems,
+                drmSystems: drmSystems,
+                emeType: emeType
+            };
+        });
     })();
 
 }(window, document, jQuery, projekktor));
