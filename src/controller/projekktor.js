@@ -111,6 +111,9 @@ window.projekktor = window.$p = (function (window, document, $) {
     }
 
     Object.defineProperties(Projekktor, {
+        initPromises: {
+            value: []
+        },
         mmap: {
             value: []
         },
@@ -4510,8 +4513,15 @@ function PPlayer (srcNode, cfg, onReady) {
     
                     return this;
                 };
-    
-                return this._init();
+                
+                var ref = this;
+                // wait with _init() untill all startup promises will be fulfilled
+                Promise.all($p.initPromises).then(function (result) {
+                    return ref._init();
+                },
+                function (reason) {
+                    console.warn('Init failed');
+                });
             }
             
             return PPlayer;

@@ -1,7 +1,5 @@
 (function (window, document, $, $p) {
 
-    $p.drm = (function () {
-
         var drmSystems = {
                 widevine: ['com.widevine.alpha'],
                 playready: ['com.microsoft.playready', 'com.youtube.playready'],
@@ -118,14 +116,15 @@
             return Promise.all(promises);
         };
 
-        return getSupportedDrmSystems().then(function (val) {
-            console.warn("DRM DONE", supportedDrmSystems);
-            return {
-                supportedDrmSystems: supportedDrmSystems,
-                drmSystems: drmSystems,
-                emeType: emeType
-            };
-        });
-    })();
-
+        $p.initPromises.push(
+            getSupportedDrmSystems().then(function (val) {
+                console.warn("DRM DONE", supportedDrmSystems);
+                $p.drm = {
+                    supportedDrmSystems: supportedDrmSystems,
+                    drmSystems: drmSystems,
+                    emeType: emeType
+                };
+                return Promise.resolve();
+            })
+        );
 }(window, document, jQuery, projekktor));
