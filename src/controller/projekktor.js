@@ -4169,21 +4169,19 @@ function PPlayer (srcNode, cfg, onReady) {
     
                     if (getPlatforms) {
     
-                        if ($p._platformTableCache != null) {
+                        if ($p._platformTableCache) {
                             return $p._platformTableCache;
                         }
                     } else {
-    
-                        if ($p._compTableCache != null) {
+
+                        if ($p._compTableCache) {
                             return $p._compTableCache;
                         }
                     }
-    
-                    for (var i = 0; i < $p.mmap.length; i++) {
-    
-                        if ($p.mmap.hasOwnProperty(i)) {
-                            platforms = (typeof $p.mmap[i]['platform'] === 'object') ? $p.mmap[i]['platform'] : [
-                                $p.mmap[i]['platform']];
+                    
+                    $p.mmap.forEach(function (value, i) {
+
+                            platforms = (typeof $p.mmap[i]['platform'] === 'object') ? $p.mmap[i]['platform'] : [$p.mmap[i]['platform']];
     
                             $.each(platforms, function (_na, platform) {
     
@@ -4240,8 +4238,8 @@ function PPlayer (srcNode, cfg, onReady) {
     
                                 return true;
                             });
-                        }
-                    }
+                        },
+                    ref);
                     $p._compTableCache = result;
                     $p._platformTableCache = resultPlatforms;
     
