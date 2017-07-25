@@ -298,6 +298,7 @@ module.exports = function (grunt) {
     },
     watch: {
       files: [
+        'dist/*.html',
         'src/**/*.js',
         'themes/**/*.css',
         'themes/**/*.scss'
