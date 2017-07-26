@@ -2394,12 +2394,6 @@ function PPlayer (srcNode, cfg, onReady) {
                     return this._canPlay(type, platform, streamType);
                 };
     
-                /* kept for historical reasons */
-                this.getCanPlayNatively = function (type) {
-    
-                    return this._canPlay(type, 'native');
-                };
-    
                 this.getCanPlayOnPlatforms = function(mimeType){
                     return this._canPlayOnPlatforms(mimeType);
                 };
