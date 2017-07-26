@@ -43,7 +43,6 @@ var playerModel  = (function(window, document, $, $p){
             duration: 0,
             position: 0,
             maxpos: 0,
-            offset: 0,
             file: false,
             poster: '',
             ended: false,
@@ -450,35 +449,13 @@ var playerModel  = (function(window, document, $, $p){
         getSource: function () {
 
             var resultSrc = [],
-                offset = this.media.offset || this.media.position || false,
-                ref = this,
-                pseudoQuery = (this.pp.getConfig('streamType') === 'pseudo') ? this.pp.getConfig('startParameter') : false;
+                ref = this;
 
             $.each(this.media.file || [], function () {
-                var src;
                 // set proper quality source
-                if (ref._quality !== this.quality && ref._quality !== null)
-                    return true;
-
-                // nothing todo
-                if (!pseudoQuery || !offset) {
-                    resultSrc.push(this);
+                if (ref._quality !== this.quality && ref._quality !== null) {
                     return true;
                 }
-
-                // add offset_GET-parameter
-                var u = $p.utils.parseUri(this.src),
-                    src = u.protocol + '://' + u.host + u.path,
-                    query = [];
-
-                $.each(u.queryKey, function (key, value) {
-                    if (key !== pseudoQuery) {
-                        query.push(key + "=" + value);
-                    }
-                });
-
-                src += (query.length > 0) ? '?' + query.join('&') + "&" + pseudoQuery + "=" + offset : "?" + pseudoQuery + "=" + offset;
-                this.src = src;
 
                 resultSrc.push(this);
                 return true;
@@ -561,22 +538,12 @@ var playerModel  = (function(window, document, $, $p){
             }
 
             // duration has changed:
-            if (duration !== null && ((duration !== this.media.duration && !this.isPseudoStream) || (this.isPseudoStream && this.media.duration === 0))) {
+            if (duration !== null && (duration !== this.media.duration)) {
                 this.media.duration = duration;
                 this.sendUpdate('durationChange', duration);
             }
 
-            // remember values & concider pseudo stream position offset, bypass some strange position hopping effects during pseudostream:
-            if (position === this.media.position) {
-                return;
-            }
-
-            if (this.isPseudoStream && Math.round(position * 100) / 100 === Math.round(this.media.offset * 100) / 100) {
-                this.media.position = this.media.offset;
-            }
-            else {
-                this.media.position = this.media.offset + position;
-            }
+            this.media.position = position;
 
             this.media.maxpos = Math.max(this.media.maxpos || 0, this.media.position || 0);
             this.media.playProgress = parseFloat((this.media.position > 0 && this.media.duration > 0) ? this.media.position * 100 / this.media.duration : 0);

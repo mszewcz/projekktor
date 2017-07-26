@@ -30,7 +30,6 @@ $p.newModel({
     ],
 
     hasGUI: false,
-    isPseudoStream: false,
     streamType: 'http',
 
     availableQualities: {},
@@ -133,7 +132,6 @@ $p.newModel({
         'http' : 'recorded',
         'httpVideo': 'recorded',
         'httpAudio': 'recorded',
-        'pseudo': 'recorded',
         'dvr': 'dvr'
     },
     /**
@@ -229,15 +227,9 @@ $p.newModel({
 
         if (this.getState('PLAYING')) {
             this.setPlay();
-            if (ref.isPseudoStream!==true && this.media.position>0) {
+            if (this.media.position>0) {
                 this.setSeek(this.media.position);
             }
-        }
-
-        if(this.streamType=='pseudo') {
-            this.isPseudoStream = true;
-            this.allowRandomSeek = true;
-            this.media.loadProgress = 100;
         }
 
         if (this.streamType.indexOf('live')>-1 ) {
@@ -801,13 +793,6 @@ $p.newModel({
      ************************************************/
 
     setSeek: function(newpos) {
-        if (this.isPseudoStream) {
-            this._setSeekState('seeking');
-            this.media.offset = newpos;
-            this.applySrc();
-            return;
-        }
-
         // snap to live position
         if (newpos < 0 || (this.getIsDVRRecording() && newpos > this.getLivePosition())) {
             this.goToLive();

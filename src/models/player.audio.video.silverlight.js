@@ -133,7 +133,7 @@ $p.newModel({
 
         if (this.getState('PLAYING')) {
             this.setPlay();
-            if (ref.isPseudoStream!==true && this.media.position>0) {
+            if (this.media.position>0) {
                 this.setSeek(this.media.position);
             }
         }

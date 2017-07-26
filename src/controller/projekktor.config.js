@@ -200,8 +200,6 @@ projekktorConfig.prototype = {
      */
     rtmpUrlIncludesApplicationInstance: false,
 
-    startParameter:                 'start',
-
     /* Youtube offers two different player APIs: fLaSh and "iFrame" for HTML5 . Make your choice here:
       For mobile devices this is forced to TRUE
     */

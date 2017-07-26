@@ -16,8 +16,8 @@ $p.newModel({
     iosVersion: "5",
     nativeVersion: "1",
     iLove: [
-        {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'pseudo', 'httpVideo'], fixed: 'maybe'},
-        {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'pseudo', 'httpVideo'], fixed: 'maybe'},
+        {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo'], fixed: 'maybe'},
+        {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo'], fixed: 'maybe'},
         {ext:'ogv', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
         {ext:'webm',type:'video/webm', platform:['native'], streamType: ['http', 'httpVideo']},
         {ext:'ogg', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
@@ -52,7 +52,6 @@ $p.newModel({
     videoWidth: 0,
     videoHeight: 0,
     wasPersistent: true,
-    isPseudoStream: false,
     endedTimeout: 0,
     displayingFullscreen: false,
     _lastPosition: null,
@@ -147,9 +146,7 @@ $p.newModel({
                 return;
             }
 
-            if (!ref.isPseudoStream) {
-                ref.setSeek(ref.media.position || 0);
-            }
+            ref.setSeek(ref.media.position || 0);
 
             if (ref._isPlaying){
                 ref.setPlay();
@@ -251,7 +248,7 @@ $p.newModel({
             complete = (Math.round(this.media.position) === Math.round(dur)),
             fixedEnd = ( (dur-this.media.maxpos) < 2 ) && (this.media.position===0) || false;
 
-        if (complete || fixedEnd || this.isPseudoStream) {
+        if (complete || fixedEnd) {
             this.endedListener(this);
         } else {
             this.pauseListener(this);
@@ -307,21 +304,6 @@ $p.newModel({
     },
 
     canplayListener: function(obj) {
-        var ref = this;
-        // pseudo streaming
-        if (this.pp.getConfig('streamType')=='pseudo') {
-            $.each(this.media.file, function() {
-                if (this.src.indexOf(ref.mediaElement[0].currentSrc)>-1) {
-                    if (this.type=='video/mp4') {
-                        ref.isPseudoStream = true;
-                        ref.allowRandomSeek = true;
-                        ref.media.loadProgress = 100;
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
         this._setBufferState('FULL');
     },
 
@@ -456,13 +438,6 @@ $p.newModel({
         var ref = this,
             np = newpos,
             relPos = true;
-
-        if (this.isPseudoStream) {
-            this.media.position = 0;
-            this.media.offset = newpos;
-            this.applySrc();
-            return;
-        }
 
         // IE9 somtimes raises INDEX_SIZE_ERR
         (function() {
