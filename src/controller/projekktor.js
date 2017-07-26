@@ -436,25 +436,25 @@ function PPlayer (srcNode, cfg, onReady) {
                     }) || [];
                 };
     
-                this._canPlayOnPlatforms = function(mimeType) {
-                    if(!$p.mmap.length){
-                        return [];
-                    }
-    
+                this._canPlayOnPlatforms = function (mimeType) {
                     var result = [],
                         platformsObj = {},
                         mmap = $p.mmap,
-                        i,l,key;
+                        i, l, key;
     
-                    $.each(mmap, function(idx, iLove){
-                       if(iLove.type === mimeType){
-                        for(i=0,l=iLove.platform.length; i<l; i++){
+                    if (mmap.length) {
+                        return result;
+                    }
+
+                    $.each(mmap, function (idx, iLove) {
+                        if (iLove.type === mimeType) {
+                            for (i = 0, l = iLove.platform.length; i < l; i++) {
                             platformsObj[iLove.platform[i]] = true;
                         }
                        }
                     });
     
-                    for(key in platformsObj){
+                    for (key in platformsObj) {
                         result.push(key);
                     }
     
