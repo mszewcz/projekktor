@@ -121,48 +121,30 @@ window.projekktor = window.$p = (function (window, document, $) {
             value: {}
         },
         newModel: {
-            value: function (obj, ext) {
+            value: function (newModelDef, parentModelId) {
                 var models = this.models,
-                    modelId = obj.modelId;
+                    mmap = this.mmap,
+                    modelId = newModelDef.modelId,
+                    parentModel = models.hasOwnProperty(parentModelId) ? models[parentModelId].prototype : {},
+                    newModel;
 
-                if (typeof obj !== 'object') {
+                // skip if already exists
+                if (models.hasOwnProperty(modelId)) {
                     return false;
                 }
 
-                if (!modelId) {
-                    return false;
-                }
+                // register new model and extend its parent
+                newModel = function () { };
+                newModel.prototype = $.extend({}, parentModel, newModelDef);
 
-                var result = false,
-                    extend = (models[ext] && ext !== undefined) ? models[ext].prototype : {};
+                // add new model to the models register
+                models[modelId] = newModel;
 
-                /* already exists or has been replaced */
-                if (models[modelId]) {
-                    return result;
-                }
-
-                /* register new model */
-                models[modelId] = function () { };
-                models[modelId].prototype = $.extend({}, extend, obj);
-
-                /* add modelname to media map object */
-                if ($.isFunction(obj.setiLove)) {
-                    obj.setiLove();
-                }
-
-                /* remove overwritten model from iLove-map */
-                this.mmap = this.mmap.filter(function (iLove) {
-                    var doesNotExist = iLove.model !== ((obj.replace) ? obj.replace.toLowerCase() : ''),
-                        isNotOverwritten = iLove.replaces !== modelId;
-
-                    return doesNotExist && isNotOverwritten;
+                // add model iLove definitions to the cache
+                newModelDef.iLove.forEach(function(iLoveObj) {
+                    iLoveObj.model = modelId;
+                    mmap.push(iLoveObj);
                 });
-
-                obj.iLove.forEach(function(element, i) {
-                    element.model = modelId.toLowerCase();
-                    element.replaces = ((obj.replace) ? obj.replace.toLowerCase() : '');
-                    this.mmap.push(element);
-                }, this);
 
                 return true;
             }
