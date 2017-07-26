@@ -16,8 +16,8 @@ $p.newModel({
     iosVersion: "5",
     nativeVersion: "1",
     iLove: [
-        {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo'], fixed: 'maybe'},
-        {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo'], fixed: 'maybe'},
+        {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo']},
+        {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo']},
         {ext:'ogv', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
         {ext:'webm',type:'video/webm', platform:['native'], streamType: ['http', 'httpVideo']},
         {ext:'ogg', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},

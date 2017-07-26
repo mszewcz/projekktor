@@ -14,7 +14,7 @@ $p.newModel({
 
     modelId: 'YTVIDEO',
     iLove: [
-	{ext:'youtube.com', type:'video/youtube', platform: ['flash'], fixed:'maybe'}
+	{ext:'youtube.com', type:'video/youtube', platform: ['flash']}
     ],
 
     allowRandomSeek: true,
@@ -346,7 +346,7 @@ $p.newModel({
 
     modelId: 'YTAUDIO',
     iLove: [
-	{ext:'youtube.com', type:'audio/youtube', platform: ['flash'], fixed:'maybe'}
+	{ext:'youtube.com', type:'audio/youtube', platform: ['flash']}
     ]
 
 }, 'YTVIDEO');

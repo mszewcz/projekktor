@@ -21,12 +21,12 @@ $p.newModel({
     //minPlatformVersion: '11.4',
 
     iLove: [
-        {ext:'flv', type:'video/flv', platform: ['flash'], fixed: true, streamType: ['*']},
+        {ext:'flv', type:'video/flv', platform: ['flash'], streamType: ['*']},
         {ext:'mp4', type:'video/mp4', platform: ['flash'], streamType: ['*']},
         {ext:'f4v', type:'video/mp4', platform: ['flash'], streamType: ['*']},
         {ext:'mov', type:'video/quicktime', platform: ['flash'], streamType: ['*']},
-        {ext:'m4v', type:'video/mp4', platform: ['flash'], fixed: true, streamType: ['*']},
-        {ext:'f4m', type:'application/f4m+xml', platform: ['flash'], fixed: true, streamType: ['*']}
+        {ext:'m4v', type:'video/mp4', platform: ['flash'], streamType: ['*']},
+        {ext:'f4m', type:'application/f4m+xml', platform: ['flash'], streamType: ['*']}
     ],
 
     hasGUI: false,
