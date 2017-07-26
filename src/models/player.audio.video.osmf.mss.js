@@ -13,14 +13,14 @@
 $p.newModel({
     modelId: 'OSMFVIDEOMSS',
     iLove: [
-        {ext:'manifest', type:'application/vnd.ms-ss', platform: ['flash'], streamType: ['*']}
+        {ext:'manifest', type:'application/vnd.ms-ss', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive']}
     ]
 }, 'OSMFVIDEO');
 
 $p.newModel({
     modelId: 'OSMFAUDIOMSS',
     iLove: [
-        {ext:'manifest', type:'application/vnd.ms-ss', platform: ['flash'], streamType: ['*']}
+        {ext:'manifest', type:'application/vnd.ms-ss', platform: ['flash'], streamType: ['http', 'httpAudio', 'httpAudioLive']}
     ]
 }, 'OSMFAUDIO');
 

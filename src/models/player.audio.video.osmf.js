@@ -21,12 +21,12 @@ $p.newModel({
     //minPlatformVersion: '11.4',
 
     iLove: [
-        {ext:'flv', type:'video/flv', platform: ['flash'], streamType: ['*']},
-        {ext:'mp4', type:'video/mp4', platform: ['flash'], streamType: ['*']},
-        {ext:'f4v', type:'video/mp4', platform: ['flash'], streamType: ['*']},
-        {ext:'mov', type:'video/quicktime', platform: ['flash'], streamType: ['*']},
-        {ext:'m4v', type:'video/mp4', platform: ['flash'], streamType: ['*']},
-        {ext:'f4m', type:'application/f4m+xml', platform: ['flash'], streamType: ['*']}
+        {ext:'flv', type:'video/flv', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']},
+        {ext:'mp4', type:'video/mp4', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']},
+        {ext:'f4v', type:'video/mp4', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']},
+        {ext:'mov', type:'video/quicktime', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']},
+        {ext:'m4v', type:'video/mp4', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']},
+        {ext:'f4m', type:'application/f4m+xml', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']}
     ],
 
     hasGUI: false,
@@ -890,9 +890,9 @@ $p.newModel({
 
     hasGUI: false,
     iLove: [
-        {ext:'mp3', type:'audio/mp3', platform: ['flash'], streamType: ['*']},
-        {ext:'m4a', type:'audio/mp4', platform: ['flash'], streamType: ['*']},
-        {ext:'m4a', type:'audio/mpeg', platform: ['flash'], streamType: ['*']}
+        {ext:'mp3', type:'audio/mp3', platform: ['flash'], streamType: ['http', 'httpAudio', 'httpAudioLive', 'rtmp']},
+        {ext:'m4a', type:'audio/mp4', platform: ['flash'], streamType: ['http', 'httpAudio', 'httpAudioLive', 'rtmp']},
+        {ext:'m4a', type:'audio/mpeg', platform: ['flash'], streamType: ['http', 'httpAudio', 'httpAudioLive', 'rtmp']}
     ],
 
     applyMedia: function(destContainer) {
