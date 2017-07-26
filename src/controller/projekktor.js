@@ -723,7 +723,13 @@ function PPlayer (srcNode, cfg, onReady) {
                         if (data.file.hasOwnProperty(index)) {
     
                             if (!data.hasOwnProperty('availableFiles')) {
-                                data.availableFiles = data.file;
+
+                                data.availableFiles = [];
+                                $.each(data.file, function (i, value) {
+                                    if($.isNumeric(i)) {
+                                        data.availableFiles.push(value);
+                                    }
+                                });
                             }
     
                             // discard files not matching the selected model
