@@ -540,6 +540,7 @@ function PPlayer (srcNode, cfg, onReady) {
                         modelPlatforms = [],
                         platformsConfig = this.getConfig('platforms'),
                         supportedPlatforms = this._testMediaSupport(true),
+                        supportedDrmSystems = $p.drm.supportedDrmSystems,
                         mmapIndex;
     
                     // filter duplicate extensions and more ...
