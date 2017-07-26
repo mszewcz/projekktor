@@ -23,7 +23,8 @@ module.exports = function (grunt) {
       "+osmf",
       "+osmfhls",
       "+osmfmss",
-      "+msehls"
+      "+msehls",
+      "+msedash"
     ].join(":"),
     filesUglify = {},
     gzip = require("gzip-js"),
@@ -103,6 +104,10 @@ module.exports = function (grunt) {
           {
             flag: "msehls",
             src: "src/models/player.audio.video.mse.hls.js"
+          },
+          {
+            flag: "msedash",
+            src: "src/models/player.audio.video.mse.dash.js"
           },
           {
             flag: "videojs",
