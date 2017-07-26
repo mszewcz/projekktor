@@ -57,7 +57,7 @@ module.exports = function (grunt) {
     polyfiller: {
       build: {
         options: {
-          features: ['Promise', 'PointerEvents']
+          features: ['Promise', 'PointerEvents', 'Collections']
         },
         dest: 'dist/polyfills.js'
       }
