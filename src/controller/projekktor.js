@@ -4147,10 +4147,9 @@ function PPlayer (srcNode, cfg, onReady) {
     
                     var result = {},
                         resultPlatforms = [],
-                        platforms = [],
+                        platformsEnabled = this.getConfig('platforms') || [],
                         platformsConfig = this.getConfig('platformsConfig') || {},
-                        streamType = '',
-                        ref = this;
+                        mmap = $p.mmap || [];
     
                     if (getPlatforms) {
     
@@ -4164,67 +4163,64 @@ function PPlayer (srcNode, cfg, onReady) {
                         }
                     }
                     
-                    $p.mmap.forEach(function (value, i) {
+                    mmap.forEach(function (iLove, i) {
 
-                            platforms = (typeof $p.mmap[i]['platform'] === 'object') ? $p.mmap[i]['platform'] : [$p.mmap[i]['platform']];
+                        var platforms = iLove.platform || [];
+
+                        platforms.forEach(function (platform) {
     
-                            $.each(platforms, function (_na, platform) {
+                            var platform = platform.toUpperCase(),
+                                model = iLove.model || "NA",
+                                streamTypes = iLove.streamType || ['http'],
+                                mimeType = iLove.type || "none/none";
     
-                                if (platform === null) {
-                                    return true;
-                                }
-                                streamType = $p.mmap[i]['streamType'] || ['http'];
+                            // check if the platform is known to the player
+                            if ($p.platforms.hasOwnProperty(platform)) {
     
-                                $.each(streamType, function (key, st) {
+                                $.each(streamTypes, function (key, st) {
     
                                     var configPlatformVersion,
                                         reqPlatformVersion;
     
-                                    if (st in result === false) {
+                                    if (!result.hasOwnProperty(st)) {
                                         result[st] = {};
                                     }
     
-                                    if (platform in result[st] === false) {
+                                    if (!result[st].hasOwnProperty(platform)) {
                                         result[st][platform] = [];
                                     }
     
                                     // avoid dupes
-                                    if ($.inArray($p.mmap[i]['type'], result[st][platform]) > -1) {
+                                    if ($.inArray(mimeType, result[st][platform]) > -1) {
                                         return true;
                                     }
     
-                                    if(platformsConfig.hasOwnProperty(platform.toLowerCase())) {
+                                    if (platformsConfig.hasOwnProperty(platform.toLowerCase())) {
                                         configPlatformVersion = platformsConfig[platform.toLowerCase()].minPlatformVersion || false;
                                     }
     
                                     // requested platform version is minPlatformVersion from platformsConfig or model prototype
-                                    reqPlatformVersion = configPlatformVersion || ($p.models[ $p.mmap[i]['model'].toUpperCase() ].prototype[(platform.toLowerCase()) + 'Version'] || "1").toString();
+                                    reqPlatformVersion = String(configPlatformVersion || ($p.models[model].prototype[(platform.toLowerCase()) + 'Version']) || "1");
     
                                     // perform version and config check:
-                                    try {
-    
-                                        if ($p.utils.versionCompare($p.platforms[platform.toUpperCase()]($p.mmap[i]['type']), reqPlatformVersion)) {
+                                    if ($p.utils.versionCompare($p.platforms[platform](mimeType), reqPlatformVersion)) {
     
                                             // check if platform is enabled in config
-                                            if (ref.getConfig('enable' + platform.toUpperCase() + 'Platform') !== false && $.inArray(platform.toLowerCase(), ref.getConfig('platforms')) > -1) {
-                                                result[st][platform].push($p.mmap[i]['type']);
-                                                if ($.inArray(platform.toUpperCase(), resultPlatforms) === -1) {
-                                                    resultPlatforms.push(platform.toUpperCase());
+                                        if ($.inArray(platform.toLowerCase(), platformsEnabled) > -1) {
+                                            result[st][platform].push(mimeType);
+
+                                            if ($.inArray(platform, resultPlatforms) === -1) {
+                                                resultPlatforms.push(platform);
                                                 }
                                             }
-                                            return true;
                                         }
-                                    } catch (e) {
-                                        $p.utils.log('ERROR', 'platform ' + platform + ' not defined');
+                                });
                                     }
     
                                     return true;
                                 });
+                    });
     
-                                return true;
-                            });
-                        },
-                    ref);
                     $p._compTableCache = result;
                     $p._platformTableCache = resultPlatforms;
     
