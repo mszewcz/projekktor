@@ -436,17 +436,20 @@ function PPlayer (srcNode, cfg, onReady) {
                     }) || [];
                 };
     
+                /**
+                 * Returns all possible platform names implemented in projekktor which are potentially 
+                 * able to play the MIME Type specified in the argument. 
+                 */
                 this._canPlayOnPlatforms = function (mimeType) {
-                    var result = [],
-                        platformsObj = {},
-                        mmap = $p.mmap,
-                        i, l, key;
+                    var platformsObj = {},
+                        mmap = $p.mmap || [],
+                        i, l;
     
-                    if (mmap.length) {
-                        return result;
+                    if (mmap.length === 0) {
+                        return [];
                     }
 
-                    $.each(mmap, function (idx, iLove) {
+                    mmap.forEach(function (iLove, idx) {
                         if (iLove.type === mimeType) {
                             for (i = 0, l = iLove.platform.length; i < l; i++) {
                             platformsObj[iLove.platform[i]] = true;
@@ -454,11 +457,7 @@ function PPlayer (srcNode, cfg, onReady) {
                        }
                     });
     
-                    for (key in platformsObj) {
-                        result.push(key);
-                    }
-    
-                    return result;
+                    return Object.keys(platformsObj);
                 };
     
                 this._canPlay = function (mediaType, platform, streamType) {
