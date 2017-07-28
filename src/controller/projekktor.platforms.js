@@ -4,13 +4,15 @@
  * http://www.projekktor.com
  *
  * Copyright 2010, 2011, Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
- * Copyright 2014 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
+ * Copyright 2014-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  *
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  */
 
 (function(window, document, $, $p){
+
+    var testVideoEl = document.createElement('video');
 
     $p.platforms = {
         VIDEOJS: function() {
@@ -21,7 +23,7 @@
          * returns 1 if MSE is available 0 otherwise
          */
         MSE: function() {
-            return $p.features.hlsjs ? "1" : "0";
+            return $p.features.mse ? "1" : "0";
         },
 
         /* returns the version of the flash player */
@@ -68,43 +70,30 @@
         },
 
         ANDROID: function () {
-            try {
-                return (navigator.userAgent.toLowerCase().match(/android\s+(([\d\.]+))?/)[1]).toString();
-            } catch (e) {
+            if($p.userAgent.os.name === "Android"){
+                return $p.userAgent.os.version || "0";
             }
             return "0";
         },
 
         IOS: function () {
-            var agent = navigator.userAgent.toLowerCase(),
-                start = agent.indexOf('os ');
-
-            if ((agent.indexOf('iphone') > -1 || agent.indexOf('ipad') > -1) && start > -1) {
-                return (agent.substr(start + 3, 3).replace('_', '.')).toString();
+            if($p.userAgent.os.name === "iOS"){
+                return $p.userAgent.os.version || "0";
             }
             return "0";
         },
 
         NATIVE: function (type) {
-            try {
-                var testObject = $((type.indexOf('video') > -1) ? '<video/>' : '<audio/>').get(0);
-                if (testObject.canPlayType != null) {
-                    if (type === '*') {
+            switch (testVideoEl.canPlayType(type)) {
+                    case null:
+                    case "no":
+                    case "":
+                        return "0";
+                    case "maybe":
+                    case "probably":
+                    default:
                         return "1";
-                    }
-                    switch (testObject.canPlayType(type)) {
-                        case "no":
-                        case "":
-                            return "0";
-                            // case "maybe":
-                            // case "probably":
-                        default:
-                            return "1";
-                    }
-                }
-            } catch (e) {
             }
-            return "0";
         },
 
         BROWSER: function () {
