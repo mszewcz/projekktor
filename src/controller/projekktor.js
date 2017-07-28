@@ -2387,52 +2387,18 @@ function PPlayer (srcNode, cfg, onReady) {
                     return this._canPlayOnPlatforms(mimeType);
                 };
     
-                this.getPlatform = function () {
-                    var item = this.getItem();
-                    if(item){
-                        return item.platform || [];
-                    }
-                    else {
-                        return [];
-                    }
+                this.getPlatform = function (item) {
+    
+                    var item = item || this.getItem();
+    
+                    return item.platform || [];
                 };
     
-                this.getPlatforms = function () {
+                this.getPlatforms = function (item) {
     
-                    // return $.map($p._platformTableCache, function(n,i){return n.toLowerCase();});
-                    var ref = this,
-                        platforms = this._testMediaSupport(true),
-                        item = this.getItem(),
-                        cfg = this.getConfig('platforms'),
-                        result = [],
-                        streamType = 'http';
+                    var item = item || this.getItem();
     
-                    try {
-    
-                        for (var i in item.availableFiles) {
-    
-                            if (item.availableFiles.hasOwnProperty(i)) {
-    
-                                for (var j = 0, l = platforms.length; j < l; j++) {
-                                    streamType = item.availableFiles[i].streamType || (item.availableFiles.hasOwnProperty('config') ? item.availableFiles.config.streamType : false) || streamType;
-    
-                                    if (this._canPlay(item.availableFiles[i].type, platforms[j].toLowerCase(), streamType)) {
-    
-                                        if ($.inArray(platforms[j].toLowerCase(), result) === -1) {
-                                            result.push(platforms[j].toLowerCase());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (e) {
-                    }
-    
-                    result.sort(function (a, b) {
-                        return $.inArray(a, cfg) - $.inArray(b, cfg);
-                    });
-    
-                    return result;
+                    return item.platforms || [];
                 };
     
                 this.getId = function () {
