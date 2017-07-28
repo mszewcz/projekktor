@@ -304,7 +304,7 @@ $p.features = (function () {
     };
 
     tests['mse'] = function(){
-        return (!!window.MediaSource);
+        return !!(window.MediaSource || window.WebKitMediaSource);
     };
     
     tests['eme'] = function () {
