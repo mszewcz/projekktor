@@ -2378,9 +2378,13 @@ function PPlayer (srcNode, cfg, onReady) {
                     return false;
                 };
     
-                this.getCanPlay = function (type, platform, streamType) {
+                this.getCanPlay = function (mimeType, platform, streamType) {
+                    var ref = this,
+                        platform = (platform === undefined) ? this._testMediaSupport(true) : [platform];
     
-                    return this._canPlay(type, platform, streamType);
+                        return platform.some(function (pt) {
+                            return ref._canPlay(mimeType, pt, streamType);
+                        });
                 };
     
                 this.getCanPlayOnPlatforms = function(mimeType){
