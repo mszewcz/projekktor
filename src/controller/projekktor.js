@@ -2400,6 +2400,10 @@ function PPlayer (srcNode, cfg, onReady) {
                     return this._canPlayOnPlatforms(mimeType);
                 };
     
+                this.getIsDrmSystemSupported = function(drmSystem){
+                    return ($p.drm.supportedDrmSystems.indexOf(drmSystem) > -1);
+                };
+    
                 this.getPlatform = function (item) {
     
                     var item = item || this.getItem();
