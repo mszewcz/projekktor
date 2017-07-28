@@ -221,6 +221,7 @@ function PPlayer (srcNode, cfg, onReady) {
                         },
                         i, l,
                         item,
+                        files,
                         itemIds = [],
                         currentItem = this.getItem();
     
@@ -248,12 +249,20 @@ function PPlayer (srcNode, cfg, onReady) {
     
                     // be sure that items are unique and processed
                     for (i = 0, l = items.length; i < l; i++) {
+
                         item = items[i];
+                        files = [];
     
+                        $.each(item, function(key, value){
+                            if($.isNumeric(key)){
+                                files.push(value);
+                            }
+                        });
+
                         // item is not processed by _prepareMedia yet
                         if (item.processed !== true) {
                             item = this._prepareMedia({
-                                file: item,
+                                file: files,
                                 config: item.config || {},
                                 errorCode: this.errorCode || 0
                             });
