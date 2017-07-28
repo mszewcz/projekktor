@@ -460,64 +460,47 @@ function PPlayer (srcNode, cfg, onReady) {
                     return Object.keys(platformsObj);
                 };
     
-                this._canPlay = function (mediaType, platform, streamType) {
+                /**
+                 * Checks if mimeType can be played using specified platform and streamType
+                 */
+                this._canPlay = function (mimeType, platform, streamType) {
     
                     var ref = this,
-                        checkIn = [],
-                        checkFor = [],
-                        st = streamType || 'http',
-                        pltfrm = (typeof platform === 'object') ? platform : [platform],
-                        type = (mediaType) ? mediaType.toLowerCase() : undefined,
-                        tm = ref._testMediaSupport();
+                        tm = ref._testMediaSupport(), // returns $._compTableCache, streamType -> platform -> mimeType tree
+                        st = (streamType !== undefined) ? streamType : 'http',
+                        pt = (typeof platform === "string") ? platform.toUpperCase() : "BROWSER",
+                        type = (typeof mimeType === "string") ? mimeType.toLowerCase() : undefined,
+                        checkIn = tm[st];
     
-                    $.each(pltfrm, function (nothing, plt) {
-    
-                        $.each($.extend(true, {}, tm[st], tm['*'] || []) || [], function (thisPlatform, val) {
-    
-                            if (plt != null) {
-                                if (thisPlatform != plt) {
+                    // mimeType "none/none" is a special internal mimeType
+                    // which is always supported
+                    if(type === "none/none") {
                                     return true;
                                 }
-                            }
-                            checkIn = $.merge(checkIn, this);
-                            return true;
-                        });
-                    });
     
-                    if (checkIn.length === 0) {
+                    // if mimeType is undefined we have nothing to look for
+                    if(type === undefined){
                         return false;
                     }
     
-                    switch (typeof type) {
-                        case 'undefined':
-                            return checkIn.length > 0;
-    
-                        case 'string':
-    
-                            if (type == '*') {
-                                return checkIn;
+                    // streamType unknown
+                    if (checkIn === undefined) {
+                        return false;
                             }
-                            checkFor.push(type);
-                            break;
-    
-                        case 'array':
-                            checkFor = type;
-                            break;
+                    // no platform for specified streamType
+                    else if (checkIn[pt] === undefined) {
+                        return false;
                     }
-    
-                    for (var i in checkFor) {
-    
-                        if ($p.mmap.hasOwnProperty(i)) {
-    
-                            if (typeof checkFor[i] !== 'string') {
-                                break;
+                    // everything fine
+                    else {
+                        // checkIn should be an array filled with mimeTypes 
+                        // supported by selected platform
+                        checkIn = checkIn[pt];
                             }
     
-                            if ($.inArray(checkFor[i], checkIn) > -1) {
+                    if (checkIn.indexOf(type) > -1) {
                                 return true;
                             }
-                        }
-                    }
     
                     return false;
                 };
