@@ -289,7 +289,7 @@ $p.features = (function () {
             ieMobileVer = ($p.userAgent.browser.name === 'IEMobile') ? parseInt($p.userAgent.browser.major) : 0,
             osVer = parseFloat($p.userAgent.os.version);
 
-        return !isIPhone && (!isWindowsPhone || (isWindowsPhone && osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || isAndroid && osVer >= 3);
+        return (!isIPhone || (isIPhone && osVer >= 10)) && (!isWindowsPhone || (isWindowsPhone && osVer >= 8.1 && ieMobileVer >= 11)) && (!isAndroid || isAndroid && osVer >= 3);
     };
 
     tests['localstorage'] = function () {
