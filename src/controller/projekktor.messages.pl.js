@@ -72,6 +72,9 @@ var projekktorMessages = (function(window, document, $, $p){
 
     "error200": 'Upłynął limit czasu żądania',
 
+    // DRM errors
+    "error300": "#300 Brak wsparcia dla systemów DRM użytych do zaszyfrowania tego pliku audio/video.",
+
     // youtube errors:
     "error500": 'To wideo zostało usunięte albo zostało ustawione jako prywatne',
     "error501": 'Użytkownik Youtube będący właścicielem tego wideo wyłączył możliwość jego załączania na serwisach zewnętrznych.',

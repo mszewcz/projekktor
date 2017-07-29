@@ -77,6 +77,9 @@ return {
 
     "error200": 'Loading timeout',
 
+    // DRM errors
+    "error300": "#300 No support for any of the DRM systems used to encrypt this media.",
+
     // youtube errors:
     "error500": 'This Youtube video has been removed or set to private',
     "error501": 'The Youtube user owning this video disabled embedding.',
