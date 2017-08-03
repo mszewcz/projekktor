@@ -1049,10 +1049,13 @@ window.projekktor = window.$p = (function (window, document, $) {
 
                             for (var events in this._pluginCache) {
 
-                                for (var shortcuts = 0; shortcuts < this._pluginCache[events].length; shortcuts++) {
+                                if (this._pluginCache.hasOwnProperty(event)) {
 
-                                    if (this._pluginCache[events][shortcuts].name === pluginsToRemove[j].toLowerCase()) {
-                                        this._pluginCache[events].splice(shortcuts, 1);
+                                    for (var shortcuts = 0; shortcuts < this._pluginCache[events].length; shortcuts++) {
+
+                                        if (this._pluginCache[events][shortcuts].name === pluginsToRemove[j].toLowerCase()) {
+                                            this._pluginCache[events].splice(shortcuts, 1);
+                                        }
                                     }
                                 }
                             }
@@ -2503,7 +2506,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             if (wasFullscreen) {
                 this.getDC().addClass('fullscreen');
             }
-
+            
             // create player instance
             var newModel = newItem.mediaModel.toUpperCase();
 
@@ -2642,6 +2645,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                         default:
                             vol = this.getVolume();
                     }
+                    break;
 
                 case 'number':
                     vol = parseFloat(vol);
@@ -3400,7 +3404,9 @@ window.projekktor = window.$p = (function (window, document, $) {
                 this.env.mediaContainer = null;
 
                 for (var i in this.config) {
-                    cleanConfig[(i.substr(0, 1) === '_') ? i.substr(1) : i] = this.config[i];
+                    if (this.config.hasOwnProperty(i)) {
+                        cleanConfig[(i.substr(0, 1) === '_') ? i.substr(1) : i] = this.config[i];
+                    }
                 }
 
                 cleanConfig['autoplay'] = cleanConfig['loop'] || autoplay;
