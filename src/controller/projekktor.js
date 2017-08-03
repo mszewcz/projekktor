@@ -485,41 +485,8 @@ window.projekktor = window.$p = (function (window, document, $) {
                 });
             });
 
-            // incoming file is a string only, no array
-            if (typeof data.file === 'string') {
-                data.file = [{
-                    src: data.file
-                }];
-
-                if (typeof data.type === 'string') {
-                    data.file = [{
-                        src: data.file,
-                        type: data.type
-                    }];
-                }
-            }
-
-            // incoming file is ... bullshit
-            if ($.isEmptyObject(data) || data.file === false || data.file === null) {
-                data.file = [{
-                    src: null
-                }];
-            }
-
             for (var index in data.file) {
                 if (data.file.hasOwnProperty(index)) {
-
-                    // just a filename _> go object
-                    if (typeof data.file[index] === 'string') {
-                        data.file[index] = {
-                            src: data.file[index]
-                        };
-                    }
-
-                    // nothing to do, next one
-                    if (!data.file[index].src) {
-                        continue;
-                    }
 
                     // if type is set, get rid of the codec mess
                     if (data.file[index].hasOwnProperty('type') && typeof data.file[index].type === 'string' && data.file[index].type !== '') {
