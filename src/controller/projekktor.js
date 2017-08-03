@@ -755,8 +755,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this.stateHandler = function (stateValue) {
 
-            var ref = this,
-                modelRef = this.playerModel;
+            var ref = this;
 
             // change player css classes in order to reflect current state:
             var classes = $.map(this.getDC().attr("class").split(" "), function (item) {
@@ -792,7 +791,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                         this.setFullscreen(false);
                     }
                     break;
-            };
+            }
         };
 
         this.volumeHandler = function (value) {
@@ -1099,7 +1098,6 @@ window.projekktor = window.$p = (function (window, document, $) {
         this.__promote = function (evt, value) {
 
             var event = evt,
-                pluginData = {},
                 debug = this.getConfig('debug');
 
             if (typeof event === 'object') {
@@ -2366,8 +2364,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         /* asynchronously loads external XML and JSON data from server */
         this.getFromUrl = function (url, dest, callback, dataType, auxConfig) {
 
-            var data = null,
-                ref = this;
+            var data = null;
 
             if (callback.substr(0, 1) !== '_') {
                 window[callback] = function (data) {
@@ -2449,7 +2446,6 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             var lastItem = this.getItem(),
                 newItem = null,
-                ref = this,
                 ap = this.config._autoplay;
 
             if (typeof mixedData === 'string') {
@@ -3239,11 +3235,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this.setPlaylist = this.destroy = function (obj) {
 
-            var ref = this,
-                itemIdx = null,
-                itemId = null,
-                itemData = null,
-                data = obj || [{
+            var data = obj || [{
                     file: {
                         src: '',
                         type: 'none/none'
@@ -3392,8 +3384,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             },
             this._reset = function (autoplay) {
 
-                var cleanConfig = {},
-                    ref = this;
+                var cleanConfig = {};
 
                 // this._isReady = false;
                 $(this).off();
@@ -3426,7 +3417,6 @@ window.projekktor = window.$p = (function (window, document, $) {
                             offset: 0
                         },
                         opt),
-                    ref = this,
                     stopPropagation = stopProp || false,
                     //should we propagate cuepointsAdd event after cuepoint was added
 
@@ -4272,8 +4262,7 @@ window.projekktor = window.$p = (function (window, document, $) {
     function Projekktor() {
 
         var arg = arguments[0],
-            instances = [],
-            plugins = [];
+            instances = [];
 
         if (!arguments.length) {
             return projekktors[0] || null;
