@@ -3540,7 +3540,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                                 }
                             }
 
-                            if (this.off === this.on && this._active && new Number(timeIdx - this.on).toPrecision(this.precision) >= 1) {
+                            if (this.off === this.on && this._active && Number(timeIdx - this.on).toPrecision(this.precision) >= 1) {
                                 this._active = false;
                             }
 
