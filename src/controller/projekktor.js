@@ -25,141 +25,9 @@ window.projekktor = window.$p = (function (window, document, $) {
         };
     }
 
-    function Projekktor(){
 
-        var arg = arguments[0],
-            instances = [],
-            plugins = [];
-
-        if (!arguments.length) {
-            return projekktors[0] || null;
-        }
-
-        // get instances
-        // projekktor(idx:number);
-        if (typeof arg === 'number') {
-            return projekktors[arg];
-        }
-
-        // by string selection unqiue "id" or "*"
-        if (typeof arg === 'string') {
-
-            // get all instances
-            if (arg === '*') {
-                return new Iterator(projekktors);
-            }
-
-            // get instance by Jquery OBJ, 'containerId' or selector
-            for (var i = 0; i < projekktors.length; i++) {
-                try {
-                    if (projekktors[i].getId() == arg.id) {
-                        instances.push(projekktors[i]);
-                        continue;
-                    }
-                } catch (e) {
-                }
-                try {
-                    for (var j = 0; j < $(arg).length; j++) {
-                        if (projekktors[i].env.playerDom.get(0) == $(arg).get(j)) {
-                            instances.push(projekktors[i]);
-                            continue;
-                        }
-                    }
-                } catch (e) {
-                }
-                try {
-                    if (projekktors[i].getParent() == arg) {
-                        instances.push(projekktors[i]);
-                        continue;
-                    }
-                } catch (e) {
-                }
-                try {
-                    if (projekktors[i].getId() == arg) {
-                        instances.push(projekktors[i]);
-                        continue;
-                    }
-                } catch (e) {
-                }
-            }
-
-            if (instances.length > 0) {
-                return (instances.length == 1) ? instances[0] : new Iterator(instances);
-            }
-        }
-
-        // build instances
-        if (instances.length === 0) {
-            var cfg = arguments[1] || {},
-                callback = arguments[2] || {},
-                count = 0,
-                playerA;
-
-            if (typeof arg === 'string') {
-                $.each($(arg), function () {
-                    playerA = new PPlayer($(this), cfg, callback);
-                    projekktors.push(playerA);
-                    count++;
-                });
-                return (count > 1) ? new Iterator(projekktors) : playerA;
-                // arg is a DOM element
-            } else if (arg) {
-                projekktors.push(new PPlayer(arg, cfg, callback));
-                return new Iterator(projekktors);
-            }
-        }
-    }
-
-    Object.defineProperties(Projekktor, {
-        initPromises: {
-            value: []
-        },
-        mmap: {
-            value: []
-        },
-        models: {
-            value: {}
-        },
-        newModel: {
-            value: function (newModelDef, parentModelId) {
-                var models = this.models,
-                    mmap = this.mmap,
-                    modelId = newModelDef.modelId,
-                    parentModel = models.hasOwnProperty(parentModelId) ? models[parentModelId].prototype : {},
-                    newModel;
-
-                // skip if already exists
-                if (models.hasOwnProperty(modelId)) {
-                    return false;
-                }
-
-                // register new model and extend its parent
-                newModel = function () { };
-                newModel.prototype = $.extend({}, parentModel, newModelDef);
-
-                // add new model to the models register
-                models[modelId] = newModel;
-
-                // add model iLove definitions to the cache
-                newModelDef.iLove.forEach(function(iLoveObj) {
-                    iLoveObj.model = modelId;
-                    mmap.push(iLoveObj);
-                });
-
-                return true;
-            }
-        }
-    });
-
-    return Projekktor;
-
-}(window, document, jQuery));
-
-var PPlayer = (function(window, document, $, $p){
-
-function PPlayer (srcNode, cfg, onReady) {
-    
-                this.config = new projekktorConfig();
+    function PPlayer (srcNode, cfg, onReady) {
+    this.config = new projekktorConfig();
     
                 this.storage = new projekktorPersistentStorage(this);
     
@@ -4477,7 +4345,134 @@ function PPlayer (srcNode, cfg, onReady) {
                 function (reason) {
                     console.warn('Init failed');
                 });
+            }     
+
+    function Projekktor(){
+
+        var arg = arguments[0],
+            instances = [],
+            plugins = [];
+
+        if (!arguments.length) {
+            return projekktors[0] || null;
+        }
+
+        // get instances
+        // projekktor(idx:number);
+        if (typeof arg === 'number') {
+            return projekktors[arg];
+        }
+
+        // by string selection unqiue "id" or "*"
+        if (typeof arg === 'string') {
+
+            // get all instances
+            if (arg === '*') {
+                return new Iterator(projekktors);
             }
-            
-            return PPlayer;
-        }(window, document, jQuery, projekktor));
+
+            // get instance by Jquery OBJ, 'containerId' or selector
+            for (var i = 0; i < projekktors.length; i++) {
+                try {
+                    if (projekktors[i].getId() == arg.id) {
+                        instances.push(projekktors[i]);
+                        continue;
+                    }
+                } catch (e) {
+                }
+                try {
+                    for (var j = 0; j < $(arg).length; j++) {
+                        if (projekktors[i].env.playerDom.get(0) == $(arg).get(j)) {
+                            instances.push(projekktors[i]);
+                            continue;
+                        }
+                    }
+                } catch (e) {
+                }
+                try {
+                    if (projekktors[i].getParent() == arg) {
+                        instances.push(projekktors[i]);
+                        continue;
+                    }
+                } catch (e) {
+                }
+                try {
+                    if (projekktors[i].getId() == arg) {
+                        instances.push(projekktors[i]);
+                        continue;
+                    }
+                } catch (e) {
+                }
+            }
+
+            if (instances.length > 0) {
+                return (instances.length == 1) ? instances[0] : new Iterator(instances);
+            }
+        }
+
+        // build instances
+        if (instances.length === 0) {
+            var cfg = arguments[1] || {},
+                callback = arguments[2] || {},
+                count = 0,
+                playerA;
+
+            if (typeof arg === 'string') {
+                $.each($(arg), function () {
+                    playerA = new PPlayer($(this), cfg, callback);
+                    projekktors.push(playerA);
+                    count++;
+                });
+                return (count > 1) ? new Iterator(projekktors) : playerA;
+                // arg is a DOM element
+            } else if (arg) {
+                projekktors.push(new PPlayer(arg, cfg, callback));
+                return new Iterator(projekktors);
+            }
+        }
+    }
+
+    Object.defineProperties(Projekktor, {
+        initPromises: {
+            value: []
+        },
+        mmap: {
+            value: []
+        },
+        models: {
+            value: {}
+        },
+        newModel: {
+            value: function (newModelDef, parentModelId) {
+                var models = this.models,
+                    mmap = this.mmap,
+                    modelId = newModelDef.modelId,
+                    parentModel = models.hasOwnProperty(parentModelId) ? models[parentModelId].prototype : {},
+                    newModel;
+
+                // skip if already exists
+                if (models.hasOwnProperty(modelId)) {
+                    return false;
+                }
+
+                // register new model and extend its parent
+                newModel = function () { };
+                newModel.prototype = $.extend({}, parentModel, newModelDef);
+
+                // add new model to the models register
+                models[modelId] = newModel;
+
+                // add model iLove definitions to the cache
+                newModelDef.iLove.forEach(function(iLoveObj) {
+                    iLoveObj.model = modelId;
+                    mmap.push(iLoveObj);
+                });
+
+                return true;
+            }
+        }
+    });
+
+    return Projekktor;
+
+}(window, document, jQuery));
