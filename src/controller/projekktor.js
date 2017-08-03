@@ -528,79 +528,96 @@ function PPlayer (srcNode, cfg, onReady) {
                         result = {},
                         bestMatch = 0,
                         currentMediaPlatforms = [],
-                        modelPlatforms = [],
                         platformsConfig = this.getConfig('platforms'),
                         supportedPlatforms = this._testMediaSupport(true),
-                        supportedDrmSystems = $p.drm.supportedDrmSystems,
-                        mmapIndex;
+                mmap = $p.mmap;
     
                     // filter duplicate extensions and more ...
-                    for (mmapIndex in $p.mmap) {
+            mmap.forEach(function (iLove, mmapIndex) {
     
-                        if ($p.mmap.hasOwnProperty(mmapIndex)) {
-                            modelPlatforms = $p.mmap[mmapIndex].platform;
+                var modelPlatforms = iLove.platform || [],
+                    mimeType = iLove.type,
+                    modelDrmSystems = iLove.drm || [];
     
                             $.each(modelPlatforms, function (_na, platform) {
     
                                 var k = 0,
-                                    streamType = 'http';
+                        streamType,
+                        requiredDrmSystems,
+                        drmSupport = false,
+                        files = data.file || [],
+                        file,
+                        i, l;
     
-                                for (var j in data.file) {
+                    for (i = 0, l = files.length; i < l; i++) {
     
-                                    if (data.file.hasOwnProperty(j)) {
+                        file = files[i];
+                        streamType = file.streamType || data.config.streamType || 'http',
+                            requiredDrmSystems = file.drm || [];
     
-                                        if (j === 'config') {
-                                            continue;
+                        if (ref._canPlay(mimeType, platform, streamType)) {
+    
+                            if (requiredDrmSystems.length) {
+    
+                                if (modelDrmSystems.length) {
+
+                                    drmSupport = requiredDrmSystems.some(function (drmSystem) {
+                                        return (ref.getIsDrmSystemSupported(drmSystem) &&
+                                            (modelDrmSystems.indexOf(drmSystem) > -1));
+                                    });
                                         }
+                                else {
+                                    drmSupport = false;
+                                }
     
-                                        streamType = data.file[j].streamType || data.config.streamType || 'http';
-    
-                                        if (ref._canPlay($p.mmap[mmapIndex].type, platform, streamType)) {
-                                            k++;
-                                        }
-    
+                                if (drmSupport) {
+                                    k += 1;
+                                }
+                            }
+                            else {
+                                k += 1;
+                            }
+                        }
+
                                         // this platform does not support any of the provided streamtypes:
                                         if (k === 0) {
                                             continue;
                                         }
     
                                         // set priority level
-                                        $p.mmap[mmapIndex].level = $.inArray(platform, platformsConfig);
-                                        $p.mmap[mmapIndex].level = ($p.mmap[mmapIndex].level < 0) ? 100 : $p.mmap[mmapIndex].level;
+                        iLove.level = $.inArray(platform, platformsConfig);
+                        iLove.level = (iLove.level < 0) ? 100 : iLove.level;
     
                                         // build extension2filetype map
-                                        if (!extTypes.hasOwnProperty($p.mmap[mmapIndex].ext)) {
-                                            extTypes[$p.mmap[mmapIndex].ext] = [];
+                        if (!extTypes.hasOwnProperty(iLove.ext)) {
+                            extTypes[iLove.ext] = [];
                                         }
-                                        extTypes[$p.mmap[mmapIndex].ext].push($p.mmap[mmapIndex]);
+                        extTypes[iLove.ext].push(iLove);
     
                                         // check stream type
-                                        if (!$p.mmap[mmapIndex].hasOwnProperty('streamType') || $p.mmap[mmapIndex].streamType.toString() === '*' || $.inArray(streamType, $p.mmap[mmapIndex].streamType || '') > -1) {
+                        if (!iLove.hasOwnProperty('streamType') || iLove.streamType.toString() === '*' || $.inArray(streamType, iLove.streamType || '') > -1) {
     
-                                            if (!typesModels.hasOwnProperty($p.mmap[mmapIndex].type)) {
-                                                typesModels[$p.mmap[mmapIndex].type] = [];
+                            if (!typesModels.hasOwnProperty(iLove.type)) {
+                                typesModels[iLove.type] = [];
                                             }
                                             k = -1;
     
-                                            for (var ci = 0,
-                                                len = typesModels[$p.mmap[mmapIndex].type].length; ci < len; ci++) {
+                            for (var ci = 0, len = typesModels[iLove.type].length; ci < len; ci++) {
     
-                                                if (typesModels[$p.mmap[mmapIndex].type][ci].model === $p.mmap[mmapIndex].model) {
+                                if (typesModels[iLove.type][ci].model === iLove.model) {
                                                     k = ci;
                                                     break;
                                                 }
                                             }
     
                                             if (k === -1) {
-                                                typesModels[$p.mmap[mmapIndex].type].push($p.mmap[mmapIndex]);
+                                typesModels[iLove.type].push(iLove);
                                             }
                                         }
                                     }
-                                }
                                 return true;
                             });
-                        }
-                    }
+            });
     
                     // incoming file is a string only, no array
                     if (typeof data.file === 'string') {
@@ -629,11 +646,6 @@ function PPlayer (srcNode, cfg, onReady) {
                     for (var index in data.file) {
                         if (data.file.hasOwnProperty(index)) {
     
-                            // meeeep
-                            if (index === 'config') {
-                                continue;
-                            }
-    
                             // just a filename _> go object
                             if (typeof data.file[index] === 'string') {
                                 data.file[index] = {
@@ -642,7 +654,7 @@ function PPlayer (srcNode, cfg, onReady) {
                             }
     
                             // nothing to do, next one
-                            if (data.file[index].src == null) {
+                    if (!data.file[index].src) {
                                 continue;
                             }
     
@@ -700,7 +712,11 @@ function PPlayer (srcNode, cfg, onReady) {
                         types.push(this.type);
                     });
     
+            // check for DRM support for selected models
+            // leave only those which are able to decode the content
     
+
+
                     modelSet = (modelSets && modelSets.length > 0) ? modelSets[0] : {
                         type: 'none/none',
                         model: 'NA',
@@ -716,13 +732,8 @@ function PPlayer (srcNode, cfg, onReady) {
     
                             if (!data.hasOwnProperty('availableFiles')) {
 
-                                data.availableFiles = [];
-                                $.each(data.file, function (i, value) {
-                                    if($.isNumeric(i)) {
-                                        data.availableFiles.push(value);
+                        data.availableFiles = data.file.slice(); // clone array
                                     }
-                                });
-                            }
     
                             // discard files not matching the selected model
                             if (data.file[index].type == null) {
