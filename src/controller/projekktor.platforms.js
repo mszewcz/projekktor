@@ -15,19 +15,19 @@
     var testVideoEl = document.createElement('video');
 
     $p.platforms = {
-        VIDEOJS: function() {
+        videojs: function() {
             return "1";
         },
 
         /**
          * returns 1 if MSE is available 0 otherwise
          */
-        MSE: function() {
+        mse: function() {
             return $p.features.mse ? "1" : "0";
         },
 
         /* returns the version of the flash player */
-        FLASH: function () {
+        flash: function () {
             var result = $p.utils.detectPlugin('Shockwave Flash', 'application/x-shockwave-flash', 'ShockwaveFlash.ShockwaveFlash', function (ax) {
                 // adapted from SWFObject
                 var version = [],
@@ -42,7 +42,7 @@
             return result.join(".");
         },
 
-        SILVERLIGHT: function () {
+        silverlight: function () {
             var result = $p.utils.detectPlugin('Silverlight Plug-In', 'application/x-silverlight-2', 'AgControl.AgControl', function (ax) {
                 // Silverlight cannot report its version number to IE
                 // but it does have a isVersionSupported function, so we have to loop through it to get a version number.
@@ -69,21 +69,21 @@
             return result.join(".");
         },
 
-        ANDROID: function () {
+        android: function () {
             if($p.userAgent.os.name === "Android"){
                 return $p.userAgent.os.version || "0";
             }
             return "0";
         },
 
-        IOS: function () {
+        ios: function () {
             if($p.userAgent.os.name === "iOS"){
                 return $p.userAgent.os.version || "0";
             }
             return "0";
         },
 
-        NATIVE: function (type) {
+        native: function (type) {
             switch (testVideoEl.canPlayType(type)) {
                     case null:
                     case "no":
@@ -96,7 +96,7 @@
             }
         },
 
-        BROWSER: function () {
+        browser: function () {
             return "1";
         }
     };
