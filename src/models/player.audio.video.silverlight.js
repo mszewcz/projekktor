@@ -25,9 +25,6 @@ $p.newModel({
 
     silverlightVersion: '3.0',
 
-    platform: 'silverlight',
-    //minPlatformVersion: "3.0",
-
     iLove: [
         {ext:'wmv', type:'video/wmv', platform: ['silverlight']},
         {ext:'wmv', type:'video/x-ms-wmv', platform: ['silverlight']},
