@@ -15,9 +15,9 @@ $p.newModel({
     browserVersion: "1.0",
     modelId: 'IMAGE',
     iLove: [
-        {ext:'jpg', type:'image/jpeg', platform: ['browser'], streamType: ['http']},
-        {ext:'gif', type:'image/gif', platform: ['browser'], streamType: ['http']},
-        {ext:'png', type:'image/png', platform: ['browser'], streamType: ['http']}
+        {ext:'jpg', type:'image/jpeg', platform: ['browser']},
+        {ext:'gif', type:'image/gif', platform: ['browser']},
+        {ext:'png', type:'image/png', platform: ['browser']}
     ],
 
     allowRandomSeek: true,
@@ -86,7 +86,7 @@ $p.newModel({
 
     modelId: 'HTML',
     iLove: [
-        {ext:'html', type:'text/html', platform: ['browser'], streamType: ['http']}
+        {ext:'html', type:'text/html', platform: ['browser']}
     ],
 
    applyMedia: function(destContainer) {

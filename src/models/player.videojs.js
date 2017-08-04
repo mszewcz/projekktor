@@ -21,8 +21,7 @@
         iLove: [{
             ext: 'mp4',
             type: 'video/mp4',
-            platform: ['videojs'],
-            streamType: ['http']
+            platform: ['videojs']
         }],
 
         _videojs: null,

@@ -21,12 +21,12 @@ $p.newModel({
     //minPlatformVersion: '11.4',
 
     iLove: [
-        {ext:'flv', type:'video/flv', platform: ['flash'], streamType: ['http', 'httpVideo', 'rtmp']},
-        {ext:'mp4', type:'video/mp4', platform: ['flash'], streamType: ['http', 'httpVideo', 'rtmp']},
-        {ext:'f4v', type:'video/mp4', platform: ['flash'], streamType: ['http', 'httpVideo', 'rtmp']},
-        {ext:'mov', type:'video/quicktime', platform: ['flash'], streamType: ['http', 'httpVideo', 'rtmp']},
-        {ext:'m4v', type:'video/mp4', platform: ['flash'], streamType: ['http', 'httpVideo', 'rtmp']},
-        {ext:'f4m', type:'application/f4m+xml', platform: ['flash'], streamType: ['http', 'httpVideo', 'httpVideoLive', 'rtmp']}
+        {ext:'flv', type:'video/flv', platform: ['flash']},
+        {ext:'mp4', type:'video/mp4', platform: ['flash']},
+        {ext:'f4v', type:'video/mp4', platform: ['flash']},
+        {ext:'mov', type:'video/quicktime', platform: ['flash']},
+        {ext:'m4v', type:'video/mp4', platform: ['flash']},
+        {ext:'f4m', type:'application/f4m+xml', platform: ['flash']}
     ],
 
     hasGUI: false,
@@ -223,7 +223,7 @@ $p.newModel({
         var ref = this,
             sources = this.getSource();
 
-        this.streamType = sources[0].streamType || this.pp.getConfig('streamType') || 'http';
+        this.streamType = this.pp.getConfig('streamType') || 'http';
 
         if (this.getState('PLAYING')) {
             this.setPlay();
@@ -890,9 +890,9 @@ $p.newModel({
 
     hasGUI: false,
     iLove: [
-        {ext:'mp3', type:'audio/mp3', platform: ['flash'], streamType: ['http', 'httpAudio', 'rtmp']},
-        {ext:'m4a', type:'audio/mp4', platform: ['flash'], streamType: ['http', 'httpAudio', 'rtmp']},
-        {ext:'m4a', type:'audio/mpeg', platform: ['flash'], streamType: ['http', 'httpAudio', 'rtmp']}
+        {ext:'mp3', type:'audio/mp3', platform: ['flash']},
+        {ext:'m4a', type:'audio/mp4', platform: ['flash']},
+        {ext:'m4a', type:'audio/mpeg', platform: ['flash']}
     ],
 
     applyMedia: function(destContainer) {

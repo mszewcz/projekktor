@@ -7,16 +7,12 @@
             {
                 ext: 'ism',
                 type: 'application/dash+xml',
-                platform: ['mse'],
-                streamType: ['http', 'httpVideo', 'httpVideoLive'],
-                drm: ['widevine', 'playready']
+                platform: ['mse']
             },
             {
                 ext: 'mpd',
                 type: 'application/dash+xml',
-                platform: ['mse'],
-                streamType: ['http', 'httpVideo', 'httpVideoLive'],
-                drm: ['widevine', 'playready']
+                platform: ['mse']
             }
         ],
 

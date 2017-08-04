@@ -26,13 +26,11 @@
         iLove: [{
             ext: 'm3u8',
             type: 'application/x-mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpVideo', 'httpVideoLive']
+            platform: ['mse']
         }, {
             ext: 'm3u8',
             type: 'application/vnd.apple.mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpVideo', 'httpVideoLive']
+            platform: ['mse']
         }],
 
         _hlsjs: null,
@@ -383,43 +381,35 @@
         iLove: [{
             ext: 'm3u8',
             type: 'application/vnd.apple.mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u',
             type: 'application/vnd.apple.mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u8',
             type: 'application/x-mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u',
             type: 'application/x-mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u8',
             type: 'audio/mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u',
             type: 'audio/mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u8',
             type: 'audio/x-mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }, {
             ext: 'm3u',
             type: 'audio/x-mpegurl',
-            platform: ['mse'],
-            streamType: ['http', 'httpAudio', 'httpAudioLive']
+            platform: ['mse']
         }],
         applyMedia: function (destContainer) {
             var ref = this,

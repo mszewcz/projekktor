@@ -16,12 +16,12 @@ $p.newModel({
     iosVersion: "5.0",
     nativeVersion: "1.0",
     iLove: [
-        {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo']},
-        {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo']},
-        {ext:'ogv', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
-        {ext:'webm',type:'video/webm', platform:['native'], streamType: ['http', 'httpVideo']},
-        {ext:'ogg', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']},
-        {ext:'anx', type:'video/ogg', platform:['native'], streamType: ['http', 'httpVideo']}
+        {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native']},
+        {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native']},
+        {ext:'ogv', type:'video/ogg', platform:['native']},
+        {ext:'webm',type:'video/webm', platform:['native']},
+        {ext:'ogg', type:'video/ogg', platform:['native']},
+        {ext:'anx', type:'video/ogg', platform:['native']}
     ],
 
     _eventMap: {
@@ -501,10 +501,10 @@ $p.newModel({
     modelId: 'AUDIO',
 
     iLove: [
-        {ext:'ogg', type:'audio/ogg', platform:['native'], streamType: ['http', 'httpAudio']},
-        {ext:'oga', type:'audio/ogg', platform:['native'], streamType: ['http', 'httpAudio']},
-        {ext:'mp3', type:'audio/mp3', platform:['ios', 'android', 'native'], streamType: ['http', 'httpAudio']},
-        {ext:'mp3', type:'audio/mpeg', platform:['ios', 'android', 'native'], streamType: ['http', 'httpAudio']}
+        {ext:'ogg', type:'audio/ogg', platform:['native']},
+        {ext:'oga', type:'audio/ogg', platform:['native']},
+        {ext:'mp3', type:'audio/mp3', platform:['ios', 'android', 'native']},
+        {ext:'mp3', type:'audio/mpeg', platform:['ios', 'android', 'native']}
     ],
 
     imageElement: {},
