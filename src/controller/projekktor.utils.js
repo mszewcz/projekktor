@@ -611,6 +611,64 @@
         regExpEsc: function (s) {
             return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         },
+        parseMimeType: function (mimeType) {
+            var type,
+                subtype,
+                params,
+                parameters,
+                tokenRegexp = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/,
+                contentTypeRegex = /^(.*?)\/(.*?)([\t ]*;.*)?$/, 
+                parameterPattern = /; *([!#$%&'*+.^_`|~0-9A-Za-z-]+) *= *("(?:[\u000b\u0020\u0021\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u000b\u0020-\u00ff])*"|[!#$%&'*+.^_`|~0-9A-Za-z-]+) */g,
+                parameterValueRegexp = /^(.*?)=(.*)$/,
+                quotedStringRegexp = /"(?:[\t \x21\x23-\x5B\x5D-\x7E\x80-\xFF]|(?:\\[\t \x21-\x7E\x80-\xFF]))*"/,
+                qescRegExp = /\\([\u000b\u0020-\u00ff])/g,
+                contentTypeMatch,
+                paramMatch,
+                keyValue,
+                key,
+                value;
+
+            if (!mimeType) {
+                return null;
+            }
+
+            contentTypeMatch = contentTypeRegex.exec(mimeType);
+
+            if (contentTypeMatch) {
+
+                type = contentTypeMatch[1];
+                subtype = contentTypeMatch[2];
+                params = contentTypeMatch[3];
+
+                if (tokenRegexp.test(type) && tokenRegexp.test(subtype)) {
+
+                    parameters = {};
+
+                    while ((paramMatch = parameterPattern.exec(params))) {
+                        key = paramMatch[1];
+                        value = paramMatch[2];
+
+                        if (quotedStringRegexp.test(value)) {
+                            value = value
+                                .substr(1, value.length - 2)
+                                .replace(qescRegExp, "$1");
+                        }
+
+                        if (key) {
+                            parameters[key.toLowerCase()] = value;
+                        }
+                    }
+                    return {
+                        type: type,
+                        subtype: subtype,
+                        parameters: parameters
+                    }
+
+                }
+                return null;
+            }
+            return null;
+        },
         /**
          * serializes a simple object to a JSON formatted string.
          * Note: stringify() is different from jQuery.serialize() which URLEncodes form elements
