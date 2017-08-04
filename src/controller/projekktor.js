@@ -2377,7 +2377,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                     }
                     data = $p.utils.cleanResponse(xhr.responseText, dataType);
 
-                    if (status !== 'error' && dataType !== 'jsonp') {
+                    if (status !== 'error') {
 
                         try {
                             dest[callback](data, xhr.responseText, auxConfig);
@@ -2387,15 +2387,13 @@ window.projekktor = window.$p = (function (window, document, $) {
                 error: function (data) {
 
                     // bypass jq 1.6.1 issues
-                    if (dest[callback] && dataType !== 'jsonp') {
+                    if (dest[callback]) {
                         dest[callback](false);
                     }
                 },
                 cache: true,
                 async: !this.getIsMobileClient(),
-                dataType: dataType,
-                jsonpCallback: (callback.substr(0, 1) !== '_') ? false : "projekktor('" + this.getId() + "')._jsonp" + callback,
-                jsonp: (callback.substr(0, 1) !== '_') ? false : 'callback'
+                dataType: dataType
             };
             ajaxConf.xhrFields = {
                 withCredentials: false

@@ -497,8 +497,6 @@
                         data = JSON.parse(data);
                     }
                     break;
-                case 'jsonp':
-                    break;
                 default:
                     data = responseText;
                     break;
