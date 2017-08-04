@@ -12,7 +12,7 @@
 
 $p.newModel({
 
-    browserVersion: "1",
+    browserVersion: "1.0",
     modelId: 'IMAGE',
     iLove: [
         {ext:'jpg', type:'image/jpeg', platform: ['browser'], streamType: ['http']},

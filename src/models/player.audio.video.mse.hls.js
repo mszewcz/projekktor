@@ -21,7 +21,7 @@
     $p.newModel({
 
         modelId: 'MSEVIDEOHLS',
-        mseVersion: '1',
+        mseVersion: '1.0',
 
         iLove: [{
             ext: 'm3u8',
@@ -377,7 +377,7 @@
 
         modelId: 'MSEAUDIOHLS',
 
-        mseVersion: '1',
+        mseVersion: '1.0',
         platform: 'mse',
 
         iLove: [{

@@ -12,9 +12,9 @@
 $p.newModel({
 
     modelId: 'VIDEO',
-    androidVersion: "4",
-    iosVersion: "5",
-    nativeVersion: "1",
+    androidVersion: "4.0",
+    iosVersion: "5.0",
+    nativeVersion: "1.0",
     iLove: [
         {ext:'mp4', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo']},
         {ext:'m4v', type:'video/mp4', platform:['ios', 'android', 'native'], streamType: ['http', 'httpVideo']},

@@ -23,7 +23,7 @@ $p.newModel({
 
     modelId: 'SILVERLIGHTVIDEO',
 
-    silverlightVersion: '3.0.0',
+    silverlightVersion: '3.0',
 
     platform: 'silverlight',
     //minPlatformVersion: "3.0",
