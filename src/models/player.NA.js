@@ -12,7 +12,7 @@
 $p.newModel({
     modelId: 'NA',
     iLove: [
-        {ext:'NaN', type:'none/none', platform: ['browser']}
+        {ext:'na', type:'none/none', platform: ['browser']}
     ],
     hasGUI: true,
 
