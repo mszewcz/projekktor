@@ -302,13 +302,13 @@ window.projekktor = window.$p = (function (window, document, $) {
         };
 
         this.getItemById = function (itemId) {
-            return $.grep(this.media, function (item) {
+            return this.media.find(function (item) {
                 return (itemId === item.id);
-            })[0] || null;
+            }) || null;
         };
 
         this.getItemsByCatName = function (catName) {
-            return $.grep(this.media, function (item) {
+            return this.media.filter(function (item) {
                 return (catName === item.cat);
             }) || [];
         };
