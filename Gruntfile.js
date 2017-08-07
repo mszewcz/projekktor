@@ -80,7 +80,7 @@ module.exports = function (grunt) {
           "src/controller/projekktor.plugininterface.js",
           "src/controller/projekktor.messages." + lang + ".js",
           "src/models/player.js",
-          "src/models/player.NA.js",
+          "src/models/player.na.js",
           "src/models/player.audio.video.js",
           "src/models/player.audio.video.hls.js",
           "src/models/player.playlist.js",
