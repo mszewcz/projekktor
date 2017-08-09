@@ -4228,18 +4228,18 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
         },
         models: {
-            value: {}
+            value: new Map()
         },
         newModel: {
             value: function (newModelDef, parentModelId) {
                 var models = this.models,
-                    mmap = this.mmap,
+                    mILove = this.cache.modelsILove,
                     modelId = newModelDef.modelId,
-                    parentModel = models.hasOwnProperty(parentModelId) ? models[parentModelId].prototype : {},
+                    parentModel = models.has(parentModelId) ? models.get(parentModelId).prototype : {},
                     newModel;
 
                 // skip if already exists
-                if (models.hasOwnProperty(modelId)) {
+                if (models.has(modelId)) {
                     return false;
                 }
 
@@ -4248,12 +4248,12 @@ window.projekktor = window.$p = (function (window, document, $) {
                 newModel.prototype = $.extend({}, parentModel, newModelDef);
 
                 // add new model to the models register
-                models[modelId] = newModel;
+                models.set(modelId, newModel);
 
                 // add model iLove definitions to the cache
                 newModelDef.iLove.forEach(function (iLoveObj) {
                     iLoveObj.model = modelId;
-                    mmap.push(iLoveObj);
+                    mILove.push(iLoveObj);
                 });
 
                 return true;
