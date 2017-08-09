@@ -3870,27 +3870,16 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this.getSupportedPlatformsGlobal = this._getSupportedPlatforms(true);
 
-                                // check if platform is enabled in config
-                                if ($.inArray(platform.toLowerCase(), platformsEnabled) > -1) {
-                                    result[st][platform].push(mimeType);
+        this.getPriorityForPlatform = function(){
+            var platforms;
 
-                                    if ($.inArray(platform, resultPlatforms) === -1) {
-                                        resultPlatforms.push(platform);
-                                    }
-                                }
-                            }
-                        });
+            return function(platform) {
+                if(!platforms){
+                    platforms = Array.from(this.getSupportedPlatforms());
                     }
-
-                    return true;
-                });
-            });
-
-            $p._compTableCache = result;
-            $p._platformTableCache = resultPlatforms;
-
-            return (getPlatforms) ? $p._platformTableCache : $p._compTableCache;
+                return platforms.indexOf(platform);
         };
+        }.call(this);
 
         this._readMediaTag = function (domNode) {
             var result = {},
