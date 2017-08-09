@@ -2184,10 +2184,10 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this.getCanPlay = function (mimeType, platforms) {
             var ref = this,
-                platform = (platform === undefined) ? this._testMediaSupport(true) : [platform];
+                pt = (platforms === undefined) ? Array.from(this.getSupportedPlatforms().keys()) : platforms;
 
-            return platform.some(function (pt) {
-                return ref._canPlay(mimeType, pt, streamType);
+            return pt.some(function (pt) {
+                return ref._canPlay(mimeType, pt);
             });
         };
 
