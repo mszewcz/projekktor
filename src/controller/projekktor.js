@@ -4129,7 +4129,8 @@ window.projekktor = window.$p = (function (window, document, $) {
                 return ref._init();
             },
             function (reason) {
-                console.warn('Init failed');
+                $p.utils.log('initPromises failed: ' + reason);
+                
             });
     }
 
