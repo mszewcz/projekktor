@@ -3811,52 +3811,39 @@ window.projekktor = window.$p = (function (window, document, $) {
          */
         this._getTypeFromFileExtension = function (url) {
 
-            var fileExt = '',
-                extRegEx = [],
-                extTypes = {},
-                extRegEx = [],
-                plt = null,
-                on = true,
-                result = 'none/none';
+            var regExp = $p.cache.fileExtensionsRegExp,
+                extTypes = $p.cache.fileExtensionMimeTypeMap, // file extension -> mimeType map
+                extMatch,
+                fileExt = 'na'; // file extension string, 'na' -> none/none
+
+            if(!regExp) {
+
+                regExp = function(){
+
+                    var extensions = [];
+
+                    // build regexp matching all known extensions
+                    extTypes.forEach(function(mimeType, ext) {
+                        extensions.push('\\\.' + ext);
+                    });
+
+                    // match last occurrence of the extension 
+                    return new RegExp('(' + extensions.join('|') + ')(?!' + extensions.join('|') + ')(?:[\?\/#&]{1}.*|$)', 'i');
+                }();
+
+                $p.cache.fileExtensionsRegExp = regExp;
+                        }
 
             if (typeof url === 'string') {
-                // build regex string and filter dublicate extensions:
-                for (var i in $p.mmap) {
 
-                    if ($p.mmap.hasOwnProperty(i)) {
-                        plt = $p.mmap[i].platform;
-                        on = true;
+                extMatch = url.match(regExp);
 
-                        for (var j = 0; j < plt.length; j++) {
-
-                            if (plt[j] != null) {
-
-                                if (this.getConfig('enable' + plt[j].toUpperCase() + 'Platform') === false || $.inArray(plt[j], this.getConfig('platforms')) === -1) {
-                                    on = false;
-                                }
-                            }
-                        }
-
-                        if (on === false) {
-                            continue;
-                        }
-                        extRegEx.push('\\\.' + $p.mmap[i].ext);
-                        extTypes[$p.mmap[i].ext] = $p.mmap[i];
-                    }
+                if (extMatch) {
+                    fileExt = extMatch[1].replace('.', '');
                 }
-                extRegEx = '^.*\.(' + extRegEx.join('|') + ")";
-
-
-                fileExt = url.match(new RegExp(extRegEx));
-                if (fileExt === null) {
-                    fileExt = 'NaN';
-                } else {
-                    fileExt = fileExt[1].replace('.', '');
-                }
-                result = extTypes.hasOwnProperty(fileExt) ? extTypes[fileExt].type : result;
             }
 
-            return result;
+            return Array.from(extTypes.get(fileExt))[0];
         };
 
         /* generates an array of mediatype=>playertype relations depending on browser capabilities */
