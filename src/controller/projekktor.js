@@ -338,42 +338,28 @@ window.projekktor = window.$p = (function (window, document, $) {
         };
 
         /**
-         * Checks if mimeType can be played using specified platform and streamType
+         * Checks if mimeType can be played using specified platform
          */
-        this._canPlay = function (mimeType, platform, streamType) {
+        this._canPlay = function (mimeType, platform) {
 
-            var ref = this,
-                tm = ref._testMediaSupport(), // returns $._compTableCache, streamType -> platform -> mimeType tree
-                st = (streamType !== undefined) ? streamType : 'http',
-                pt = (typeof platform === "string") ? platform.toUpperCase() : "BROWSER",
-                type = (typeof mimeType === "string") ? mimeType.toLowerCase() : undefined,
-                checkIn = tm[st];
-
-            // mimeType "none/none" is a special internal mimeType
-            // which is always supported
-            if (type === "none/none") {
-                return true;
-            }
+            var platformMimeTypeMap = this.getSupportedPlatforms(), 
+                pt = (typeof platform === "string") ? platform.toLowerCase() : "browser",
+                type = (typeof mimeType === "string") ? mimeType.toLowerCase() : undefined;
 
             // if mimeType is undefined we have nothing to look for
             if (type === undefined) {
                 return false;
             }
 
-            // streamType unknown
-            if (checkIn === undefined) {
+            // platform unsupported
+            if (!platformMimeTypeMap.has(pt)) {
                 return false;
             }
-            // no platform for specified streamType
-            else if (checkIn[pt] === undefined) {
-                return false;
-            }
+
             // everything fine
-            else {
-                // checkIn should be an array filled with mimeTypes 
-                // supported by selected platform
-                checkIn = checkIn[pt];
-            }
+            // check if specified platform is supporting mimeType we are looking for
+            return platformMimeTypeMap.get(pt).has(type);
+        };
 
             if (checkIn.indexOf(type) > -1) {
                 return true;
