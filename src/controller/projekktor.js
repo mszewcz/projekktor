@@ -4333,6 +4333,66 @@ window.projekktor = window.$p = (function (window, document, $) {
 
                 return true;
             }
+        },
+        /* generates:
+            platform -> mimeType map 
+            file extension -> mimeType map    
+        */
+        testMediaSupport: {
+            value: function () {
+
+                var platformMimeTypeMap,
+                    fileExtensionMimeTypeMap,
+                    mILove;
+
+                // process only once
+                if (!$p.cache.platformMimeTypeMap && !$p.cache.fileExtensionMimeTypeMap) {
+
+                    platformMimeTypeMap = new Map();
+                    fileExtensionMimeTypeMap = new Map();
+                    mILove = $p.cache.modelsILove || [];
+
+                    mILove.forEach(function (iLove) {
+
+                        var platforms = iLove.platform || [],
+                            modelId = iLove.model,
+                            mimeType = iLove.type,
+                            fileExt = iLove.ext;
+
+                        // create file extension -> mimeType map for later use
+                        if (!fileExtensionMimeTypeMap.has(fileExt)) {
+                            fileExtensionMimeTypeMap.set(fileExt, new Set());
+                        }
+                        // add mimeType to the set of supported for this platform
+                        fileExtensionMimeTypeMap.get(fileExt).add(mimeType);
+
+                        // test mimeType support for every platform specified in iLove
+                        platforms.forEach(function (platform) {
+
+                            // check if the platform is known to the player
+                            if ($p.platforms.hasOwnProperty(platform)) {
+
+                                // requested platform version is minPlatformVersion from platformsConfig or model prototype
+                                var reqPlatformVersion = String($p.models.get(modelId).prototype[platform + 'Version']);
+
+                                // perform version and config check:
+                                if ($p.utils.versionCompare($p.platforms[platform](mimeType), reqPlatformVersion)) {
+
+                                    if (!platformMimeTypeMap.has(platform)) {
+                                        platformMimeTypeMap.set(platform, new Set());
+                                    }
+                                    // add mimeType to the set of supported for this platform
+                                    platformMimeTypeMap.get(platform).add(mimeType);
+                                }
+                            }
+                        });
+                    });
+
+                    // cache values
+                    $p.cache.platformMimeTypeMap = platformMimeTypeMap;
+                    $p.cache.fileExtensionMimeTypeMap = fileExtensionMimeTypeMap;
+                }
+            }
         }
     });
 
