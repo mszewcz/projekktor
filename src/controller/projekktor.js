@@ -4239,8 +4239,12 @@ window.projekktor = window.$p = (function (window, document, $) {
         initPromises: {
             value: []
         },
-        mmap: {
-            value: []
+        cache: {
+            value: {
+                modelsILove: [],
+                platformMimeTypeMap: undefined,
+                fileExtensionMimeTypeMap: undefined
+            }
         },
         models: {
             value: {}
