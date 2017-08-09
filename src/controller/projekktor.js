@@ -4136,7 +4136,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                     }
                 }
             }
-            this._testMediaSupport();
+            
             this.setFile(this.config._playlist);
 
             return this;
@@ -4156,6 +4156,9 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         var arg = arguments[0],
             instances = [];
+
+        // test media support
+        $p.testMediaSupport();
 
         if (!arguments.length) {
             return projekktors[0] || null;
