@@ -2329,10 +2329,6 @@ window.projekktor = window.$p = (function (window, document, $) {
                     } catch (e) {}
                     dest[callback](data);
                 };
-            } else if (dataType.indexOf('jsonp') > -1) {
-                this['_jsonp' + callback] = function (data) {
-                    dest[callback](data);
-                };
             }
 
             if (dataType) {
