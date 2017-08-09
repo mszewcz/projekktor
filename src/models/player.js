@@ -169,7 +169,7 @@ var playerModel  = (function(window, document, $, $p){
                 $('#' + this.mediaElement.id).empty();
             } catch (e) {
             }
-            if (!this.pp.getIsMobileClient()) {
+            if (!$p.userAgent.isMobile) {
                 try {
                     $('#' + this.mediaElement.id).remove();
                 } catch (e) {

@@ -715,7 +715,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 onReady(this);
             }
 
-            if (!this.getIsMobileClient()) {
+            if (!$p.userAgent.isMobile) {
                 this.synchronizedHandler(this.getConfig('autoplay'));
             }
         };
@@ -2182,22 +2182,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             return [];
         };
 
-        this.getIsMobileClient = function (what) {
-
-            var uagent = navigator.userAgent.toLowerCase(),
-                mobileAgents = ['android', "windows ce", 'blackberry', 'palm', 'mobile'];
-
-            for (var i = 0; i < mobileAgents.length; i++) {
-
-                if (uagent.indexOf(mobileAgents[i]) > -1) {
-                    return (what) ? (mobileAgents[i].toUpperCase() === what.toUpperCase()) : true;
-                }
-            }
-
-            return false;
-        };
-
-        this.getCanPlay = function (mimeType, platform, streamType) {
+        this.getCanPlay = function (mimeType, platforms) {
             var ref = this,
                 platform = (platform === undefined) ? this._testMediaSupport(true) : [platform];
 
@@ -2392,7 +2377,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                     }
                 },
                 cache: true,
-                async: !this.getIsMobileClient(),
+                async: !$p.userAgent.isMobile,
                 dataType: dataType
             };
             ajaxConf.xhrFields = {
@@ -2523,7 +2508,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 this.getDC().addClass('notransitions');
             }
 
-            if (this.getIsMobileClient()) {
+            if ($p.userAgent.isMobile) {
                 this.getDC().addClass('mobile');
             }
         };
@@ -4158,7 +4143,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             this.setSize();
 
             // force autoplay false on mobile devices:
-            if (this.getIsMobileClient()) {
+            if ($p.userAgent.isMobile) {
                 this.config._autoplay = false;
                 this.config.fixedVolume = true;
             }
