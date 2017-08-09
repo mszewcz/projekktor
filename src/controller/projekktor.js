@@ -318,23 +318,18 @@ window.projekktor = window.$p = (function (window, document, $) {
          * able to play the MIME Type specified in the argument. 
          */
         this._canPlayOnPlatforms = function (mimeType) {
-            var platformsObj = {},
-                mmap = $p.mmap || [],
-                i, l;
+            var platformsSet = new Set(),
+                mILove = $p.cache.modelsILove || [];
 
-            if (mmap.length === 0) {
-                return [];
-            }
-
-            mmap.forEach(function (iLove, idx) {
+            mILove.forEach(function (iLove, idx) {
                 if (iLove.type === mimeType) {
-                    for (i = 0, l = iLove.platform.length; i < l; i++) {
-                        platformsObj[iLove.platform[i]] = true;
+                    iLove.platform.forEach(function(platform) {
+                        platformsSet.add(platform);
+                    });
                     }
-                }
             });
 
-            return Object.keys(platformsObj);
+            return platformsSet;
         };
 
         /**
