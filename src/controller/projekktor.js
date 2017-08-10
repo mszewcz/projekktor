@@ -824,7 +824,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             this.getItem().qualities = value;
         };
 
-        this.qualitiyChangeHandler = function (value) {
+        this.qualityChangeHandler = function (value) {
 
             this.setConfig({
                 playbackQuality: value
