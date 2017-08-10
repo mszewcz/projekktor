@@ -1,4 +1,4 @@
-(function(window, document, $, $p){
+(function (window, document, $, $p) {
 
     $p.utils = {
         imageDummy: function () {
@@ -21,11 +21,16 @@
             if (dest) {
 
                 dest.css({
-                    "-webkit-touch-callout": "none", /* iOS Safari */
-                    "-webkit-user-select": "none", /* Safari */
-                    "-khtml-user-select": "none", /* Konqueror HTML */
-                    "-moz-user-select": "none", /* Firefox */
-                    "-ms-user-select": "none", /* IE 11 / Edge */
+                    "-webkit-touch-callout": "none",
+                    /* iOS Safari */
+                    "-webkit-user-select": "none",
+                    /* Safari */
+                    "-khtml-user-select": "none",
+                    /* Konqueror HTML */
+                    "-moz-user-select": "none",
+                    /* Firefox */
+                    "-ms-user-select": "none",
+                    /* IE 11 / Edge */
                     "user-select": "none" /* Non-prefixed version */
                 });
             }
@@ -36,13 +41,15 @@
         },
         intersect: function (array1, array2) {
             var aA = Array.from(new Set(array1)),
-            setB = new Set(array2),
-            intersection = new Set(aA.filter(function (val) { return setB.has(val); }));
-            
+                setB = new Set(array2),
+                intersection = new Set(aA.filter(function (val) {
+                    return setB.has(val);
+                }));
+
             return Array.from(intersection);
         },
         roundNumber: function (value, decimals) {
-            return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+            return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
         },
         /* generates a random string of <length> */
         randomId: function (length) {
@@ -61,7 +68,7 @@
         },
         toAbsoluteURL: function (s) {
             var l = location,
-                    h, p, f, i;
+                h, p, f, i;
 
             if (s == null || s == '') {
                 return '';
@@ -80,7 +87,7 @@
             f = s.match(/\.\.\//g);
             if (f) {
                 s = s.substring(f.length * 3);
-                for (i = f.length; i--; ) {
+                for (i = f.length; i--;) {
                     p = p.substring(0, p.lastIndexOf('/'));
                 }
             }
@@ -122,10 +129,10 @@
         },
         toTimeObject: function (secs) {
             var hours = Math.floor(secs / (60 * 60)),
-                    divisor_for_minutes = secs % (60 * 60),
-                    minutes = Math.floor(divisor_for_minutes / 60),
-                    divisor_for_seconds = divisor_for_minutes % 60,
-                    seconds = Math.floor(divisor_for_seconds);
+                divisor_for_minutes = secs % (60 * 60),
+                minutes = Math.floor(divisor_for_minutes / 60),
+                divisor_for_seconds = divisor_for_minutes % 60,
+                seconds = Math.floor(divisor_for_seconds);
 
             return {
                 h: hours,
@@ -135,9 +142,9 @@
         },
         toTimeString: function (secs, noSecs) {
             var time = this.toTimeObject(secs),
-                    hours = time.h,
-                    minutes = time.m,
-                    seconds = time.s;
+                hours = time.h,
+                minutes = time.m,
+                seconds = time.s;
 
             if (hours < 10) {
                 hours = "0" + hours;
@@ -153,18 +160,18 @@
         embedPlugin: function (pluginName, destObj, config, shield, shrinkShield) {
 
             var src = config.src || '',
-                    attributes = config.attributes || {},
-                    parameters = config.parameters || {},
-                    initVars = config.initVars || {},
-                    initVarsArray = [],
-                    result = '',
-                    htmlAttributes = '',
-                    htmlObject = '',
-                    htmlObjectParams = '',
-                    htmlEmbed = '',
-                    htmlEmbedParams = '',
-                    dest = destObj,
-                    key;
+                attributes = config.attributes || {},
+                parameters = config.parameters || {},
+                initVars = config.initVars || {},
+                initVarsArray = [],
+                result = '',
+                htmlAttributes = '',
+                htmlObject = '',
+                htmlObjectParams = '',
+                htmlEmbed = '',
+                htmlEmbedParams = '',
+                dest = destObj,
+                key;
 
             // generate attributes for <embed> and <object> elements
             for (key in attributes) {
@@ -193,20 +200,20 @@
                 case 'flash':
                     // <object>
                     htmlObject =
-                            '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" ' +
-                            htmlAttributes + '>' +
-                            '<param name="movie" value="' + src + '" />' +
-                            '<param name="flashvars" value="' + initVarsArray.join('&amp;') + '" />' +
-                            htmlObjectParams;
+                        '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" ' +
+                        htmlAttributes + '>' +
+                        '<param name="movie" value="' + src + '" />' +
+                        '<param name="flashvars" value="' + initVarsArray.join('&amp;') + '" />' +
+                        htmlObjectParams;
 
                     // <embed>
                     htmlEmbed =
-                            '<embed type="application/x-shockwave-flash" pluginspage="//www.macromedia.com/go/getflashplayer" ' +
-                            htmlAttributes +
-                            htmlEmbedParams +
-                            'src="' + config.src + '" ' +
-                            'flashvars="' + initVarsArray.join('&') + '" ' +
-                            '></embed>';
+                        '<embed type="application/x-shockwave-flash" pluginspage="//www.macromedia.com/go/getflashplayer" ' +
+                        htmlAttributes +
+                        htmlEmbedParams +
+                        'src="' + config.src + '" ' +
+                        'flashvars="' + initVarsArray.join('&') + '" ' +
+                        '></embed>';
 
                     if (!document.all || window.opera) {
                         result = htmlEmbed;
@@ -219,12 +226,12 @@
 
                 case 'silverlight':
                     htmlObject =
-                            '<object data="data:application/x-silverlight-2," type="application/x-silverlight-2" ' +
-                            htmlAttributes + '>' +
-                            '<param name="source" value="' + src + '" />' +
-                            '<param name="initParams" value="' + initVarsArray.join(',') + '" />' +
-                            htmlObjectParams +
-                            '</object>';
+                        '<object data="data:application/x-silverlight-2," type="application/x-silverlight-2" ' +
+                        htmlAttributes + '>' +
+                        '<param name="source" value="' + src + '" />' +
+                        '<param name="initParams" value="' + initVarsArray.join(',') + '" />' +
+                        htmlObjectParams +
+                        '</object>';
 
                     result = htmlObject;
                     break;
@@ -240,17 +247,17 @@
 
             if (shield !== false) {
                 dest.append(
-                        $('<div/>').attr('id', attributes.id + '_cc')
-                        .css({
-                            width: (shrinkShield) ? '1px' : '100%',
-                            height: (shrinkShield) ? '1px' : '100%',
-                            backgroundColor: 'transparent',
-                            filter: 'alpha(opacity = 0.1)',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0
-                        })
-                        );
+                    $('<div/>').attr('id', attributes.id + '_cc')
+                    .css({
+                        width: (shrinkShield) ? '1px' : '100%',
+                        height: (shrinkShield) ? '1px' : '100%',
+                        backgroundColor: 'transparent',
+                        filter: 'alpha(opacity = 0.1)',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0
+                    })
+                );
             }
 
             return $('#' + attributes.id);
@@ -259,7 +266,7 @@
          * script that allows fetching a cached/uncached script
          * set options to {cache: true} if you want to cache requests
          */
-        getScript: function(url, options) {
+        getScript: function (url, options) {
             options = $.extend(options || {}, {
                 dataType: "script",
                 url: url
@@ -314,8 +321,8 @@
          */
         stretch: function (stretchStyle, target, owid, ohei, twf, thf) {
             var unit = "%",
-                    wid = owid,
-                    hei = ohei;
+                wid = owid,
+                hei = ohei;
 
             if (!target) {
                 return false;
@@ -333,11 +340,11 @@
             }
 
             var tw = (twf !== undefined) ? twf : target.attr("data-od-width"),
-                    th = (thf !== undefined) ? thf : target.attr("data-od-height"),
-                    xsc = (wid / tw),
-                    ysc = (hei / th),
-                    rw = wid,
-                    rh = hei;
+                th = (thf !== undefined) ? thf : target.attr("data-od-height"),
+                xsc = (wid / tw),
+                ysc = (hei / th),
+                rw = wid,
+                rh = hei;
 
             // fill area
             switch (stretchStyle) {
@@ -401,20 +408,20 @@
         // MIT License
         parseUri: function (str) {
             var o = {
-                strictMode: false,
-                key: ["source", "protocol", "authority", "userInfo", "user", "password", "host", "port", "relative", "path", "directory", "file", "query", "anchor"],
-                q: {
-                    name: "queryKey",
-                    parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+                    strictMode: false,
+                    key: ["source", "protocol", "authority", "userInfo", "user", "password", "host", "port", "relative", "path", "directory", "file", "query", "anchor"],
+                    q: {
+                        name: "queryKey",
+                        parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+                    },
+                    parser: {
+                        strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+                        loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+                    }
                 },
-                parser: {
-                    strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-                    loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
-                }
-            },
-            m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
-                    uri = {},
-                    i = 14;
+                m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+                uri = {},
+                i = 14;
 
             while (i--) {
                 uri[o.key[i]] = m[i] || "";
@@ -469,8 +476,8 @@
         },
         versionCompare: function (installed, required) {
             var a = installed.split('.'),
-                    b = required.split('.'),
-                    i = 0;
+                b = required.split('.'),
+                i = 0;
 
             for (i = 0; i < a.length; ++i) {
                 a[i] = Number(a[i]);
@@ -509,10 +516,10 @@
         detectPlugin: function (pluginName, mimeType, activeX, axDetect) {
 
             var nav = window.navigator,
-                    version = [0, 0, 0],
-                    description,
-                    i,
-                    ax;
+                version = [0, 0, 0],
+                description,
+                i,
+                ax;
 
             // Firefox, Webkit, Opera
             if (typeof (nav.plugins) != 'undefined' && typeof nav.plugins[pluginName] == 'object') {
@@ -530,8 +537,7 @@
                     if (ax) {
                         version = axDetect(ax);
                     }
-                } catch (e) {
-                }
+                } catch (e) {}
             }
             return version;
         },
@@ -543,7 +549,7 @@
          * @return (String) Da parsed string
          */
         parseTemplate: function (template, data, encode) {
-            if (data === undefined || data.length == 0 || typeof data != 'object'){
+            if (data === undefined || data.length == 0 || typeof data != 'object') {
                 return template;
             }
 
@@ -555,9 +561,9 @@
         },
         i18n: function (str, customData) {
             var regexp = /%{([^}]+)}/g,
-                    messages = $.extend({}, projekktorMessages, customData),
-                    text,
-                    msg = '';
+                messages = $.extend({}, projekktorMessages, customData),
+                text,
+                msg = '';
 
             while (text = regexp.exec(str)) {
                 msg = messages.hasOwnProperty(text[1]) ? messages[text[1]] : text[1];
@@ -583,7 +589,7 @@
                 params,
                 parameters,
                 tokenRegexp = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/,
-                contentTypeRegex = /^(.*?)\/(.*?)([\t ]*;.*)?$/, 
+                contentTypeRegex = /^(.*?)\/(.*?)([\t ]*;.*)?$/,
                 parameterPattern = /; *([!#$%&'*+.^_`|~0-9A-Za-z-]+) *= *("(?:[\u000b\u0020\u0021\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u000b\u0020-\u00ff])*"|[!#$%&'*+.^_`|~0-9A-Za-z-]+) */g,
                 quotedStringRegexp = /"(?:[\t \x21\x23-\x5B\x5D-\x7E\x80-\xFF]|(?:\\[\t \x21-\x7E\x80-\xFF]))*"/,
                 qescRegExp = /\\([\u000b\u0020-\u00ff])/g,
@@ -646,14 +652,15 @@
             var t = typeof (obj);
             if (t != "object" || obj === null) {
                 // simple data type
-                if (t == "string"){
+                if (t == "string") {
                     obj = '"' + obj + '"';
                 }
 
                 return String(obj);
             } else {
                 // recourse array or object
-                var n, v, json = [], arr = (obj && obj.constructor == Array);
+                var n, v, json = [],
+                    arr = (obj && obj.constructor == Array);
 
                 for (n in obj) {
                     if (obj.hasOwnProperty(n)) {
@@ -708,7 +715,6 @@
          * @param {boolean} capitalize - should be the first letter of prefixed string capitalized (to preserve camelCase)
          * @returns {string or array} - returns prefixed string or array of strings
          */
-
         addPrefix: function (obj, prefix, replace, capitalize) {
             if (this.is(obj, 'string') && this.is(prefix, 'string')) {
                 if (!!replace) {
