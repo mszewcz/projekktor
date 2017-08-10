@@ -41,33 +41,15 @@
                         });
             return dest;
         },
-        unique: function (dest) {
-            var uniqueArr = [];
-            for (var i = dest.length; i--; ) {
-                var val = dest[i];
-                if ($.inArray(val, uniqueArr) === -1) {
-                    uniqueArr.unshift(val);
-                }
-            }
-            return uniqueArr;
+        unique: function (arr) {
+            return Array.from(new Set(arr));
         },
         intersect: function (array1, array2) {
+            var aA = Array.from(new Set(array1)),
+            setB = new Set(array2),
+            intersection = new Set(aA.filter(function (val) { return setB.has(val); }));
 
-            var result = [];
-            $.each(array1, function (i) {
-                // ugly try catch mess thx to IE6-8
-                try {
-                    if ($.inArray(array2, array1[i]) > -1)
-                        result.push(array1[i]);
-                } catch (e) {
-                }
-                try {
-                    if ($.inArray(array1[i], array2) > -1)
-                        result.push(array1[i]);
-                } catch (e) {
-                }
-            });
-            return result;
+            return Array.from(intersection);
         },
         roundNumber: function (rnum, rlength) {
             if (rnum <= 0 || isNaN(rnum))
