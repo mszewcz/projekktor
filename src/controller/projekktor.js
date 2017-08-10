@@ -75,7 +75,7 @@ window.projekktor = window.$p = (function (window, document, $) {
          *
          * @param {array} items - playlist items to add
          * @param {number} [index=this.media.length] - index on which the items should be added
-         * @param {boolean} [replace=false] - should the items on specyfied index be replaced
+         * @param {boolean} [replace=false] - should the items on specified index be replaced
          * @returns {object} object with affected index, added and replaced (removed) items.
          * For example when nothing was added the object will look like: {added: [], removed: [], index: -1}
          */
@@ -105,7 +105,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 return result;
             }
 
-            // chcek if items are not the reference to the actual media array (for example when result of getPlaylist() is passed)
+            // check if items are not the reference to the actual media array (for example when result of getPlaylist() is passed)
             if (items === this.media) {
                 items = items.slice(); // clone
             }
@@ -503,7 +503,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 modelSets = typesModels['none/none'];
             } else {
 
-                // find highest priorized playback model
+                // find highest prioritized playback model
                 modelSets.sort(function (a, b) {
                     return a.level - b.level;
                 });
@@ -859,7 +859,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             this.setActiveItem(0, false);
 
-            // prevent player-hangup in sitiations where
+            // prevent player-hangup in situations where
             // playlist becomes virtually empty by applied filter rules (e.g. maxviews)
             if (!this.getNextItem()) {
                 //this.reset();
@@ -1123,7 +1123,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
         };
 
-        /* destoy, reset, break down to rebuild */
+        /* destroy, reset, break down to rebuild */
         this._detachplayerModel = function () {
 
             this._removeGUIListeners();
@@ -1423,7 +1423,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             return true;
         };
 
-        /* exit player from full viewport mode - "full (parent) window viewport" to be specyfic */
+        /* exit player from full viewport mode - "full (parent) window viewport" to be specific */
         this._exitFullViewport = function () {
 
             var iframeCfg = this.getConfig('iframe'),
@@ -1835,7 +1835,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
         };
         /**
-         * Basing on fullscreen prioritized array config, curently used platform and device abilities
+         * Basing on fullscreen prioritized array config, currently used platform and device abilities
          * it detects fullscreen type/mode to use.
          *
          * @returns string - full | mediaonly | viewport | none
@@ -1941,7 +1941,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             switch (apiType) {
                 case 'full':
                     // we need to check if the document fullscreenEnabled value is true or false
-                    // cause even if the fullscreen API feature is availble it could be blocked
+                    // cause even if the fullscreen API feature is available it could be blocked
                     // through browser configuration and/or <iframe> lack of allowfullscreen attribute
                     result = document[fsFullscreenEnabledPropName];
                     break;
@@ -2033,7 +2033,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             // if mediacontainer does not exist ...
             if (this.env.mediaContainer.length === 0 || !$.contains(document.body, this.env.mediaContainer[0])) {
 
-                // and there is a "display", injectz media container
+                // and there is a "display", injects media container
                 if (this.env.playerDom.find('.' + this.getNS() + 'display').length > 0) {
                     this.env.mediaContainer = $(document.createElement('div'))
                         .attr({
@@ -2252,7 +2252,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                     return true;
                 }
 
-                // check player-dim agains minHeight
+                // check player-dim against minHeight
                 if ((this.minHeight || 0) > hei && temp.minHeight <= hei) {
                     return true;
                 }
@@ -2550,7 +2550,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         /* queue ready */
         this.setVolume = function (vol, fadeDelay) {
 
-            var initalVolume = this.getVolume();
+            var initialVolume = this.getVolume();
 
             if (this.getConfig('fixedVolume') === true) {
                 return this;
@@ -2584,21 +2584,21 @@ window.projekktor = window.$p = (function (window, document, $) {
                     return this;
             }
 
-            if (vol > initalVolume && fadeDelay) {
+            if (vol > initialVolume && fadeDelay) {
 
-                if (vol - initalVolume > 0.03) {
+                if (vol - initialVolume > 0.03) {
 
-                    for (var i = initalVolume; i <= vol; i = i + 0.03) {
+                    for (var i = initialVolume; i <= vol; i = i + 0.03) {
                         this._enqueue('volume', i, fadeDelay);
                     }
                     this._enqueue('volume', vol, fadeDelay);
                     return this;
                 }
-            } else if (vol < initalVolume && fadeDelay) {
+            } else if (vol < initialVolume && fadeDelay) {
 
-                if (initalVolume - vol > 0.03) {
+                if (initialVolume - vol > 0.03) {
 
-                    for (var i = initalVolume; i >= vol; i = i - 0.03) {
+                    for (var i = initialVolume; i >= vol; i = i - 0.03) {
                         this._enqueue('volume', i, fadeDelay);
                     }
                     this._enqueue('volume', vol, fadeDelay);
@@ -3056,7 +3056,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 evt = (event.indexOf('.') > -1) ? event.split('.') : [event, '*'],
                 toKill = [];
 
-            // gather listners to remove
+            // gather listeners to remove
             for (var i = 0; i < len; i++) {
 
                 if (this.listeners[i] === undefined) {
@@ -3440,7 +3440,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                                     this.callback(cp);
                                 } catch (e) {}
 
-                                // remove cue point if it shoud be triggered only once
+                                // remove cue point if it should be triggered only once
                                 if (this.once) {
                                     player.removeCuePointById(this.id, this.item);
                                 }
@@ -3461,7 +3461,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                                     this.callback(cp);
                                 } catch (e) {}
 
-                                // remove cue point if it shoud be triggered only once
+                                // remove cue point if it should be triggered only once
                                 if (this.once) {
                                     player.removeCuePointById(this.id, this.item);
                                 }
@@ -4124,7 +4124,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         };
 
         var ref = this;
-        // wait with _init() untill all startup promises will be fulfilled
+        // wait with _init() until all startup promises will be fulfilled
         Promise.all($p.initPromises).then(function (result) {
                 return ref._init();
             },
