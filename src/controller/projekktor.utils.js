@@ -72,8 +72,9 @@
             var l = location,
                     h, p, f, i;
 
-            if (s == null || s == '')
+            if (s == null || s == '') {
                 return '';
+            }
 
             if (/^\w+:/.test(s)) {
                 return s;
@@ -112,15 +113,18 @@
          */
         toSeconds: function (t) {
             var s = 0.0;
-            if (typeof t != 'string')
+            if (typeof t != 'string') {
                 return t;
+            }
             if (t) {
                 var p = t.split(':');
-                if (p.length > 3)
+                if (p.length > 3) {
                     p = p.slice(0, 3);
+                }
 
-                for (var i = 0; i < p.length; i++)
+                for (var i = 0; i < p.length; i++) {
                     s = s * 60 + parseFloat(p[i].replace(',', '.'));
+            }
             }
 
             return parseFloat(s);
@@ -421,13 +425,15 @@
                     uri = {},
                     i = 14;
 
-            while (i--)
+            while (i--) {
                 uri[o.key[i]] = m[i] || "";
+            }
 
             uri[o.q.name] = {};
             uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
-                if ($1)
+                if ($1) {
                     uri[o.q.name][$1] = $2;
+                }
             });
 
             return uri;
@@ -442,8 +448,9 @@
 
             this.history = this.history || []; // store logs to an array for reference
             this.history.push(arguments);
-            if (window.console)
+            if (window.console) {
                 console.log(Array.prototype.slice.call(arguments));
+            }
         },
         cleanResponse: function (responseText, type) {
             var data = false;
@@ -490,20 +497,24 @@
                 a[2] = 0;
             }
 
-            if (a[0] > b[0])
+            if (a[0] > b[0]) {
                 return true;
-            if (a[0] < b[0])
+            }
+            if (a[0] < b[0]) {
                 return false;
-
-            if (a[1] > b[1])
+            }
+            if (a[1] > b[1]) {
                 return true;
-            if (a[1] < b[1])
+            }
+            if (a[1] < b[1]) {
                 return false;
-
-            if (a[2] > b[2])
+            }
+            if (a[2] > b[2]) {
                 return true;
-            if (a[2] < b[2])
+            }
+            if (a[2] < b[2]) {
                 return false;
+            }
 
             return true;
         },
@@ -547,8 +558,9 @@
          * @return (String) Da parsed string
          */
         parseTemplate: function (template, data, encode) {
-            if (data === undefined || data.length == 0 || typeof data != 'object')
+            if (data === undefined || data.length == 0 || typeof data != 'object'){
                 return template;
+            }
 
             for (var i in data) {
                 template = template.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
@@ -651,8 +663,9 @@
             var t = typeof (obj);
             if (t != "object" || obj === null) {
                 // simple data type
-                if (t == "string")
+                if (t == "string"){
                     obj = '"' + obj + '"';
+                }
 
                 return String(obj);
             } else {
