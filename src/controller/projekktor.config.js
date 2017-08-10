@@ -143,6 +143,12 @@ projekktorConfig.prototype = {
 
     cat:                            'clip',
 
+    /* How to select best media format to play. There are two modes available:
+        - 'platformsOrder'
+        - 'sourcesOrder'
+    */
+    prioritizeBy: 'platformsOrder', 
+
     /* URL to poster image -  will be overwritten by poster-attribute of the replaced media tag. */
     poster:                         null,
 
