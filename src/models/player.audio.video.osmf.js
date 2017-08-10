@@ -23,7 +23,9 @@ $p.newModel({
         {ext:'f4v', type:'video/mp4', platform: ['flash']},
         {ext:'mov', type:'video/quicktime', platform: ['flash']},
         {ext:'m4v', type:'video/mp4', platform: ['flash']},
-        {ext:'f4m', type:'application/f4m+xml', platform: ['flash']}
+        {ext:'f4m', type:'application/f4m+xml', platform: ['flash']},
+        {ext:'mp4', type:'video/rtmp+mp4', platform: ['flash']},
+        {ext:'flv', type:'video/rtmp+flv', platform: ['flash']}
     ],
 
     availableQualities: {},
@@ -134,7 +136,11 @@ $p.newModel({
      */
     _mimeTypeMap: {
         'audio/mpegurl': 'application/vnd.apple.mpegurl',
-        'audio/x-mpegurl': 'application/vnd.apple.mpegurl'
+        'audio/x-mpegurl': 'application/vnd.apple.mpegurl',
+        'video/rtmp+mp4' : 'video/mp4',
+        'video/rtmp+flv' : 'video/flv',
+        'audio/rtmp+mp4' : 'audio/mp4',
+        'audio/rtmp+mp3' : 'audio/mp3'
     },
 
     applyMedia: function(destContainer) {
@@ -886,6 +892,8 @@ $p.newModel({
     iLove: [
         {ext:'mp3', type:'audio/mp3', platform: ['flash']},
         {ext:'m4a', type:'audio/mp4', platform: ['flash']},
+        {ext:'mp3', type:'audio/rtmp+mp3', platform: ['flash']},
+        {ext:'m4a', type:'audio/rtmp+mp4', platform: ['flash']},
         {ext:'m4a', type:'audio/mpeg', platform: ['flash']}
     ],
 
