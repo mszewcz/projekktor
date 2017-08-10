@@ -50,10 +50,8 @@
 
             return Array.from(intersection);
         },
-        roundNumber: function (rnum, rlength) {
-            if (rnum <= 0 || isNaN(rnum))
-                return 0;
-            return Math.round(rnum * Math.pow(10, rlength)) / Math.pow(10, rlength);
+        roundNumber: function (value, decimals) {
+            return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
         },
         /* generates a random string of <length> */
         randomId: function (length) {
