@@ -176,7 +176,7 @@ $p.newModel({
                 quality: "high",
                 menu: false,
                 allowFullScreen: "true",
-                wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
+                wmode: 'opaque', 
                 seamlessTabbing: 'false',
                 bgcolor: '#000000'
             },
@@ -932,7 +932,7 @@ $p.newModel({
                 quality: "high",
                 menu: false,
                 allowFullScreen: "true",
-                wmode: ($p.utils.ieVersion() < 9) ? 'transparent' : 'opaque', // must be either transparent (ie) or opaque in order to allow HTML overlays
+                wmode: 'opaque', 
                 seamlessTabbing: 'false',
                 bgcolor: '#000000'
             },

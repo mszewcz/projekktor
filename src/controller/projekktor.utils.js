@@ -249,7 +249,7 @@
                         .css({
                             width: (shrinkShield) ? '1px' : '100%',
                             height: (shrinkShield) ? '1px' : '100%',
-                            backgroundColor: ($p.utils.ieVersion() < 9) ? '#000' : 'transparent',
+                            backgroundColor: 'transparent',
                             filter: 'alpha(opacity = 0.1)',
                             position: 'absolute',
                             top: 0,
@@ -286,19 +286,6 @@
             if (url) {
                 css.appendTo('head');
             }
-        },
-        ieVersion: function () {
-            var v = 3,
-                    div = document.createElement('div'),
-                    all = div.getElementsByTagName('i');
-
-            while (
-                    div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-                    all[0]
-                    )
-                ;
-
-            return v > 4 ? v : undefined;
         },
         /**
          * replaces {}-tags with parameter equialents
