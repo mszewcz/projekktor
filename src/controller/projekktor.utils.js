@@ -459,14 +459,8 @@
                 case 'html':
                 case 'xml':
                     // Create the xml document from the responseText string.
-                    if (window.DOMParser) {
                         data = new DOMParser()
                         data = data.parseFromString(responseText, "text/xml");
-                    } else { // Internet Explorer
-                        data = new ActiveXObject("Microsoft.XMLDOM");
-                        data.async = "false";
-                        data.loadXML(responseText);
-                    }
                     break;
 
                 case 'json':
