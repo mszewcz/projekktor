@@ -27,18 +27,17 @@
          * @param (Object) Object
          */
         blockSelection: function (dest) {
-            if (dest)
-                dest
-                        .css({
-                            "-khtml-user-select": "none",
-                            "-webkit-user-select": "none",
-                            "MozUserSelect": "none",
-                            "user-select": "none"
-                        })
-                        .attr('unselectable', 'on')
-                        .on("selectstart", function () {
-                            return false;
+            if (dest) {
+
+                dest.css({
+                    "-webkit-touch-callout": "none", /* iOS Safari */
+                    "-webkit-user-select": "none", /* Safari */
+                    "-khtml-user-select": "none", /* Konqueror HTML */
+                    "-moz-user-select": "none", /* Firefox */
+                    "-ms-user-select": "none", /* IE 11 / Edge */
+                    "user-select": "none" /* Non-prefixed version */
                         });
+            }
             return dest;
         },
         unique: function (arr) {
