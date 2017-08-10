@@ -59,10 +59,15 @@
         /* generates a random string of <length> */
         randomId: function (length) {
             var chars = "abcdefghiklmnopqrstuvwxyz",
-                    result = '';
-            for (var i = 0; i < length; i++) {
-                var rnum = Math.floor(Math.random() * chars.length);
-                result += chars.substring(rnum, rnum + 1);
+                charsLen = chars.length,
+                len = length || 8, // default to 8 char id
+                result = '',
+                r,
+                i;
+
+            for (i = 0; i < len; i++) {
+                r = Math.floor(Math.random() * charsLen);
+                result += chars.substr(r, 1);
             }
             return result;
         },
