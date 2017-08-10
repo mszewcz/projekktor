@@ -292,7 +292,7 @@
             }
         },
         /**
-         * replaces {}-tags with parameter equialents
+         * replaces {}-tags with parameter equivalents
          * @public
          * @param (String) Da string to get processed
          * @param (Object) Object holding data to fill in
@@ -311,14 +311,14 @@
          */
 
         /**
-         * stretches target to fit into specified dimensions keeping apsect ratio
+         * stretches target to fit into specified dimensions keeping aspect ratio
          * @public
          * @param (String) "fill" or "aspectratio" (default)
          * @param (Object) the Dom-Obj to scale
          * @param (Float) The maximum available width in px
          * @param (Float) The maximum available height in px
-         * @param (Float) A forced asumed with of the target object (optional)
-         * @param (Float) A forced asumed height of the target object (optional)
+         * @param (Float) A forced assumed with of the target object (optional)
+         * @param (Float) A forced assumed height of the target object (optional)
          * @return (Boolean) Returns TRUE if <target> was resized in any way, otherwise FALSE
          */
         stretch: function (stretchStyle, target, owid, ohei, twf, thf) {
@@ -545,7 +545,7 @@
             return version;
         },
         /**
-         * replaces {}-tags with parameter equialents
+         * replaces {}-tags with parameter equivalents
          * @public
          * @param (String) Da string to get processed
          * @param (Object) Object holding data to fill in
@@ -661,7 +661,7 @@
 
                 return String(obj);
             } else {
-                // recurse array or object
+                // recourse array or object
                 var n, v, json = [], arr = (obj && obj.constructor == Array);
 
                 for (n in obj) {
