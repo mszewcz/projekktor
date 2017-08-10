@@ -36,7 +36,7 @@
                     "-moz-user-select": "none", /* Firefox */
                     "-ms-user-select": "none", /* IE 11 / Edge */
                     "user-select": "none" /* Non-prefixed version */
-                        });
+                });
             }
             return dest;
         },
@@ -47,7 +47,7 @@
             var aA = Array.from(new Set(array1)),
             setB = new Set(array2),
             intersection = new Set(aA.filter(function (val) { return setB.has(val); }));
-
+            
             return Array.from(intersection);
         },
         roundNumber: function (value, decimals) {
@@ -124,7 +124,7 @@
 
                 for (var i = 0; i < p.length; i++) {
                     s = s * 60 + parseFloat(p[i].replace(',', '.'));
-            }
+                }
             }
 
             return parseFloat(s);
@@ -459,8 +459,8 @@
                 case 'html':
                 case 'xml':
                     // Create the xml document from the responseText string.
-                        data = new DOMParser()
-                        data = data.parseFromString(responseText, "text/xml");
+                    data = new DOMParser()
+                    data = data.parseFromString(responseText, "text/xml");
                     break;
 
                 case 'json':
@@ -594,12 +594,10 @@
                 tokenRegexp = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/,
                 contentTypeRegex = /^(.*?)\/(.*?)([\t ]*;.*)?$/, 
                 parameterPattern = /; *([!#$%&'*+.^_`|~0-9A-Za-z-]+) *= *("(?:[\u000b\u0020\u0021\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u000b\u0020-\u00ff])*"|[!#$%&'*+.^_`|~0-9A-Za-z-]+) */g,
-                parameterValueRegexp = /^(.*?)=(.*)$/,
                 quotedStringRegexp = /"(?:[\t \x21\x23-\x5B\x5D-\x7E\x80-\xFF]|(?:\\[\t \x21-\x7E\x80-\xFF]))*"/,
                 qescRegExp = /\\([\u000b\u0020-\u00ff])/g,
                 contentTypeMatch,
                 paramMatch,
-                keyValue,
                 key,
                 value;
 
