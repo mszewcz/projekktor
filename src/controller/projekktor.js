@@ -1056,7 +1056,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 if (!event._plugin) {
                     return;
                 }
-                event = 'plugin_' + event._plugin + $p.utils.capitalise(event._event.toUpperCase());
+                event = 'plugin_' + event._plugin + $p.utils.ucfirst(event._event.toUpperCase());
             }
 
             if (event !== 'time' && event !== 'progress' && event !== 'mousemove') {

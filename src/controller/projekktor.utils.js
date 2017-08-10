@@ -13,15 +13,6 @@
             }
         },
         /**
-         * Capitalizes a String
-         * @private
-         * @param (Object) da String
-         * @return da result String
-         */
-        capitalise: function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-        },
-        /**
          * blocks text selection attempts by the user for the given obj
          * @private
          * @param (Object) Object
