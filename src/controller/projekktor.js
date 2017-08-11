@@ -606,7 +606,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 platform: modelSet.platform,
                 platforms: currentMediaPlatforms,
                 qualities: $p.utils.intersect($p.utils.unique(_setQual), $p.utils.unique(qualities)),
-                mediaModel: modelSet.model || 'NA',
+                model: modelSet.model || 'NA',
                 errorCode: modelSet.errorCode || data.errorCode || 7,
                 viewcount: 0,
                 processed: true,
@@ -1673,7 +1673,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this.getItemCount = function () {
             // ignore NA dummy
-            return (this.media.length === 1 && this.media[0].mediaModel === 'na') ? 0 : this.media.length;
+            return (this.media.length === 1 && this.media[0].model === 'NA') ? 0 : this.media.length;
         };
 
         this.getItemId = function (idx) {
@@ -1713,7 +1713,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         this.getItem = function (idx) {
 
             // ignore NA dummy
-            if (this.media.length === 1 && this.media[0].mediaModel === 'na') {
+            if (this.media.length === 1 && this.media[0].model === 'NA') {
                 return false;
             }
 
@@ -2088,7 +2088,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         this.getModel = function () {
 
             try {
-                return this.getItem().mediaModel.toUpperCase();
+                return this.getItem().model;
             } catch (e) {
                 return "NA";
             }
@@ -2435,7 +2435,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
             
             // create player instance
-            var newModel = newItem.mediaModel.toUpperCase();
+            var newModel = newItem.model;
 
             // model does not exist or is faulty:
             if (!$p.models[newModel]) {
