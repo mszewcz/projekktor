@@ -54,19 +54,11 @@ module.exports = function (grunt) {
         cache: "dist/.sizecache.json"
       }
     },
-    polyfiller: {
-      build: {
-        options: {
-          features: ['Promise', 'PointerEvents', 'Collections', 'Array.from']
-        },
-        dest: 'dist/polyfills.js'
-      }
-    },
     build: {
       all: {
         dest: "dist/projekktor-" + version + ".js",
         src: [
-          "dist/polyfills.js",
+          "node_modules/core-js/client/shim.js",
           "src/controller/projekktor.js",
           "src/controller/projekktor.config.version.js",
           "src/controller/projekktor.config.js",
@@ -561,7 +553,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-compare-size");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-polyfiller');
   grunt.loadNpmTasks('grunt-lineending');
   grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -578,7 +569,6 @@ module.exports = function (grunt) {
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
     "clean",
-    "polyfiller",
     "build:*:*:" + defaults,
     "lineending",
     "uglify:all",
@@ -598,7 +588,6 @@ module.exports = function (grunt) {
   // Build preview
   grunt.registerTask("build-preview", [
     "clean",
-    "polyfiller",
     "build:*:*:" + defaults,
     "lineending",
     "uglify:all",

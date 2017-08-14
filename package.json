@@ -28,6 +28,7 @@
   "dependencies": {},
   "devDependencies": {
     "archiver": "1.x",
+    "core-js": "^2.5.0",
     "dashjs": "^2.5.0",
     "grunt": "^1.0.1",
     "grunt-browser-sync": "^2.2.0",
@@ -38,8 +39,9 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "1.x",
     "grunt-contrib-uglify": "3.x",
+    "grunt-contrib-watch": "^1.0.0",
     "grunt-lineending": "^1.0.0",
-    "grunt-polyfiller": "0.0.4",
+    "gzip-js": "^0.3.0",
     "hls.js": "^0.7.11",
     "jquery": "^3.2.1"
   },
