@@ -22,10 +22,12 @@ $p.newModel({
         destContainer.html('');
         this.displayReady();
 
-        this.sendUpdate( 'error', (this.media.file[0].src!=null && this.media.errorCode===7) ? 5 : this.media.errorCode );
+        this.sendUpdate( 'error', this.media.errorCode);
 
         if (!this.pp.getConfig('enableTestcard')) {
-            window.location.href = this.media.file[0].src;
+            if(this.media.file.length && this.media.file[0].src) {
+                window.location.href = this.media.file[0].src;
+            }
         }
     }
 });
