@@ -72,7 +72,6 @@ $p.newModel({
                 $('<video/>')
                 .attr({
                     "id": this.pp.getMediaId()+"_html",
-                    "poster": $p.utils.imageDummy(),
                     "loop": false,
                     "autoplay": false,
                     "preload": "none",
@@ -109,7 +108,7 @@ $p.newModel({
          * instead of <video> 'src' attribute.
          */
         this.mediaElement.attr('src', media[0].src);
-        this.mediaElement.attr('type', media[0].originalType );
+        this.mediaElement.attr('type', media[0].type );
 
         /*
          * Some of the mobile browsers (e.g. Android native browsers <= 4.2.x, Opera Mobile)
