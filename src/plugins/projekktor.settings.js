@@ -25,9 +25,6 @@ var projekktorSettings = (function () {
                 '<li data-pp-settings-func="tool_version" class="inactive">%{player info}</li>' +
                 '<li></li>' +
                 '</ul>' +
-                '<ul id="platform" class="ppsettingslist active">' +
-                '<li class="first label">%{platform}</li>' +
-                '</ul>' +
                 '<ul id="quality" class="ppsettingslist active">' +
                 '<li class="first label">%{quality}</li>' +
                 '</ul>' +
@@ -90,9 +87,6 @@ var projekktorSettings = (function () {
             this.dest = this.applyToPlayer($('<div/>').addClass('settingsmenu').html($p.utils.i18n(this.getConfig('settingsMenu'))));
             this.btn = this.applyToPlayer($('<div/>').addClass('settingsbtn'), 'btn');
             this.tool = this.applyToPlayer($('<div/>').addClass('tool'), 'toolwindow');
-
-            // the platforms hack
-            this.platformSet();
 
             this.setActive(this.btn, true);
 
@@ -195,11 +189,6 @@ var projekktorSettings = (function () {
             return true;
         },
 
-        platformCheck: function (value) {
-            if ($.inArray(value.toLowerCase(), this.pp.getPlatforms()) == -1) return false;
-            return true;
-        },
-
         /*****************************************************
          * Config SETTERS
          * **************************************************/
@@ -253,12 +242,12 @@ var projekktorSettings = (function () {
                     platformscfg: this.pp.config._platforms,
                     plugins: this.pp.config._plugins,
                     media: this.pp.media,
-                    compTable: this.pp._testMediaSupport(),
+                    compTable: this.pp.getSupportedPlatforms(),
                     rnd: $p.utils.randomId(22)
                 };
 
                 $.each(this.pp.config._platforms, function (key, value) {
-                    debugData[value + 'ver'] = $p.platforms[value.toUpperCase()]();
+                    debugData[value + 'ver'] = $p.platforms[value]();
                 });
 
                 this.tool.find((func == 'debug') ? '#result' : '#errortxt')
@@ -315,41 +304,6 @@ var projekktorSettings = (function () {
 
             if (this.pp.getPlaybackQuality() !== value) {
                 this.pp.setPlaybackQuality(value);
-            }
-
-            return true;
-        },
-
-        platformSet: function (val) {
-            var platforms = this.pp.getConfig('platforms'),
-                value = val || this.cookie('platform') || null,
-                tmp = platforms[0],
-                ref = this,
-                pos = ref.pp.getPosition(),
-                old = $.inArray(value, platforms);
-
-            if (value == 'auto') {
-                this.cookie('platform', false, true);
-                this.pp.reset(this.pp.getState('PLAYING') || this.pp.getState('PAUSED'));
-                return true;
-            }
-
-            if (value == null) return null; // bullshit
-            if (old == -1 || old === 0) return null; // bullshit or already is prefered
-
-
-            platforms[0] = value;
-            platforms[old] = tmp;
-            this.pp.config._platforms = platforms;
-
-
-            if (val != null) {
-                this.cookie('platform', value);
-                this.pp.reset(this.pp.getState('PLAYING') || this.pp.getState('PAUSED'));
-                setTimeout(function () {
-                    ref.pp.setPlayhead(pos);
-                }, 500);
-                return true;
             }
 
             return true;
@@ -421,9 +375,8 @@ var projekktorSettings = (function () {
                 pCount = 0,
                 menuOptions = [];
 
-            // setup quality and platforms menu for current playlist item
+            // setup quality menu for current playlist item
             this.setupQualityMenu();
-            this.setupPlatformMenu();
 
             $.each(this.dest.find("[" + this.getDA('func') + "]"), function () {
                 var func = $(this).attr(ref.getDA('func')).split('_');
@@ -495,14 +448,6 @@ var projekktorSettings = (function () {
             this.addMenuItems('quality', qualityList);
         },
 
-        setupPlatformMenu: function () {
-            // remove all the current quality menu items
-            this.removeMenuItems('platform');
-
-            // add new items
-            this.addMenuItems('platform', this.createPlatformList());
-        },
-
         createQualityList: function (qualities) {
             var qualityValues = qualities || this.pp.getPlaybackQualities(),
                 qualityList = '',
@@ -519,24 +464,6 @@ var projekktorSettings = (function () {
             qualityList += '<li data-' + this.pp.getNS() + '-settings-func="quality_auto"  class="auto inactive">%{auto}</li>';
 
             return $p.utils.i18n(qualityList);
-        },
-
-        createPlatformList: function (platforms) {
-            var platformValues = platforms || this.pp.getPlatforms(),
-                platformList = '',
-                val = '';
-
-            for (var i = 0; i < platformValues.length; i++) {
-                val = platformValues[i];
-
-                if (val != 'auto') {
-                    platformList += '<li data-' + this.pp.getNS() + '-settings-func="platform_' + val + '"  class="inactive">%{platform_' + val + '}</li>';
-                }
-            }
-
-            platformList += '<li data-' + this.pp.getNS() + '-settings-func="platform_auto"  class="auto inactive">%{auto}</li>';
-
-            return $p.utils.i18n(platformList);
         },
 
         addMenuItems: function (menuId, content, prepend) {
