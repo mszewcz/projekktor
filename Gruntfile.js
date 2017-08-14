@@ -249,7 +249,9 @@ module.exports = function (grunt) {
           {
             expand: true,
             flatten: true,
-            src: ['lib/jQuery/3.2.1/**'],
+            src: ['node_modules/jquery/dist/jquery.js',
+              'node_modules/jquery/dist/jquery.min.js',
+              'node_modules/jquery/dist/jquery.min.map'],
             dest: dest,
             filter: 'isFile'
           }
@@ -262,9 +264,15 @@ module.exports = function (grunt) {
       platforms: {
         files: [{
             expand: true,
-            cwd: 'lib/hls.js/dist/',
+            cwd: 'node_modules/hls.js/dist/',
             src: ['*.js', '*.map'],
             dest: 'platforms/mse/hls.js/'
+          },
+          {
+            expand: true,
+            cwd: 'node_modules/dashjs/dist/',
+            src: ['*.js', '*.map'],
+            dest: 'platforms/mse/dash.js/'
           },
           {
             expand: true,

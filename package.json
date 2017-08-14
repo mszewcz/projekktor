@@ -28,6 +28,7 @@
   "dependencies": {},
   "devDependencies": {
     "archiver": "1.x",
+    "dashjs": "^2.5.0",
     "grunt": "^1.0.1",
     "grunt-browser-sync": "^2.2.0",
     "grunt-bump": "^0.8.0",
@@ -39,7 +40,8 @@
     "grunt-contrib-uglify": "3.x",
     "grunt-lineending": "^1.0.0",
     "grunt-polyfiller": "0.0.4",
-    "gzip-js": "^0.3.0"
+    "hls.js": "^0.7.11",
+    "jquery": "^3.2.1"
   },
   "keywords": []
 }
