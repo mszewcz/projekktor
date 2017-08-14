@@ -200,7 +200,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
 
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this.mediaElement = $p.utils.embedPlugin('flash', destContainer, config, false);
         this._modelInitTimeoutId = setTimeout(function(){
             ref._modelInitTimeoutHandler();
         }, this._modelInitTimeout);
@@ -958,7 +958,7 @@ $p.newModel({
             }, this.pp.getConfig('platformsConfig').flash.initVars || {})
         };
 
-        this.mediaElement = $p.utils.embedPlugin(this.platform, destContainer, config, false);
+        this.mediaElement = $p.utils.embedPlugin('flash', destContainer, config, false);
         this._modelInitTimeoutId = setTimeout(function(){
             ref._modelInitTimeoutHandler();
         }, this._modelInitTimeout);
