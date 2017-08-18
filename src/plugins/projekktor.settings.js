@@ -272,7 +272,9 @@ var projekktorSettings = (function () {
             $(this.pp.getDC().find('.cancel')).click(function () {
                 $(this).off();
                 ref.setActive(ref.tool, false);
-                if (isPlaying) ref.pp.setPlay();
+                if (isPlaying) {
+                    ref.pp.setPlay();
+                }
                 return false;
             });
 
@@ -471,7 +473,9 @@ var projekktorSettings = (function () {
                 cont = content || false,
                 prep = prepend || false;
 
-            if (!(id && cont)) return false;
+            if (!(id && cont)) {
+                return false;
+            }
 
             var menu = this.dest.find('#' + id);
 
@@ -493,7 +497,9 @@ var projekktorSettings = (function () {
         removeMenuItems: function (menuId) {
             var id = menuId || false;
 
-            if (!id) return false;
+            if (!id) {
+                return false;
+            }
 
             return this.dest.find('#' + id).children().not('.label').remove();
         }
