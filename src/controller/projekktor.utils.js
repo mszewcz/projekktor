@@ -549,15 +549,21 @@
          * @return (String) Da parsed string
          */
         parseTemplate: function (template, data, encode) {
-            if (data === undefined || data.length == 0 || typeof data != 'object') {
-                return template;
+            var tpl = template,
+            i;
+
+            if (data === undefined || data.length == 0 || typeof data !== 'object') {
+                return tpl;
             }
 
-            for (var i in data) {
-                template = template.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
+            for (i in data) {
+                if(data.hasOwnProperty(i)){
+                    tpl = tpl.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
+                }
             }
-            template = template.replace(/%{(.*?)}/gi, '');
-            return template;
+            
+            tpl = tpl.replace(/%{(.*?)}/gi, '');
+            return tpl;
         },
         i18n: function (str, customData) {
             var regexp = /%{([^}]+)}/g,
