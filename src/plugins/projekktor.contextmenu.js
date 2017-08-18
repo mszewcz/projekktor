@@ -91,24 +91,27 @@ var projekktorContextmenu = (function () {
 
         displayReadyHandler: function () {
             var ref = this,
-                span = null;
+                span = null,
+                item;
 
             this.setInactive();
             this._dest.html('');
 
-            for (var i in this._items) {
-                span = $('<span/>')
-                    .data('plugin', i)
-                    .html(this._items[i].getContextTitle() || i);
+            for (item in this._items) {
+                if (this._items.hasOwnProperty(item)) {
+                    span = $('<span/>')
+                        .data('plugin', item)
+                        .html(ref._items[item].getContextTitle() || item);
 
-                try {
-                    this._items[i].setContextEntry(span);
-                } catch (e) {}
+                    try {
+                        ref._items[item].setContextEntry(span);
+                    } catch (ignore) { }
 
-                $('<li/>')
-                    .append(span)
-                    .data('plugin', i)
-                    .appendTo(this._dest)
+                    $('<li/>')
+                        .append(span)
+                        .data('plugin', item)
+                        .appendTo(ref._dest);
+                }
             }
         },
 
