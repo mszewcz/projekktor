@@ -54,11 +54,13 @@ var projekktorContextmenu = (function () {
                         yPos = (evt.pageY - parentOffset.top),
                         xPos = (evt.pageX - parentOffset.left);
 
-                    if (xPos + this._dest.width() > this.pp.getDC().width())
+                    if (xPos + this._dest.width() > this.pp.getDC().width()){
                         xPos = this.pp.getDC().width() - this._dest.width() - 2;
+                    }
 
-                    if (yPos + this._dest.height() > this.pp.getDC().height())
+                    if (yPos + this._dest.height() > this.pp.getDC().height()){
                         yPos = this.pp.getDC().height() - this._dest.height() - 2;
+                    }
 
                     this.setActive();
                     this._dest.css({

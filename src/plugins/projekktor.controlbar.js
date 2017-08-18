@@ -391,9 +391,15 @@ var projekktorControlbar = (function () {
                 this._active('play', false);
                 this._active('pause', false);
             } else {
-                if (state === 'PLAYING') this.drawPauseButton();
-                if (state === 'PAUSED') this.drawPlayButton();
-                if (state === 'IDLE') this.drawPlayButton();
+                if (state === 'PLAYING') {
+                    this.drawPauseButton();
+                }
+                if (state === 'PAUSED') {
+                    this.drawPlayButton();
+                }
+                if (state === 'IDLE') {
+                    this.drawPlayButton();
+                }    
             }
 
             // stop button
@@ -466,7 +472,9 @@ var projekktorControlbar = (function () {
 
                 for (var subset = 0; subset < elmCfg.length; subset++) {
 
-                    if (elmCfg[subset].on == null) continue;
+                    if (elmCfg[subset].on == null) {
+                        continue;
+                    }
 
                     $.each(elmCfg[subset].on, function (evtKey, eventName) {
 
@@ -621,7 +629,9 @@ var projekktorControlbar = (function () {
         },
 
         displayTime: function (pct, dur, pos) {
-            if (this.pp.getHasGUI()) return;
+            if (this.pp.getHasGUI()) {
+                return;
+            }
 
             var percent = ((pct || this.pp.getLoadPlaybackProgress() || 0) * 10) / 10,
                 duration = dur || this.pp.getDuration() || 0,
@@ -655,8 +665,9 @@ var projekktorControlbar = (function () {
 
                 // update numeric displays
                 for (var key in this.controlElements) {
-                    if (key == 'cb')
+                    if (key == 'cb') {
                         break;
+                    }
 
                     if (times[key]) {
                         $.each(this.controlElements[key], function () {
@@ -682,8 +693,12 @@ var projekktorControlbar = (function () {
 
             var ref = this;
 
-            if (this._vSliderAct == true) return;
-            if (volume == null) return;
+            if (this._vSliderAct == true) {
+                return;
+            }
+            if (volume == null) {
+                return;
+            }    
 
             var isVisible = this.cb.hasClass('active'),
                 ref = this,
@@ -701,7 +716,9 @@ var projekktorControlbar = (function () {
             this._active('vmarker', !fixed);
             this._active('vslider', !fixed);
 
-            if (fixed) return;
+            if (fixed) {
+                return;
+            }
 
             // make controls visible in order to allow dom manipulations
             // this.cb.stop(true, true).show();
@@ -731,8 +748,12 @@ var projekktorControlbar = (function () {
                 set = lis.length - Math.ceil((volume * 100) / lis.length);
 
             for (var i = 0; i <= lis.length; i++) {
-                if (i >= set) $(lis[i]).addClass('active');
-                else $(lis[i]).removeClass('active');
+                if (i >= set) {
+                    $(lis[i]).addClass('active');
+                }
+                else {
+                    $(lis[i]).removeClass('active');
+                }
             }
 
 
@@ -755,8 +776,9 @@ var projekktorControlbar = (function () {
 
         displayCuePoints: function (immediately) {
 
-            if (!this.getConfig('showCuePoints'))
+            if (!this.getConfig('showCuePoints')){
                 return;
+            }
 
             var ref = this,
                 prefix = this.pp.getNS(),
@@ -782,8 +804,9 @@ var projekktorControlbar = (function () {
                     .css('width', blipWidth),
                     blipEvents = ref.config.cuePointEvents.concat(this.blipEvents);
 
-                if (this.title != '')
+                if (this.title != '') {
                     blip.attr('title', this.title);
+                }
 
                 if (!immediately) {
                     this.addListener('unlock', function () {
@@ -846,10 +869,12 @@ var projekktorControlbar = (function () {
                 return a.minHeight - b.minHeight;
             });
             for (var i = qualsCfg.length; i--; i > 0) {
-                if ($.inArray(qualsCfg[i].key, qualsItm) > -1)
+                if ($.inArray(qualsCfg[i].key, qualsItm) > -1){
                     best.push(qualsCfg[i].key);
-                if (best.length > 1)
+                }
+                if (best.length > 1) {
                     break;
+                }
             }
 
             this.cb.addClass('qualities');
@@ -911,7 +936,9 @@ var projekktorControlbar = (function () {
         },
 
         scheduleModifiedHandler: function () {
-            if (this.pp.getState() === 'IDLE') return;
+            if (this.pp.getState() === 'IDLE') {
+                return;
+            }
             this.updateDisplay();
             this.displayTime();
             this.displayProgress();
@@ -959,8 +986,12 @@ var projekktorControlbar = (function () {
             this._noHide = false;
             this._vSliderAct = false;
 
-            if (!this.getConfig('controls')) return;
-            if (!this.pp.getFullscreenEnabled()) return;
+            if (!this.getConfig('controls')) {
+                return;
+            }
+            if (!this.pp.getFullscreenEnabled()) {
+                return;
+            }
 
             if (inFullscreen) {
                 this.cb.addClass('fullscreen');
@@ -1001,7 +1032,9 @@ var projekktorControlbar = (function () {
         },
 
         mousemoveHandler: function (evt) {
-            if (this.pp.getState('STARTING')) return;
+            if (this.pp.getState('STARTING')) {
+                return;
+            }
             this.showcb();
         },
 
@@ -1097,7 +1130,9 @@ var projekktorControlbar = (function () {
         openCloseClk: function (evt) {
             var ref = this;
             $($(evt.currentTarget).attr('class').split(/\s+/)).each(function (key, value) {
-                if (value.indexOf('toggle') === -1) return;
+                if (value.indexOf('toggle') === -1) {
+                    return;
+                }
                 ref.playerDom.find('.' + value.substring(6)).slideToggle('slow', function () {
                     ref.pp.setSize();
                 });
@@ -1125,15 +1160,21 @@ var projekktorControlbar = (function () {
 
         volumeBtnOut: function (evt, elm) {
             var ref = this;
-            if (evt.currentTarget != elm.get(0)) return;
-            if (evt.relatedTarget == elm.get(0)) return;
+            if (evt.currentTarget != elm.get(0)) {
+                return;
+            }    
+            if (evt.relatedTarget == elm.get(0)) {
+                return;
+            }
             this._outDelay = setTimeout(function () {
                 ref.setActive(ref.controlElements['volumePanel'], false);
             }, 100);
         },
 
         vsliderClk: function (evt) {
-            if (this._vSliderAct == true) return;
+            if (this._vSliderAct == true) {
+                return;
+            }
 
 
             var slider = $(this.controlElements['vslider']),
@@ -1154,7 +1195,9 @@ var projekktorControlbar = (function () {
         },
 
         scrubberShowTooltip: function (event) {
-            if (this.pp.getDuration() == 0) return;
+            if (this.pp.getDuration() == 0) {
+                return;
+            }
             clearTimeout(this._cTimer);
             this.setActive(this.controlElements['scrubbertip'], true)
         },
@@ -1166,7 +1209,9 @@ var projekktorControlbar = (function () {
         scrubberdragTooltip: function (evt) {
 
             // IE amd Chrome issues (mouseenter,mouseleave)
-            if (this.pp.getDuration() == 0) return;
+            if (this.pp.getDuration() == 0) {
+                return;
+            }
             this.setActive(this.controlElements['scrubbertip'], true)
 
             var slider = $(this.controlElements['scrubberdrag'][0]),
@@ -1187,8 +1232,9 @@ var projekktorControlbar = (function () {
             }*/
 
             for (var key in this.controlElements) {
-                if (key == 'cb')
+                if (key == 'cb') {
                     break;
+                }
 
                 if (times[key]) {
                     $.each(this.controlElements[key], function () {

@@ -52,9 +52,9 @@ var projekktorPluginInterface = (function (window, document, $, $p){
                 result = this.config[idx];
             }
 
-            if ($.isPlainObject(result))
+            if ($.isPlainObject(result)) {
                 result = $.extend(true, {}, result, this.config[idx]);
-            else if ($.isArray(result)) {
+            } else if ($.isArray(result)) {
                 result = $.extend(true, [], this.config[idx] || [], result || []);
             }
 
@@ -97,7 +97,9 @@ var projekktorPluginInterface = (function (window, document, $, $p){
          * @return (Object) the element
          */
         applyToPlayer: function (element, fu, visible) {
-            if (!element) return null;
+            if (!element) {
+                return null;
+            }
 
             var func = fu || 'container',
                 tmpClass = '',
@@ -217,9 +219,9 @@ var projekktorPluginInterface = (function (window, document, $, $p){
          * @return (Object) the element
          */
         cookie: function (key, value, ttl) {
-            if (document.cookie === undefined || document.cookie === false) return null;
-            if (key == null && value != null) return null;
-            if (this.pp.getConfig('cookieExpiry') == 0) return null;
+            if (document.cookie === undefined || document.cookie === false) {return null;}
+            if (key == null && value != null) {return null;}
+            if (this.pp.getConfig('cookieExpiry') == 0) {return null;}
 
             var t = new Date(),
                 result = null,
@@ -231,8 +233,9 @@ var projekktorPluginInterface = (function (window, document, $, $p){
 
             if (typeof storedData != 'object' || storedData == null) {
                 storedData = {};
-                if (key != null)
+                if (key != null){
                     storedData[key] = tmp;
+                }
             }
 
             // read cookie
