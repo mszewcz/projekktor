@@ -143,7 +143,6 @@ var projekktorSettings = (function () {
                 });
                 dest.addClass('on').removeClass('off');
             }
-            // set automode: delete cookie
         },
 
         /*****************************************************
@@ -292,15 +291,15 @@ var projekktorSettings = (function () {
 
         qualitySet: function (val) {
 
-            var value = val || this.cookie('quality') || null;
+            var value = val || this.pp.storage.restore('quality') || null;
 
-            if (value == 'auto' || !this.qualityCheck(value)) {
-                this.cookie('quality', false, true);
+            if (value === 'auto' || !this.qualityCheck(value)) {
+                this.pp.storage.remove('quality');
                 value = this.pp.getAppropriateQuality();
             }
 
             if (value !== null) {
-                this.cookie('quality', value);
+                this.pp.storage.save('quality', value);
             }
 
             if (this.pp.getPlaybackQuality() !== value) {
@@ -380,31 +379,34 @@ var projekktorSettings = (function () {
             this.setupQualityMenu();
 
             $.each(this.dest.find("[" + this.getDA('func') + "]"), function () {
-                var func = $(this).attr(ref.getDA('func')).split('_');
-
-                if (menuOptions[func[0]] == null) {
-                    menuOptions[func[0]] = [];
+                var currentElement = $(this),
+                func = currentElement.attr(ref.getDA('func')).split('_'),
+                menuName = func[0],
+                optionName = func[1],
+                storedValue = ref.pp.storage.restore(menuName);
+                
+                if (!menuOptions.hasOwnProperty(menuName)) {
+                    menuOptions[menuName] = [];
                 }
 
                 // check
-                if (!ref[func[0] + 'Check'](func[1]) && func[1] != 'auto') {
-                    $(this).addClass('inactive').removeClass('active');
+                if (!ref[menuName + 'Check'](optionName) && optionName !== 'auto') {
+                    currentElement.addClass('inactive').removeClass('active');
                     return true;
                 } else {
-                    $(this).addClass('active').removeClass('inactive');
+                    currentElement.addClass('active').removeClass('inactive');
                 }
 
-                menuOptions[func[0]].push(func[1]);
+                menuOptions[menuName].push(optionName);
 
-                // visual feedback custom settings
-                if (ref.cookie(func[0]) == func[1] || ((ref.cookie(func[0]) === false || ref.cookie(func[0]) == null) && func[1] == 'auto')) {
-                    $(this).addClass('on').removeClass('off');
+                if ((storedValue === optionName) || (storedValue === null && optionName === 'auto')) {
+                    currentElement.addClass('on').removeClass('off');
                 } else {
-                    $(this).addClass('off').removeClass('on');
+                    currentElement.addClass('off').removeClass('on');
                 }
 
-                $(this).click(function (evt) {
-                    ref.optionSelect($(this), func[0], func[1]);
+                currentElement.click(function (evt) {
+                    ref.optionSelect(currentElement, menuName, optionName);
                     evt.stopPropagation();
                     evt.preventDefault();
                     return false;
