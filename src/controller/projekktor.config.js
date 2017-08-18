@@ -226,12 +226,12 @@ projekktorConfig.prototype = {
 
     _playbackQualities:
     [
-        {key: 'small',  minHeight: 240,  minWidth: 240},
-        {key: 'medium',  minHeight: 360,  minWidth: [{ratio: 1.77, minWidth: 640}, {ratio: 1.33, minWidth: 480}]},
-        {key: 'large',  minHeight: 480,  minWidth: [{ratio: 1.77, minWidth: 853}, {ratio: 1.33, minWidth: 640}]},
-        {key: 'hd1080',  minHeight: 1080, minWidth: [{ratio: 1.77, minWidth: 1920}, {ratio: 1.33, minWidth: 1440}]},
-        {key: 'hd720',  minHeight: 720,  minWidth: [{ratio: 1.77, minWidth: 1280}, {ratio: 1.33, minWidth: 960}]},
-        {key: 'highres',  minHeight: 1081, minWidth: 0}
+        {key: 'small', minHeight: 240, minWidth: 240},
+        {key: 'medium', minHeight: 360, minWidth: [{ratio: 1.77, minWidth: 640}, {ratio: 1.33, minWidth: 480}]},
+        {key: 'large', minHeight: 480, minWidth: [{ratio: 1.77, minWidth: 853}, {ratio: 1.33, minWidth: 640}]},
+        {key: 'hd1080', minHeight: 1080, minWidth: [{ratio: 1.77, minWidth: 1920}, {ratio: 1.33, minWidth: 1440}]},
+        {key: 'hd720', minHeight: 720, minWidth: [{ratio: 1.77, minWidth: 1280}, {ratio: 1.33, minWidth: 960}]},
+        {key: 'highres', minHeight: 1081, minWidth: 0}
     ],
 
     /**
