@@ -23,7 +23,7 @@ projekktorPersistentStorage.prototype = (function () {
 
             if (window.$p.features.localstorage) {
                 try {
-                    window.localStorage.setItem(nskey, value);
+                    window.localStorage.setItem(nskey, JSON.stringify(value));
                     return true;
                 } catch (e) {
                     return false;
