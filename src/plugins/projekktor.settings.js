@@ -225,7 +225,7 @@ var projekktorSettings = (function () {
                 var topHref = this.pp.getIframe() && window.top.location.href;
 
                 var debugData = {
-                    version: this.pp.getPlayerVer(),
+                    version: this.pp.getVersion(),
                     message: data,
                     timestamp: new Date().getTime(),
                     userAgent: $p.userAgent,
@@ -237,7 +237,6 @@ var projekktorSettings = (function () {
                     duration: this.pp.getDuration(),
                     position: this.pp.getPosition(),
                     maxposition: this.pp.getMaxPosition(),
-                    platforms: this.pp.getPlatforms(),
                     platform: this.pp.getPlatform(),
                     platformscfg: this.pp.config._platforms,
                     plugins: this.pp.config._plugins,

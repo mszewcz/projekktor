@@ -23,7 +23,7 @@ var projekktorContextmenu = (function () {
             this._dest = $p.utils.blockSelection(this.applyToPlayer($('<ul/>')));
             this._items['player'] = {
                 getContextTitle: function () {
-                    return ref.getConfig('playerName') + ' V' + ref.pp.getPlayerVer();
+                    return ref.getConfig('playerName') + ' V' + ref.pp.getVersion();
                 },
                 open: function () {
                     if (ref.getConfig('playerHome') != null) {

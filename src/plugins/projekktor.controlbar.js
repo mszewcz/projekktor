@@ -530,7 +530,7 @@ var projekktorControlbar = (function () {
         },
 
         displayLogo: function () {
-            var logoConfig = this.pp.getItemConfig('logo') || this.getConfig('logo'),
+            var logoConfig = this.pp.getConfig('logo') || this.getConfig('logo'),
                 logoElement = this.controlElements['logo'],
                 img;
 

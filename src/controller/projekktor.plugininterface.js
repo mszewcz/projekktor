@@ -27,7 +27,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
         _init: function (pluginConfig) {
             this.config = $.extend(true, this.config, pluginConfig);
             if (this.reqVer != null) {
-                if (!$p.utils.versionCompare(this.pp.getPlayerVer(), this.reqVer)) {
+                if (!$p.utils.versionCompare(this.pp.getVersion(), this.reqVer)) {
                     alert("Plugin '" + this.name + "' requires Projekktor v" + this.reqVer + " or later! Please visit http://www.projekktor.com and get the most recent version.");
                     this.pluginReady = true;
                     return;
