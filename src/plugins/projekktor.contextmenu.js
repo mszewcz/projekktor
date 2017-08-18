@@ -113,7 +113,7 @@ var projekktorContextmenu = (function () {
         },
 
         popup: function (url, width, height) {
-            centeredY = window.screenY + (((window.outerHeight / 2) - (height / 2)));
+            var centeredY = window.screenY + (((window.outerHeight / 2) - (height / 2))),
             centeredX = window.screenX + (((window.outerWidth / 2) - (width / 2)));
             window.open(url, 'projekktor', 'height=' + height + ',width=' + width + ',toolbar=0,scrollbars=0,status=0,resizable=1,location=0,menuBar=0' + ',left=' + centeredX + ',top=' + centeredY).focus();
         }
