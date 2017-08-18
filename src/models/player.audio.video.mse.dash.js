@@ -7,12 +7,14 @@
             {
                 ext: 'ism',
                 type: 'application/dash+xml',
-                platform: ['mse']
+                platform: ['mse'],
+                drm: ['widevine', 'playready']
             },
             {
                 ext: 'mpd',
                 type: 'application/dash+xml',
-                platform: ['mse']
+                platform: ['mse'],
+                drm: ['widevine', 'playready']
             }
         ],
 
