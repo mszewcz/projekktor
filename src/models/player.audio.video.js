@@ -551,8 +551,9 @@ $p.newModel({
             var dest = this.imageElement.parent(),
             ref = this;
 
-            if (this.imageElement.attr('src') == this.getPoster('cover') || this.getPoster('poster'))
+            if (this.imageElement.attr('src') == this.getPoster('cover') || this.getPoster('poster')) {
                 return;
+            }
 
             this.imageElement.fadeOut('fast', function() {
                 $(this).remove();

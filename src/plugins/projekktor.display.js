@@ -228,23 +228,26 @@ var projekktorDisplay = (function () {
             }
             dest.css('cursor', 'auto');
             clearTimeout(this._cursorTimer);
-            if ("AWAKENING|ERROR|PAUSED".indexOf(this.pp.getState()) == -1)
+            if ("AWAKENING|ERROR|PAUSED".indexOf(this.pp.getState()) == -1) {
                 this._cursorTimer = setTimeout(function () {
                     dest.css('cursor', 'none');
                 }, 3000);
+            }
         },
 
         mousedownHandler: function (evt) {
             var ref = this;
 
-            if (($(evt.target).attr('id') || '').indexOf('_media') == -1 && !$(evt.target).hasClass(this.pp.getNS() + 'testcard'))
+            if (($(evt.target).attr('id') || '').indexOf('_media') == -1 && !$(evt.target).hasClass(this.pp.getNS() + 'testcard')){
                 return;
+            }
 
             clearTimeout(this._cursorTimer);
             this.display.css('cursor', 'auto');
 
-            if (evt.which != 1)
+            if (evt.which != 1){
                 return;
+            }
 
             switch (this.pp.getState()) {
                 case 'ERROR':
@@ -259,8 +262,9 @@ var projekktorDisplay = (function () {
                     return;
             }
 
-            if (this.pp.getHasGUI() === true)
+            if (this.pp.getHasGUI() === true){
                 return;
+            }
 
             this.displayClicks++;
 
@@ -270,11 +274,14 @@ var projekktorDisplay = (function () {
                 setTimeout(
                     function () {
                         if (ref.displayClicks == 1) {
-                            if (ref.pp.getState() == 'PLAYING')
+                            if (ref.pp.getState() == 'PLAYING'){
                                 ref.clickHandler('displayPlaying');
-                            else
+                            }
+                            else {
                                 ref.clickHandler('display');
-                        } else if (ref.displayClicks == 2) {
+                            }
+                        } 
+                        else if (ref.displayClicks == 2) {
                             ref.clickHandler('displayDbl');
                         }
                         ref.displayClicks = 0;
@@ -325,8 +332,9 @@ var projekktorDisplay = (function () {
                 return;
             }
 
-            if ((this.pp.getModel() === 'YTAUDIO' || this.pp.getModel() === 'YTVIDEO') && !this.pp.getState('IDLE'))
+            if ((this.pp.getModel() === 'YTAUDIO' || this.pp.getModel() === 'YTVIDEO') && !this.pp.getState('IDLE')){
                 instant = true;
+            }
 
             if (instant !== true && this.getConfig('bufferIconDelay') > 0) {
                 this.bufferDelayTimer = setTimeout(function () {
@@ -335,26 +343,35 @@ var projekktorDisplay = (function () {
                 return;
             }
 
-            if (this.buffIcn.hasClass('active')) return;
+            if (this.buffIcn.hasClass('active')) {
+                return;
+            }
             this.buffIcn.addClass('active').removeClass('inactive');
 
-            if (ref.buffIcnSprite === null) return;
+            if (ref.buffIcnSprite === null) {
+                return;
+            }
 
             var startOffset = (ref.config.spriteCountUp === true) ? 0 : (ref.config.spriteHeight + ref.config.spriteOffset) * (ref.config.spriteTiles - 1),
                 spriteOffset = startOffset;
             ref.buffIcnSprite.addClass('active').removeClass('inactive');
             (function bi() {
 
-                if (!ref.buffIcn.is(':visible')) return;
+                if (!ref.buffIcn.is(':visible')) {
+                    return;
+                }
                 ref.buffIcnSprite.css('backgroundPosition', '0px -' + spriteOffset + "px");
 
-                if (ref.config.spriteCountUp === true)
+                if (ref.config.spriteCountUp === true){
                     spriteOffset += ref.config.spriteHeight + ref.config.spriteOffset;
-                else
+                }
+                else {
                     spriteOffset -= ref.config.spriteHeight + ref.config.spriteOffset;
+                }
 
-                if (spriteOffset > (startOffset + ref.config.spriteHeight) * ref.config.spriteTiles || spriteOffset < ref.config.spriteOffset) spriteOffset = startOffset;
-
+                if (spriteOffset > (startOffset + ref.config.spriteHeight) * ref.config.spriteTiles || spriteOffset < ref.config.spriteOffset) {
+                    spriteOffset = startOffset;
+                }
 
                 setTimeout(bi, 60);
             })();

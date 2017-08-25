@@ -162,8 +162,9 @@ var playerModel  = (function(window, document, $, $p){
 
             this.removeListeners();
 
-            if (!this.getState('IDLE'))
+            if (!this.getState('IDLE')) {
                 this._setState('destroying');
+            }
 
             this.detachMedia();
 
@@ -200,8 +201,9 @@ var playerModel  = (function(window, document, $, $p){
                     this.pp._modelUpdateListener('error', value);
                     break;
                 case 'play':
-                    if (this.getState('ERROR'))
+                    if (this.getState('ERROR')) {
                         break;
+                    }
                     if (this.getState('IDLE')) {
                         this._setState('awakening');
                         break;
@@ -209,13 +211,15 @@ var playerModel  = (function(window, document, $, $p){
                     this.setPlay();
                     break;
                 case 'pause':
-                    if (this.getState('ERROR'))
+                    if (this.getState('ERROR')) {
                         break;
+                    }
                     this.setPause();
                     break;
                 case 'volume':
-                    if (this.getState('ERROR'))
+                    if (this.getState('ERROR')) {
                         break;
+                    }
                     this.setVolume(value);
                     break;
                 case 'stop':
@@ -647,12 +651,15 @@ var playerModel  = (function(window, document, $, $p){
             this.sendUpdate('qualityChange', this._quality);
         },
         endedListener: function (obj) {
-            if (this.mediaElement === null)
+            if (this.mediaElement === null) {
                 return;
-            if (this.media.maxpos <= 0)
+            }
+            if (this.media.maxpos <= 0) {
                 return;
-            if (this.getState() === 'STARTING')
+            }
+            if (this.getState() === 'STARTING') {
                 return;
+            } 
             this._setState('completed');
         },
         waitingListener: function (event) {
@@ -741,10 +748,12 @@ var playerModel  = (function(window, document, $, $p){
                 var target = $(event.currentTarget),
                     imgObj;
 
-                if (!imageObj.attr("data-od-width"))
+                if (!imageObj.attr("data-od-width")){
                     imageObj.attr("data-od-width", target[0].naturalWidth);
-                if (!imageObj.attr("data-od-height"))
+                }
+                if (!imageObj.attr("data-od-height")){
                     imageObj.attr("data-od-height", target[0].naturalHeight);
+                }
 
                 currentImageObj.remove();
 

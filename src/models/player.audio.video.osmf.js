@@ -303,10 +303,12 @@ $p.newModel({
     },
 
     OSMF_bufferingChange: function(state) {
-        if (state===true)
+        if (state===true){
             this.waitingListener();
-        else
+        }
+        else {
             this.canplayListener();
+        }
     },
 
     OSMF_bufferTimeChange: function(value) {
@@ -528,7 +530,9 @@ $p.newModel({
      */
     switchDynamicStreamIndex: function(index) {
         // return if the index is NaN or is the current index or is out of range
-        if((isNaN(index) || (index < 0 && this.getAutoDynamicStreamSwitch()) || (index === this.getCurrentDynamicStreamIndex() && !this.getAutoDynamicStreamSwitch()) || index > this.getMaxAllowedDynamicStreamIndex())) return false;
+        if((isNaN(index) || (index < 0 && this.getAutoDynamicStreamSwitch()) || (index === this.getCurrentDynamicStreamIndex() && !this.getAutoDynamicStreamSwitch()) || index > this.getMaxAllowedDynamicStreamIndex())) {
+            return false;
+        } 
 
         this._requestedDynamicStreamIndex = index;
 
@@ -783,10 +787,18 @@ $p.newModel({
     },
 
     endedListener: function (obj) {
-        if (this.mediaElement === null) return;
-        if (this.media.maxpos <= 0) return;
-        if (this.getState('STARTING')) return;
-        if (this._qualitySwitching===true) return;
+        if (this.mediaElement === null) {
+            return;
+        }
+        if (this.media.maxpos <= 0) {
+            return;
+        }
+        if (this.getState('STARTING')) {
+            return;
+        }
+        if (this._qualitySwitching === true) {
+            return;
+        }
         this._setState('completed');
     },
 
@@ -822,7 +834,9 @@ $p.newModel({
     },
 
     setQuality: function (quality) {
-        if (this._quality == quality) return;
+        if (this._quality == quality) {
+            return;
+        }
         this._quality = quality;
 
         // dynamic streams

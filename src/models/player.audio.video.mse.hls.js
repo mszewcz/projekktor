@@ -362,7 +362,9 @@
         },
 
         setQuality: function (quality) {
-            if (this._quality == quality) return;
+            if (this._quality == quality) {
+                return;
+            }
             this._quality = quality;
 
             // dynamic streams
