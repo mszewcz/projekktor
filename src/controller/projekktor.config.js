@@ -20,12 +20,6 @@ projekktorConfig.prototype = {
 
     _playerHome:                    'http://www.projekktor.com?via=context',
 
-    /* sets name of the cookie to store playerinformation in */
-    _cookieName:                    'projekktor',
-
-    /* days to keep cookie alive */
-    _cookieExpiry:                  356,
-
     /* Plugins to load on instance initialization, plugins are automatically extening the projekktorPluginInterface class.
     The order how the plugins are set here is important because they are added from z-index 0 to n one by one to the player DOM.
     As such it is usefull to add the "Display" plugin always first.

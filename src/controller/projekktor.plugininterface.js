@@ -210,73 +210,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
             }
             return false;
         },
-
-        /**
-         * set and get cookie-values for this specific plugin
-         *
-         * @public
-         * @key (String) variable name / key
-         * @value (Mixed) Value to store
-         * @ttl (Mixed) Time to live in seconds or "false" for instant deletion
-         * @return (Object) the element
-         */
-        cookie: function (key, value, ttl) {
-            if (document.cookie === undefined || document.cookie === false) {return null;}
-            if (key == null && value != null) {return null;}
-            if (this.pp.getConfig('cookieExpiry') == 0) {return null;}
-
-            var t = new Date(),
-                result = null,
-                cookieString = '',
-                tmp,
-                storedData;
-
-            tmp = storedData = JSON.parse(eval(result = new RegExp('(?:^|; )' + encodeURIComponent(this.getConfig('cookieName') + "_" + this.name) + '=([^;]*)').exec(document.cookie)) ? decodeURIComponent(result[1]) : null);
-
-            if (typeof storedData != 'object' || storedData == null) {
-                storedData = {};
-                if (key != null){
-                    storedData[key] = tmp;
-                }
-            }
-
-            // read cookie
-            if (key == null) {
-                return storedData;
-            }
-
-            if (arguments.length == 1) {
-                return storedData[key];
-            }
-
-            if (value != null) {
-                storedData[key] = value;
-            } else {
-                delete storedData[key];
-            }
-
-            if ($.isEmptyObject(storedData)) {
-                ttl = 0;
-                storedData = '';
-            } else {
-                storedData = $p.utils.stringify(storedData)
-            }
-
-            // set cookie:
-            t.setDate(t.getDate() + (ttl || this.getConfig('cookieExpiry', 0)));
-
-            cookieString = encodeURIComponent(this.getConfig('cookieName', 'projekktor') + "_" + this.name) + '=' +
-                encodeURIComponent(storedData) +
-                '; expires=' + ((ttl == false) ? "Thu, 01 Jan 1970 00:00:01 GMT" : t.toUTCString())
-
-            if (this.getConfig('cookieDomain', false)) {
-                cookieString += '; domain=' + options.domain;
-            }
-
-            document.cookie = cookieString;
-            return value;
-        },
-
+        
         // important
         eventHandler: function () {}
     };
