@@ -116,7 +116,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
             this._pageDOMContainer[func] = $("[" + this.getDA('host') + "='" + this.pp.getId() + "'][" + this.getDA('func') + "='" + func + "']");
             this._childDOMContainer[func] = this.playerDom.find("[" + this.getDA('func') + "='" + func + "'],." + this.getCN(tmpClass) + ":not([" + this.getDA('func') + "=''])");
 
-            // check if this element aleady exists somewhere on page
+            // check if this element already exists somewhere on page
             if (this._pageDOMContainer[func].length > 0) {
                 this._pageDOMContainer[func].removeClass('active').addClass('inactive');
 
@@ -193,7 +193,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
             return $(elm).hasClass('active');
         },
 
-        // triggered on plugin-instanciation
+        // triggered on plugin-instantiation
         initialize: function () {},
 
         isReady: function () {

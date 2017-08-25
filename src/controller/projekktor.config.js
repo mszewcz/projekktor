@@ -20,9 +20,9 @@ projekktorConfig.prototype = {
 
     _playerHome:                    'http://www.projekktor.com?via=context',
 
-    /* Plugins to load on instance initialization, plugins are automatically extening the projekktorPluginInterface class.
+    /* Plugins to load on instance initialization, plugins are automatically extending the projekktorPluginInterface class.
     The order how the plugins are set here is important because they are added from z-index 0 to n one by one to the player DOM.
-    As such it is usefull to add the "Display" plugin always first.
+    As such it is useful to add the "Display" plugin always first.
     */
     _plugins:                       ['display', 'controlbar', 'contextmenu', 'settings'],
 
@@ -116,12 +116,12 @@ projekktorConfig.prototype = {
     /* on "true" try to leave fullscreen on player "complete" */
     _leaveFullscreen:               true,
 
-    /* A prioritised list of available fullscreen modes:
+    /* A prioritized list of available fullscreen modes:
      * - full - use HTML5 fullscreen API if available - will push all the player controls and video into fullscreen mode
      * - mediaonly - will use native video player in fullscreen mode (no custom overlays or controls will be displayed)
-     * - viewport - this is 'pseudo fullscreen', it'll streach player with it's controls to the browser viewport size
+     * - viewport - this is 'pseudo fullscreen', it'll stretch the player with it's controls to the browser viewport size
      *
-     * If the array is empty or value is null then the fullscreen functionality will be disabled. If you prefere to use
+     * If the array is empty or value is null then the fullscreen functionality will be disabled. If you prefer to use
      * fullviewport mode even if the native fullscreen for <video> elements is available (e.g. iPad), just push 'viewport' before
      * 'mediaonly' into array like: ['full', 'viewport', 'mediaonly']
      */
@@ -272,8 +272,8 @@ projekktorConfig.prototype = {
     // if true, the player will add audio only streams to the list of available qualities
     dynamicStreamShowAudioOnlyQualities: false,
 
-    /* if testcard is disabled, the player will force a filedowload in case no native- or flashplayer
-    is available. oterhwise (enableTestcard=true) a testcard with an errormessage is shown in case of issues */
+    /* if testcard is disabled, the player will force a file download when no playback platform
+    is available. Otherwise (enableTestcard=true) a testcard with an error message is shown in case of issues */
     enableTestcard:                 true,
 
     /* if the scheduled playlist holds more than one item an "skipTestcard" is set to TRUE in case of an error

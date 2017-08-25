@@ -35,7 +35,7 @@ $p.newModel({
     _hardwareAcceleration: true,
     _qualitySwitching: false,
     _isDynamicStream: false,
-    _requestedDynamicStreamIndex: -1, // inited with "auto switch" value to indicate that no index was manually requested
+    _requestedDynamicStreamIndex: -1, // init with "auto switch" value to indicate that no index was manually requested
     _bufferTime: 0,
     _liveOffset: 2,
     _cbTimeout: null, // clear buffer timeout id
@@ -424,7 +424,7 @@ $p.newModel({
 
         this.qualityChangeListener();
 
-        // Flush the buffer only when the switch to the requested index was succesfully performed, otherwise the Strobe Media Playback will hang
+        // Flush the buffer only when the switch to the requested index was successfully performed, otherwise the Strobe Media Playback will hang
         // and stop reacting on manual quality switch requests. We never flush buffer if 'auto switch' (index < 0) was requested.
         if(this._requestedDynamicStreamIndex >= 0 && this.getCurrentDynamicStreamIndex() === this._requestedDynamicStreamIndex){
             this.clearBuffer();
@@ -443,7 +443,7 @@ $p.newModel({
      *
      * To show audio-only qualities set 'dynamicStreamShowAudioOnlyQualities' config option to true (default: false)
      *
-     * Note: Quality keys must have unique names, otherwise they will be overwriten.
+     * Note: Quality keys must have unique names, otherwise they will be overwritten.
      *
      * @returns {Array} - returns available dynamic streams quality keys in the projekktor's format
      */
@@ -522,7 +522,7 @@ $p.newModel({
      *
      * @returns {mixed} - if the requested index is invalid, is the same as current index or is out of valid range function returns false
      * otherwise it returns requested index value.
-     * Note: Always use strict comparison when using return value cause the lowes valid index could be 0.
+     * Note: Always use strict comparison when using return value cause the lowest valid index could be 0.
      *
      * Note:  If the media is paused, switching will not take place until after play resumes.
      */
@@ -545,7 +545,7 @@ $p.newModel({
             // auto dynamic stream switch must be set to false before any attempt of manual index switching
             this.setAutoDynamicStreamSwitch(false);
 
-            // if there is atempt to manual switch but after disabling auto switching current index is already the requested one (without that check the player tend to hang)
+            // if there is attempt to manual switch but after disabling auto switching current index is already the requested one (without that check the player tend to hang)
             if(index !== this.getCurrentDynamicStreamIndex()){
                 this.mediaElement[0].switchDynamicStreamIndex(index);
             }
@@ -720,7 +720,7 @@ $p.newModel({
 
         /**
          * Map:
-         * - OSFM MediaErrorCodes - http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/org/osmf/events/MediaErrorCodes.html
+         * - OSMF MediaErrorCodes - http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/org/osmf/events/MediaErrorCodes.html
          * - SMP StrobePlayerErrorCodes
          * to internal Projekktor error codes.
          */

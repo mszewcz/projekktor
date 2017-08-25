@@ -403,7 +403,7 @@ $p.newModel({
     _loopThroughTimeRanges: function(timeRanges) {
         var i = 0,
             l = timeRanges.length,
-            result = "lenght: " + l + "; ";
+            result = "length: " + l + "; ";
 
         for(; i<l; i++){
             result += "#" + i + " - ";
@@ -440,15 +440,15 @@ $p.newModel({
             np = newpos,
             relPos = true;
 
-        // IE9 somtimes raises INDEX_SIZE_ERR
+        // IE9 sometimes raises INDEX_SIZE_ERR
         (function ss(){
             try {
                 // if it's a DVR stream
                 if(ref._isDVR){
                     /*
-                     * iOS 7.1.2 Safari 7.0 behaviour is weird cause it takes absolute values
+                     * iOS 7.1.2 Safari 7.0 behavior is weird cause it takes absolute values
                      * when the OSX 10.9.4 Safari 7.0.5 takes relative values for seeking through timeline.
-                     * E.g. when we want to seek to the begining of the DVR window which duration is 60s
+                     * E.g. when we want to seek to the beginning of the DVR window which duration is 60s
                      * and the stream already plays for 120s on iOS Safari we must seek to 0 position, when
                      * on OSX Safari we must seek to 60 position. Same for seeking to the live point:
                      * on iOS Safari we must seek to the 60 position (duration of DVR window) but on

@@ -33,7 +33,7 @@ $p.fullscreenApi = (function () {
             /*
              * Events
              */
-            beginfullscreen: 'onwebkitbeginfullscreen', // webkit specyfic, NOTE: this event is unexposed
+            beginfullscreen: 'onwebkitbeginfullscreen', // webkit specific, NOTE: this event is unexposed
             // in the newest versions of WebKit based browsers, but it's still dispatched
             endfullscreen: 'onwebkitendfullscreen' // ditto
         },

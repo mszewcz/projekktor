@@ -64,7 +64,7 @@ var projekktorDisplay = (function () {
         },
 
 
-        /* triggered on plugin-instanciation */
+        /* triggered on plugin-instantiation */
         initialize: function () {
             // create the display container itself
             this.display = this.applyToPlayer($('<div/>'));

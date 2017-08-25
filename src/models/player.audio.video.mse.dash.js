@@ -201,7 +201,7 @@
          * Otherwise load DashJS lib from URL.
          * 
          * @param {function|null} cb
-         *        {function} Callback function called after successufll load of DashJS lib
+         *        {function} Callback function called after successful load of DashJS lib
          *                   Usage: `cb(dashjs)`
          *                  `dashjs` - reference to the DashJS lib
          *        {null} Callback function not specified.

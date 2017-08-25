@@ -513,7 +513,7 @@ var playerModel  = (function(window, document, $, $p){
                     }
                     /*
                      * When seekable.start(0) is >0 the seekable.start is probably set properly (e.g. Safari 7.0.5 on OS X 10.9.4)
-                     * so we could use it to derermine DVR window duration
+                     * so we could use it to determine DVR window duration
                      */
                     if (obj.seekable.start(0) > 0) {
                         duration = parseFloat((obj.seekable.end(0) - obj.seekable.start(0)).toFixed(2));
@@ -594,7 +594,7 @@ var playerModel  = (function(window, document, $, $p){
         },
         progressListener: function (obj, evt) {
 
-            // we prefer timeranges but keep catching "progress" events by default
+            // we prefer time ranges but keep catching "progress" events by default
             // for historical and compatibility reasons:
             if (this.mediaElement instanceof jQuery) { // fix this - make sure all instances are jquery objects
                 if (typeof this.mediaElement.get(0).buffered === 'object') {

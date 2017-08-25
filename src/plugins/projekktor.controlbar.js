@@ -268,7 +268,7 @@ var projekktorControlbar = (function () {
 
             /* cuepoints */
             showCuePoints: true,
-            showCuePointsImmediately: true, // should the cuepoint be displayed immediately after curent playlist item duration is known or only if the relevant part of the playlist item is buffered and ready to be played
+            showCuePointsImmediately: true, // should the cuepoint be displayed immediately after current playlist item duration is known or only if the relevant part of the playlist item is buffered and ready to be played
             showCuePointGroups: [],
             minCuePointSize: '2px', // minimal cuepoint size
             cuePointEvents: [
@@ -286,7 +286,7 @@ var projekktorControlbar = (function () {
             ],
             /**
              * displays logo on the controlbar
-             * You can set the logo config globally for all playlist items in the controllbar plugin config or locally for every playlist item.
+             * You can set the logo config globally for all playlist items in the controlbar plugin config or locally for every playlist item.
              * Playlist item config overwrites the global config.
              */
             logo: {
@@ -351,7 +351,7 @@ var projekktorControlbar = (function () {
 
             // apply template string if required:
             if (templateString) {
-                // replace tags by class derictive
+                // replace tags by class directive
                 var tagsUsed = templateString.match(/\%{[a-zA-Z_]*\}/gi);
                 if (tagsUsed != null) {
                     $.each(tagsUsed, function (key, value) {
