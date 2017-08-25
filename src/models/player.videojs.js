@@ -13,7 +13,7 @@
  */
 
 (function(window, document, $, $p){
-
+    
     "use strict";
 
     $p.newModel({
@@ -254,7 +254,7 @@
                         break;
                 }
             } catch (e) {
-                console.log(e);
+                $p.utils.log(error, e);
             }
         },
 
