@@ -318,12 +318,12 @@ var projekktorControlbar = (function () {
                 classPrefix = this.pp.getNS();
 
             // check if ANY control element already exists
-            for (var i in this.controlElementsConfig) {
-                if (playerHtml.match(new RegExp(classPrefix + i, 'gi'))) {
+            Object.keys(this.controlElementsConfig).some(function (controlElementName) {
+                if (playerHtml.match(new RegExp(classPrefix + controlElementName, 'gi'))) {
                     useTemplate = false;
-                    break;
+                    return true;
                 }
-            }
+            });
 
             if (useTemplate) {
                 this.cb = this.applyToPlayer($(('<div/>')).addClass('controls'));
@@ -333,10 +333,10 @@ var projekktorControlbar = (function () {
             }
 
             // find (inter)active elements
-            for (var i in this.controlElementsConfig) {
-                this.controlElements[i] = $(this.playerDom).find('.' + classPrefix + i);
-                $p.utils.blockSelection($(this.controlElements[i]));
-            }
+            Object.keys(this.controlElementsConfig).forEach(function (controlElementName) {
+                ref.controlElements[controlElementName] = $(ref.playerDom).find('.' + classPrefix + controlElementName);
+                $p.utils.blockSelection($(ref.controlElements[controlElementName]));
+            });
 
             this.addGuiListeners();
             this.showcb();
