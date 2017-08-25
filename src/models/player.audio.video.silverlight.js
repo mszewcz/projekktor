@@ -122,8 +122,7 @@ $p.newModel({
     },
 
     applySrc: function() {
-        var ref = this,
-            sources = this.getSource();
+        var sources = this.getSource();
 
         try {
             this._silverlightApi.setSrc(sources[0].src);

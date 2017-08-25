@@ -222,8 +222,6 @@ $p.newModel({
     loadProgressUpdate: function () {},
 
     applyMediaConfig: function() {
-        var ref = this,
-            sources = this.getSource();
 
         this.streamType = this.pp.getConfig('streamType') || 'http';
 

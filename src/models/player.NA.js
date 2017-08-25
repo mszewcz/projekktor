@@ -19,7 +19,6 @@ $p.newModel({
     hasGUI: true,
 
     applyMedia: function(destContainer) {
-        var ref = this;
 
         destContainer.html('');
         this.displayReady();

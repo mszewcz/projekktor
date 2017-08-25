@@ -118,7 +118,6 @@ var playerModel  = (function(window, document, $, $p){
             this.pp._modelUpdateListener('displayReady');
         },
         start: function () {
-            var ref = this;
 
             if (this.mediaElement == null && this.modelId !== 'PLAYLIST') {
                 return;
