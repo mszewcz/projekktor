@@ -3,8 +3,8 @@
  * projekktor zwei
  * http://www.projekktor.com
  *
- * Copyright 2010, 2011, Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
- * Copyright 2014-2015 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
+ * Copyright 2010-2014, Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
+ * Copyright 2014-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  *
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
