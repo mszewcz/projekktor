@@ -12,6 +12,8 @@
 
 window.projekktor = window.$p = (function (window, document, $) {
 
+    "use strict";
+
     var projekktors = [];
 
     // this object is returned in case multiple player's are requested
@@ -3735,13 +3737,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
             this._processing = true;
 
-            (function () {
-                try {
-                    modelReady = ref.playerModel.getIsReady();
-                } catch (e) {}
-                modelReady = true;
-
-                if (modelReady) {
+            (function pq() {
                     try {
 
                         var msg = ref._queue.shift();
@@ -3769,12 +3765,8 @@ window.projekktor = window.$p = (function (window, document, $) {
                         ref._processing = false;
                         return;
                     }
-                    arguments.callee();
-
-                    return;
-                }
-                // setTimeout(arguments.callee,100);
-            }());
+                pq();
+            })();
         };
 
         /********************************************************************************************
