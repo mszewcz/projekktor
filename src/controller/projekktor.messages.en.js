@@ -34,12 +34,9 @@ return {
     "platform_native": "HTML5",
     "platform_native_info": "Get one of the modern web browsers: <ul><li>Chrome</li><li>Edge</li><li>Firefox</li><li>Opera</li></ul>",
 
-    "platform_vlc": "VLC Plugin",
-    "platform_vlc_info": "",
-
     // MSE
     "platform_mse": "MSE",
-    "pplatform_mse_info": "",
+    "platform_mse_info": "",
 
     // settings
     'ok': 'OK',
