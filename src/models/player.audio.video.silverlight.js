@@ -73,7 +73,7 @@ $p.newModel({
             projekktor(ppId).playerModel.silverlightReadyListener(id);
         };
 
-        window['projekktorSilverlightEventListener' + ppId] = function(id, eventName, values)  {
+        window['projekktorSilverlightEventListener' + ppId] = function(id, eventName, values) {
             projekktor(ppId).playerModel.silverlightEventListener(id, eventName, values);
         };
 
@@ -167,7 +167,7 @@ $p.newModel({
         clearTimeout(this._modelInitTimeoutId);
 
         if(!this.mediaElement){
-            this.mediaElement = $('#' +  mediaId); // IE 10 sucks
+            this.mediaElement = $('#' + mediaId); // IE 10 sucks
         }
 
         if (this.mediaElement !== null && (this.getState('AWAKENING') || this.getState('STARTING'))) {
@@ -276,7 +276,7 @@ $p.newModel({
             projekktor(ppId).playerModel.silverlightReadyListener(id);
         };
 
-        window['projekktorSilverlightEventListener' + ppId] = function(id, eventName, values)  {
+        window['projekktorSilverlightEventListener' + ppId] = function(id, eventName, values) {
             projekktor(ppId).playerModel.silverlightEventListener(id, eventName, values);
         };
 

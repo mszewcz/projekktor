@@ -320,7 +320,7 @@ $p.newModel({
     getMediaStatus: function(name){
         if($p.utils.logging){
             var m = this.mediaElement[0],
-                networkState  = m.networkState,
+                networkState = m.networkState,
                 readyState = m.readyState,
                 error = m.error,
                 pos = m.currentTime,

@@ -250,7 +250,7 @@ $p.newModel({
             value = arguments[0][2];
 
         if(!this.mediaElement){
-            this.mediaElement = $('#' +  mediaId); // IE 10 sucks
+            this.mediaElement = $('#' + mediaId); // IE 10 sucks
         }
 
         switch(event) {
@@ -703,7 +703,7 @@ $p.newModel({
                            ', max allowed index: ', this.getMaxAllowedDynamicStreamIndex(),
                            ', num streams: ', this.getNumDynamicStreams(),
                            ', auto:', this.getAutoDynamicStreamSwitch(),
-                           ', is switching:',  this.getDynamicStreamSwitching()
+                           ', is switching:', this.getDynamicStreamSwitching()
                         );
             var streams = this.getStreamItems();
             for (var index in streams) {

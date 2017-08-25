@@ -7,7 +7,7 @@
  * under GNU General Public License
  * http://www.filenew.org/projekktor/license/
  */
-var playerModel  = (function(window, document, $, $p){
+var playerModel = (function(window, document, $, $p){
 
     "use strict";
 
