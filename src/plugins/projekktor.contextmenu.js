@@ -6,6 +6,8 @@
  */
 var projekktorContextmenu = (function () {
 
+    "use strict";
+
     function projekktorContextmenu() {}
 
     projekktorContextmenu.prototype = {

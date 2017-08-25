@@ -1,5 +1,7 @@
 (function (window, document, $, $p) {
 
+    "use strict";
+
         var drmSystems = {
                 widevine: ['com.widevine.alpha'],
                 playready: ['com.microsoft.playready', 'com.youtube.playready'],

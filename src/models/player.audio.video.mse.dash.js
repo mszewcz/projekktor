@@ -1,5 +1,7 @@
 (function(window, document, $, $p){
 
+    "use strict";
+
     $p.newModel({
         modelId: 'MSEVIDEODASH',
 

@@ -1,4 +1,6 @@
 var projekktorMessages = (function(window, document, $, $p){
+
+    "use strict";
     
     return {
 

@@ -9,6 +9,8 @@
 */
 (function(window, document, $, $p){
     
+    "use strict";
+    
 $p.newModel({
     modelId: 'VIDEOHLS',
     androidVersion: '4.1',

@@ -14,6 +14,8 @@
 
 (function(window, document, $, $p){
 
+    "use strict";
+
     $p.newModel({
         modelId: 'VIDEOJS',
         videojsVersion: '1',
@@ -283,7 +285,7 @@
             var ref = this,
                 np = newpos;
 
-            (function () {
+            (function sk() {
                 try {
                     ref._videojs.currentTime(np);
                     ref.timeListener({
@@ -291,10 +293,9 @@
                     });
                 } catch (e) {
                     if (ref.mediaElement !== null) {
-                        setTimeout(arguments.callee, 100);
+                        setTimeout(sk, 100);
                     }
                 }
-
             })();
         },
         /************************************************

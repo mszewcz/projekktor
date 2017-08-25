@@ -10,6 +10,8 @@
  */
 (function(window, document, $, $p){
 
+    "use strict";
+    
 $p.fullscreenApi = (function () {
 
     var videoElement = document.createElement('video'),

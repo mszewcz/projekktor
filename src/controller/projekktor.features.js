@@ -13,6 +13,8 @@
  */
 (function(window, document, $, $p){
 
+    "use strict";
+    
 $p.features = (function () {
 
     var Modernizr = {},

@@ -18,6 +18,8 @@
 
 (function(window, document, $, $p){
 
+    "use strict";
+
     $p.newModel({
 
         modelId: 'MSEVIDEOHLS',
@@ -340,7 +342,7 @@
 
         getDynamicStreamingStatus: function (name) {
             if ($p.utils.logging) {
-                $p.utils.log('| ' + name + ' | ' + arguments.callee.name + ' ===');
+                $p.utils.log('| ' + name + ' | getDynamicStreamingStatus ===');
                 $p.utils.log(
                     '| reqIdx: ', this._requestedDynamicStreamIndex,
                     ', current index: ', this.getCurrentDynamicStreamIndex(),

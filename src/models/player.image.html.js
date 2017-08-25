@@ -10,6 +10,8 @@
 
 (function(window, document, $, $p){
 
+    "use strict";
+
 $p.newModel({
 
     browserVersion: "1.0",
@@ -48,7 +50,7 @@ $p.newModel({
             return;
         }
 
-        (function() {
+        (function sp() {
             if (ref._position>=ref._duration) {
                 ref._setState('completed');
                 return;
@@ -59,7 +61,7 @@ $p.newModel({
             }
 
             ref.timeListener({duration: ref._duration, position:ref._position});
-            setTimeout(arguments.callee,200);
+            setTimeout(sp, 200);
             ref._position += 0.2;
         })();
 

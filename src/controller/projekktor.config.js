@@ -9,6 +9,8 @@
 */
 (function (window, document, $, $p, projekktorConfig){
     
+    "use strict";
+    
 projekktorConfig.prototype = {
     /**************************************************************
         Config options to be customized prior initialization only:

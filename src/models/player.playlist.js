@@ -8,6 +8,8 @@
  * http://www.filenew.org/projekktor/license/
 */
 (function(window, document, $, $p){
+    
+    "use strict";
 
 $p.newModel({
 

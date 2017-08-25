@@ -9,6 +9,8 @@
 */
 (function(window, document, $, $p){
     
+    "use strict";
+
 $p.newModel({
 
     modelId: 'VIDEO',
@@ -256,14 +258,14 @@ $p.newModel({
 
     playingListener: function(obj) {
         var ref = this;
-        (function() {
+        (function pl() {
             try{
                 if (ref.getDuration()===0) {
                     if(ref.mediaElement.get(0).currentSrc!=='' && ref.mediaElement.get(0).networkState==ref.mediaElement.get(0).NETWORK_NO_SOURCE) {
                         ref.sendUpdate('error', 80);
                         return;
                     }
-                    setTimeout(arguments.callee, 500);
+                    setTimeout(pl, 500);
                     return;
                 }
             } catch(e) {}
@@ -439,7 +441,7 @@ $p.newModel({
             relPos = true;
 
         // IE9 somtimes raises INDEX_SIZE_ERR
-        (function() {
+        (function ss(){
             try {
                 // if it's a DVR stream
                 if(ref._isDVR){
@@ -476,7 +478,7 @@ $p.newModel({
             }
             catch(e){
                 if (ref.mediaElement !== null) {
-                    setTimeout(arguments.callee, 100);
+                    setTimeout(ss, 100);
                 }
             }
 

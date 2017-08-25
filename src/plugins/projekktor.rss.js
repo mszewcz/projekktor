@@ -6,6 +6,8 @@
  */
 var projekktorRSS = (function () {
 
+    "use strict";
+
     function projekktorPluginInterface() {}
 
     projekktorRSS.prototype = {

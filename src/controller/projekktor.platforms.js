@@ -12,6 +12,8 @@
 
 (function(window, document, $, $p){
 
+    "use strict";
+    
     var testVideoEl = document.createElement('video'),
     silverlightVer,
     flashVer;

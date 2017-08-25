@@ -6,6 +6,8 @@
  */
 var projekktorSettings = (function () {
 
+    "use strict";
+
     function projekktorSettings() {}
 
     projekktorSettings.prototype = {

@@ -10,6 +10,8 @@
  */
 var projekktorPersistentStorage = (function (window, document, $, $p){
 
+    "use strict";
+    
 function projekktorPersistentStorage(pp){
     this.pp = pp;
 }

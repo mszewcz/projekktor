@@ -11,6 +11,8 @@
  */
 (function(window, document, $, $p){
 
+    "use strict";
+
 $p.newModel({
 
     modelId: 'OSMFVIDEO',
@@ -382,11 +384,11 @@ $p.newModel({
                 this.pauseListener();
                 if (this._isDVR) {
                     // simulate sliding time window:
-                    (function() {
+                    (function sw() {
                         if (ref.getState('PAUSED')) {
                             if (ref.media.position>=0.5) {
                                 ref.timeListener({position: ref.media.position-0.5, duration: ref.media.duration || 0 });
-                                setTimeout(arguments.callee, 500);
+                                setTimeout(sw, 500);
                             }
                         }
                     })();
@@ -690,7 +692,7 @@ $p.newModel({
 
     getDynamicStreamingStatus: function(name){
         if($p.utils.logging){
-            $p.utils.log('| ' + name + ' | ' + arguments.callee.name + ' ===');
+            $p.utils.log('| ' + name + ' | getDynamicStreamingStatus ===');
             $p.utils.log(
                            '| reqIdx: ', this._requestedDynamicStreamIndex ,
                            ', current index: ', this.getCurrentDynamicStreamIndex(),

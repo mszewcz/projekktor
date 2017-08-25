@@ -10,6 +10,8 @@
  */
 var projekktorDisplay = (function () {
 
+    "use strict";
+
     function projekktorDisplay() {}
 
     projekktorDisplay.prototype = {
@@ -341,7 +343,7 @@ var projekktorDisplay = (function () {
             var startOffset = (ref.config.spriteCountUp === true) ? 0 : (ref.config.spriteHeight + ref.config.spriteOffset) * (ref.config.spriteTiles - 1),
                 spriteOffset = startOffset;
             ref.buffIcnSprite.addClass('active').removeClass('inactive');
-            (function () {
+            (function bi() {
 
                 if (!ref.buffIcn.is(':visible')) return;
                 ref.buffIcnSprite.css('backgroundPosition', '0px -' + spriteOffset + "px");
@@ -354,7 +356,7 @@ var projekktorDisplay = (function () {
                 if (spriteOffset > (startOffset + ref.config.spriteHeight) * ref.config.spriteTiles || spriteOffset < ref.config.spriteOffset) spriteOffset = startOffset;
 
 
-                setTimeout(arguments.callee, 60);
+                setTimeout(bi, 60);
             })();
         },
 

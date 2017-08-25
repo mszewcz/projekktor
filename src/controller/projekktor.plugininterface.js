@@ -9,6 +9,8 @@
  */
 var projekktorPluginInterface = (function (window, document, $, $p){
 
+    "use strict";
+    
     function projekktorPluginInterface() {}
 
     projekktorPluginInterface.prototype = {

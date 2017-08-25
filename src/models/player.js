@@ -9,6 +9,8 @@
  */
 var playerModel  = (function(window, document, $, $p){
 
+    "use strict";
+
     function playerModel() {}
 
     playerModel.prototype = {

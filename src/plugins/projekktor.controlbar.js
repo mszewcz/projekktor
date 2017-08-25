@@ -9,6 +9,8 @@
  */
 var projekktorControlbar = (function () {
 
+    "use strict";
+
     function projekktorControlbar() {}
 
     projekktorControlbar.prototype = {

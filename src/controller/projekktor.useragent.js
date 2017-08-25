@@ -11,6 +11,8 @@
 
 (function(window, document, $, $p){
 
+    "use strict";
+    
 $p.userAgent = (function () {
 
    /*
