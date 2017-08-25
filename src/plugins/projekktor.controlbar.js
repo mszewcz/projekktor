@@ -856,8 +856,8 @@ var projekktorControlbar = (function () {
 
             var qualsCfg = this.getConfig('playbackQualities'),
                 qualsItm = this.pp.getPlaybackQualities(),
-                classPrefix = this.pp.getNS();
-            best = [];
+                classPrefix = this.pp.getNS(),
+                best = [];
 
             // off
             if (qualsItm.length < 2 || qualsCfg.length < 2) {
@@ -1126,7 +1126,7 @@ var projekktorControlbar = (function () {
         },
 
         vmarkerClk: function (evt) {
-            vsliderClk(evt);
+            this.vsliderClk(evt);
         },
 
         openCloseClk: function (evt) {
