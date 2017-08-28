@@ -1254,53 +1254,62 @@ var projekktorControlbar = (function () {
             this._sSliderAct = true;
 
             var ref = this,
+                jqEventNS = '.' + this.pp.getNS() + 'scrubberdrag',
                 slider = ref.controlElements['scrubberdrag'],
                 loaded = ref.controlElements['loaded'],
-                second = 0,
+                lastSeekPosition = 0,
+                lastPointerPosition = this._getPointerPosition(event),
+                seekDelayTimer,
 
-                applyValue = function (event) {
+                applyValue = function (pointerPosition) {
 
-                    var newPos = Math.abs(slider.offset().left - event.clientX);
+                    var newPos = Math.abs(slider.offset().left - pointerPosition.clientX);
+
                     newPos = (newPos > slider.width()) ? slider.width() : newPos;
                     newPos = (newPos > loaded.width()) ? loaded.width() : newPos;
                     newPos = (newPos < 0) ? 0 : newPos;
                     newPos = Math.abs(newPos / slider.width()) * ref.pp.getDuration();
 
-                    // avoid strange "mouseMove"-flooding in IE7+8
-                    if (newPos > 0 && newPos != second) {
-                        second = newPos;
-                        ref.pp.setPlayhead(second);
+                    if (newPos > 0) {
+                        // delay the seek call
+                        clearInterval(seekDelayTimer);
+                        seekDelayTimer = setTimeout(function() {
+                            ref.pp.setPlayhead(newPos);
+                        }, 100);
                     }
 
                 },
 
-                mouseUp = function (evt) {
-                    evt.stopPropagation();
-                    evt.preventDefault();
+                pointerUp = function (evt) {
+                    console.warn('pointerUp', evt);
 
-                    ref.playerDom.off('mouseup.slider');
+                    $(window).off(jqEventNS);
 
-                    slider.off('mousemove', mouseMove);
-                    slider.off('mouseup', mouseUp);
+                    applyValue(lastPointerPosition);
+
                     ref._sSliderAct = false;
-
                     return false;
                 },
 
-                mouseMove = function (evt) {
+                pointerMove = function (evt) {
+                    lastPointerPosition = ref._getPointerPosition(evt);
+                    
                     clearTimeout(ref._cTimer);
-                    evt.stopPropagation();
-                    evt.preventDefault();
-                    applyValue(evt);
+                    console.warn('pointerMove');
+                    applyValue(lastPointerPosition);
                     return false;
                 };
 
-            this.playerDom.on('mouseup.slider', mouseUp);
-            slider.mouseup(mouseUp);
-            slider.mousemove(mouseMove);
+                if($p.features.touch){
+                    $(window).on('touchmove' + jqEventNS, pointerMove);
+                    $(window).on('touchend' + jqEventNS, pointerUp);
+                }
+                else {
+                    $(window).on('mousemove' + jqEventNS, pointerMove);
+                    $(window).on('mouseup' + jqEventNS, pointerUp);
+                }
 
-            applyValue(event);
-
+            applyValue(lastPointerPosition);
         },
 
         vknobStartDragListener: function (event, domObj) {
