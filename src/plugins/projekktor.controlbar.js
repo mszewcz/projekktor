@@ -1396,10 +1396,18 @@ var projekktorControlbar = (function () {
         },
 
         /* convert a num of seconds to a digital-clock like display string */
-        _clockDigits: function (secs, postfix) {
+        _clockDigits: function (secs, postfix, minValSecs, maxValSecs) {
 
-            if (secs < 0 || isNaN(secs) || secs == undefined) {
+            if (isNaN(secs) || secs === undefined) {
                 secs = 0;
+            }
+
+            if(minValSecs !== undefined){
+                secs = secs < minValSecs ? minValSecs : secs;
+            }
+
+            if(maxValSecs !== undefined){
+                secs = secs > maxValSecs ? maxValSecs : secs;
             }
 
             var hr = Math.floor(secs / (60 * 60)),
