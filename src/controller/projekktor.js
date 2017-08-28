@@ -907,7 +907,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 .on('resize.projekktor' + this.getId(), function () {
                     ref.setSize();
                 })
-                .on('touchstart.projekktor' + this.getId(), function () {
+                .on('touchstart.projekktor' + this.getId(), function (event) {
                     ref._windowTouchListener(event);
                 });
 
