@@ -3,6 +3,7 @@
  *
  * DESC: Adds a fully features cb element to the player
  * Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
+ * Copyright 2015-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  *
  * under GNU General Public License
  * http://www.projekktor.com/license/
