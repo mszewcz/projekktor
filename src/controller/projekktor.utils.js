@@ -477,40 +477,27 @@
             return data;
         },
         versionCompare: function (installed, required) {
-            var a = installed.split('.'),
-                b = required.split('.'),
-                i = 0;
+            var installedArr = String(installed).split('.').map(Number),
+                requiredArr = String(required).split('.').map(Number),
+                insVal, reqVal;
 
-            for (i = 0; i < a.length; ++i) {
-                a[i] = Number(a[i]);
-            }
-            for (i = 0; i < b.length; ++i) {
-                b[i] = Number(b[i]);
-            }
-            if (a.length == 2) {
-                a[2] = 0;
-            }
-
-            if (a[0] > b[0]) {
-                return true;
-            }
-            if (a[0] < b[0]) {
-                return false;
-            }
-            if (a[1] > b[1]) {
-                return true;
-            }
-            if (a[1] < b[1]) {
-                return false;
-            }
-            if (a[2] > b[2]) {
-                return true;
-            }
-            if (a[2] < b[2]) {
+            if(installedArr.some(isNaN) || requiredArr.some(isNaN)){
                 return false;
             }
 
-            return true;
+            for (var i = 0; i < 3; i++) {
+                reqVal = requiredArr[i];
+                insVal = installedArr[i] === undefined ? 0 : installedArr[i];
+
+                if(insVal > reqVal){
+                    return true;
+                }
+                if(reqVal > insVal){
+                    return false;
+                }
+            }
+
+            return true;        
         },
         // detectPlugin function adopted from MediaElement.js
         //
