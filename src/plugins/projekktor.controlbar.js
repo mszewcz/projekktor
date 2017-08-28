@@ -469,7 +469,7 @@ var projekktorControlbar = (function () {
                 }
 
                 if (!(elmCfg instanceof Array)) {
-                    elmCfg = [elmCfg]
+                    elmCfg = [elmCfg];
                 }
 
                 for (var subset = 0; subset < elmCfg.length; subset++) {
@@ -485,10 +485,9 @@ var projekktorControlbar = (function () {
                             callback = elmCfg[subset].call;
 
                         if (!isSupported) {
-                            var el = document.createElement('div')
+                            var el = document.createElement('div');
                             el.setAttribute("on" + eventName, 'return;');
                             isSupported = (typeof el["on" + eventName] == 'function');
-
                         }
 
                         if (isSupported) {
@@ -1210,7 +1209,7 @@ var projekktorControlbar = (function () {
         },
 
         scrubberdragTooltip: function (event) {
-
+            
             var pointerPosition = this._getPointerPosition(event);
 
             // IE amd Chrome issues (mouseenter,mouseleave)
@@ -1235,7 +1234,7 @@ var projekktorControlbar = (function () {
                 if (ref.controlElements.hasOwnProperty(key)) {
                     $(ref.controlElements[key]).html(times[key]);
                 }
-                    });
+            });
 
             newPos = (newPos < 0) ? 0 : newPos;
             newPos = (newPos > slider.width() - tip.outerWidth()) ? slider.width() - tip.outerWidth() : newPos;
@@ -1299,7 +1298,7 @@ var projekktorControlbar = (function () {
                     applyValue(lastPointerPosition);
                     return false;
                 };
-
+                
                 if($p.features.touch){
                     $(window).on('touchmove' + jqEventNS, pointerMove);
                     $(window).on('touchend' + jqEventNS, pointerUp);
@@ -1448,7 +1447,7 @@ var projekktorControlbar = (function () {
                     clientY: positionSource.clientY,
                     pageX: positionSource.pageX,
                     pageY: positionSource.pageY
-                }
+                };
             }
         }
     };
