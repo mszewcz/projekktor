@@ -1430,6 +1430,27 @@ var projekktorControlbar = (function () {
             } else { // otherwise make the blip 'invisible' for mouse events (works everywhere but IE up to 10)
                 blip.css('pointer-events', 'none');
             }
+        },
+        _getPointerPosition: function(event){
+
+            var positionSource = {};
+
+            if(event) {
+
+                if(('touches' in event.originalEvent) && event.originalEvent.touches.length > 0) {
+                    positionSource = event.originalEvent.touches[0];
+                }
+                else {
+                    positionSource = event;
+                }
+
+                return {
+                    clientX: positionSource.clientX,
+                    clientY: positionSource.clientY,
+                    pageX: positionSource.pageX,
+                    pageY: positionSource.pageY
+                }
+            }
         }
     };
 
