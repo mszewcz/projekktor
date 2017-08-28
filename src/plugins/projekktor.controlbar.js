@@ -345,9 +345,7 @@ var projekktorControlbar = (function () {
 
         /* parse and apply controls dom-template */
         applyTemplate: function (dest, templateString) {
-            var ref = this,
-                classPrefix = this.pp.getNS(),
-                label = '';
+            var classPrefix = this.pp.getNS();
 
             // apply template string if required:
             if (templateString) {
@@ -370,8 +368,7 @@ var projekktorControlbar = (function () {
         },
 
         updateDisplay: function () {
-            var ref = this,
-                state = this.pp.getState();
+            var state = this.pp.getState();
 
             // nothing to do
             if (this.getConfig('controls') === false) {
@@ -690,8 +687,6 @@ var projekktorControlbar = (function () {
 
         displayVolume: function (volume) {
 
-            var ref = this;
-
             if (this._vSliderAct == true) {
                 return;
             }
@@ -699,9 +694,7 @@ var projekktorControlbar = (function () {
                 return;
             }    
 
-            var isVisible = this.cb.hasClass('active'),
-                ref = this,
-                fixed = this.getConfig('fixedVolume') || (this.pp.playerModel && this.pp.playerModel._fixedVolume),
+            var fixed = this.getConfig('fixedVolume') || (this.pp.playerModel && this.pp.playerModel._fixedVolume),
                 toggleMute = (this.controlElements['mute'].hasClass('toggle') || this.controlElements['unmute'].hasClass('toggle') || this.getConfig('toggleMute')),
                 // check if the volume is in the proper range and correct its value if it's not
                 volume = volume > 1 ? 1 : volume,
@@ -980,8 +973,6 @@ var projekktorControlbar = (function () {
 
         fullscreenHandler: function (inFullscreen) {
 
-            var ref = this;
-
             this._noHide = false;
             this._vSliderAct = false;
 
@@ -1141,8 +1132,7 @@ var projekktorControlbar = (function () {
         },
 
         logoClk: function (evt) {
-            var ref = this,
-                logoConfig = this.pp.getConfig('logo') || this.getConfig('logo');
+            var logoConfig = this.pp.getConfig('logo') || this.getConfig('logo');
             if (logoConfig) {
                 if (logoConfig.link && logoConfig.link.url) {
                     window.open(logoConfig.link.url, logoConfig.link.target);
@@ -1256,7 +1246,6 @@ var projekktorControlbar = (function () {
                 jqEventNS = '.' + this.pp.getNS() + 'scrubberdrag',
                 slider = ref.controlElements['scrubberdrag'],
                 loaded = ref.controlElements['loaded'],
-                lastSeekPosition = 0,
                 lastPointerPosition = this._getPointerPosition(event),
                 seekDelayTimer,
 
