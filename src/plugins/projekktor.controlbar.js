@@ -1317,6 +1317,7 @@ var projekktorControlbar = (function () {
 
             var ref = this,
 
+                jqEventNS = '.' + this.pp.getNS() + 'vknob', 
                 vslider = ref.controlElements['vslider'],
                 vmarker = ref.controlElements['vmarker'],
                 vknob = ref.controlElements['vknob'],
@@ -1326,14 +1327,7 @@ var projekktorControlbar = (function () {
                 volume = 0,
 
                 mouseUp = function (mouseUpEvent) {
-                    if (window.onmouseup === undefined) { // IE < 9 has no window mouse events support
-                        $(document).off('mousemove', mouseMove);
-                        $(document).off('mouseup', mouseUp);
-                        $(document).off('mouseleave', mouseUp);
-                    } else {
-                        $(window).off('mousemove', mouseMove);
-                        $(window).off('mouseup', mouseUp);
-                    }
+                    $(window).off(jqEventNS);
 
                     ref._vSliderAct = false;
 
@@ -1375,14 +1369,8 @@ var projekktorControlbar = (function () {
                     return false;
                 };
 
-            if (window.onmouseup === undefined) {
-                $(document).mousemove(mouseMove);
-                $(document).mouseup(mouseUp);
-                $(document).mouseleave(mouseUp);
-            } else {
-                $(window).mousemove(mouseMove);
-                $(window).mouseup(mouseUp);
-            }
+                $(window).on('mousemove' + jqEventNS, mouseMove);
+                $(window).on('mouseup' + jqEventNS, mouseUp);
         },
 
         /*******************************
