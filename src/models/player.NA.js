@@ -13,6 +13,7 @@
     
 $p.newModel({
     modelId: 'NA',
+    browserVersion: '1.0',
     iLove: [
         {ext:'na', type:'none/none', platform: ['browser']}
     ],

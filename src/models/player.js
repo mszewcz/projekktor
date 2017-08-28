@@ -15,6 +15,7 @@ var playerModel = (function(window, document, $, $p){
 
     playerModel.prototype = {
         modelId: 'player',
+        browserVersion: '1.0',
         iLove: [],
         platform: ['browser'],
         // all the player states

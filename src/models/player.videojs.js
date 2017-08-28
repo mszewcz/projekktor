@@ -18,7 +18,7 @@
 
     $p.newModel({
         modelId: 'VIDEOJS',
-        videojsVersion: '1',
+        videojsVersion: '1.0',
 
         iLove: [{
             ext: 'mp4',

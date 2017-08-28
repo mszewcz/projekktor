@@ -4,7 +4,8 @@
 
     $p.newModel({
         modelId: 'MSEVIDEODASH',
-
+        mseVersion: '1.0',
+        
         iLove: [
             {
                 ext: 'ism',

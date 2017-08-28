@@ -14,8 +14,8 @@
 
 $p.newModel({
 
-    browserVersion: "1.0",
     modelId: 'IMAGE',
+    browserVersion: "1.0",
     iLove: [
         {ext:'jpg', type:'image/jpeg', platform: ['browser']},
         {ext:'gif', type:'image/gif', platform: ['browser']},
@@ -87,6 +87,7 @@ $p.newModel({
 $p.newModel({
 
     modelId: 'HTML',
+    browserVersion: "1.0",
     iLove: [
         {ext:'html', type:'text/html', platform: ['browser']}
     ],

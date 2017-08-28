@@ -14,7 +14,7 @@
 $p.newModel({
 
     modelId: 'PLAYLIST',
-
+    browserVersion: '1.0',
     iLove: [
         {ext:'json', type:'text/json', platform: ['browser']},
         {ext:'xml', type:'text/xml', platform: ['browser']},
