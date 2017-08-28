@@ -1195,60 +1195,54 @@ var projekktorControlbar = (function () {
         },
 
         scrubberShowTooltip: function (event) {
-            if (this.pp.getDuration() == 0) {
+            var pointerPosition = this._getPointerPosition(event);
+
+            if (this.pp.getDuration() === 0) {
                 return;
             }
             clearTimeout(this._cTimer);
-            this.setActive(this.controlElements['scrubbertip'], true)
+
+            this.updateScrubberTooltip(pointerPosition);
         },
 
         scrubberHideTooltip: function (event) {
-            this.setActive(this.controlElements['scrubbertip'], false)
+            this.setActive(this.controlElements['scrubbertip'], false);
         },
 
-        scrubberdragTooltip: function (evt) {
+        scrubberdragTooltip: function (event) {
+
+            var pointerPosition = this._getPointerPosition(event);
 
             // IE amd Chrome issues (mouseenter,mouseleave)
-            if (this.pp.getDuration() == 0) {
+            if (this.pp.getDuration() === 0) {
                 return;
             }
-            this.setActive(this.controlElements['scrubbertip'], true)
 
-            var slider = $(this.controlElements['scrubberdrag'][0]),
-                loaded = $(this.controlElements['loaded'][0]),
+            this.updateScrubberTooltip(pointerPosition);
+        },
+
+        updateScrubberTooltip: function (pointerPosition) {
+            var ref = this,
+                slider = $(this.controlElements['scrubberdrag'][0]),
                 tip = $(this.controlElements['scrubbertip']),
-                pageX = (evt.originalEvent.touches) ? evt.originalEvent.touches[0].pageX : evt.pageX,
-                pageY = (evt.originalEvent.touches) ? evt.originalEvent.touches[0].pageY : evt.pageY,
-                newPos = pageX - slider.offset().left - (tip.outerWidth() / 2),
-                timeIdx = this.pp.getDuration() / 100 * ((pageX - slider.offset().left) * 100 / slider.width()),
-                times = this._clockDigits(timeIdx, 'tip');
+                newPos = pointerPosition.clientX - slider.offset().left - (tip.outerWidth() / 2),
+                timeIdx = this.pp.getDuration() / 100 * ((pointerPosition.clientX - slider.offset().left) * 100 / slider.width()),
+                times = this._clockDigits(timeIdx, 'tip', 0, this.pp.getDuration());
 
-            /*if (this._isDVR) {
-                timeIdx =  this.pp.getDuration() - timeIdx;
-                var then = new Date( (new Date().getTime() / 1000 - timeIdx) * 1000), // date minus timeidx
-                    then = then.getSeconds() + (60 * then.getMinutes()) + (60 * 60 * then.getHours()); // second of today
+            this.setActive(this.controlElements['scrubbertip'], true);
 
-                times = this._clockDigits( then , 'tip');
-            }*/
-
-            for (var key in this.controlElements) {
-                if (key == 'cb') {
-                    break;
+            Object.keys(times).forEach(function (key) {
+                if (ref.controlElements.hasOwnProperty(key)) {
+                    $(ref.controlElements[key]).html(times[key]);
                 }
-
-                if (times[key]) {
-                    $.each(this.controlElements[key], function () {
-                        $(this).html(times[key]);
                     });
-                }
-            }
 
             newPos = (newPos < 0) ? 0 : newPos;
             newPos = (newPos > slider.width() - tip.outerWidth()) ? slider.width() - tip.outerWidth() : newPos;
 
             tip.css({
                 left: newPos + "px"
-            })
+            });
         },
 
         scrubberdragStartDragListener: function (event) {
