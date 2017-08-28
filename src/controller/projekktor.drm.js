@@ -103,11 +103,13 @@
                 return Promise.resolve();
             }
 
-            $.each(drmSystems, function (keySystem, keySystemNS) {
+            Object.keys(drmSystems).forEach(function(keySystemName) {
+                var keySystemNS = drmSystems[keySystemName];
+
                 keySystemNS.forEach(function (ks) {
                     promises.push(isKeySupported(ks, testConfig).then(
                         function (val) {
-                            supportedDrmSystems.push(keySystem);
+                            supportedDrmSystems.push(keySystemName);
                         },
                         function (error) {
                             // skip
@@ -115,6 +117,7 @@
                     ));
                 }, ref);
             });
+
             return Promise.all(promises);
         };
 
