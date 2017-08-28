@@ -459,7 +459,7 @@
                 case 'html':
                 case 'xml':
                     // Create the xml document from the responseText string.
-                    data = new DOMParser()
+                    data = new DOMParser();
                     data = data.parseFromString(responseText, "text/xml");
                     break;
 
@@ -547,7 +547,7 @@
 
             for (i in data) {
                 if(data.hasOwnProperty(i)){
-                    tpl = tpl.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]))
+                    tpl = tpl.replace(new RegExp('%{' + this.regExpEsc(i) + '}', 'gi'), ((encode === true) ? window.encodeURIComponent(data[i]) : data[i]));
                 }
             }
             
@@ -627,7 +627,7 @@
                         type: type,
                         subtype: subtype,
                         parameters: parameters
-                    }
+                    };
 
                 }
                 return null;
@@ -723,7 +723,7 @@
                     if (!!replace) {
                         obj[i] = prefix + (!!capitalize ? this.ucfirst(obj[i]) : obj[i]);
                     } else {
-                        obj.push(prefix + (!!capitalize ? this.ucfirst(obj[i]) : obj[i]))
+                        obj.push(prefix + (!!capitalize ? this.ucfirst(obj[i]) : obj[i]));
                     }
                 }
             }
