@@ -512,11 +512,9 @@ var projekktorControlbar = (function () {
 
         /* generic click handler for all controlbar buttons */
         clickCatcher: function (evt, callback, element) {
-            var ref = this;
-
-            evt.stopPropagation();
+            //evt.stopPropagation();
             evt.preventDefault();
-            // $p.utils.log('Controlbar: Click', element, callback, evt)
+
             this[callback](evt, element);
 
             return false;
