@@ -189,30 +189,47 @@
 
         applySrc: function () {
 
-            var drmConfig = this.pp.getConfig('drm'),
-                buffer = {}
+            var file = this.getSource()[0],
+                fileDrmConfig = Array.isArray(file.drm) ? file.drm : [],
+                drmConfig = this.pp.getConfig('drm') || {}, // item or global
+                availableDrmConfig = $p.utils.intersect(fileDrmConfig, Object.keys(drmConfig)),
+                dashjsProtectionDataConf;
 
-            if (typeof this._file['drm'] === "object") {
-                for (var i = 0; i < this._file['drm'].length; i++) {
-                    var item = this._file['drm'][i];
-
-                    if (typeof drmConfig[item] === "string") {
-                        buffer[item] = drmConfig[item];
+            if (fileDrmConfig.length > 0) {
+                if (availableDrmConfig.length > 0) {
+                    // DRM config required and available
+                    dashjsProtectionDataConf = {};
                     }
+                else {
+                    // DRM system required but no valid license server config defined
+                    this.sendUpdate('error', 301);
+                    return;
                 }
             }
 
-            this._dashjs.setProtectionData({
-                "com.microsoft.playready": {
-                    serverURL: buffer['playready'] || null
-                },
-                "com.widevine.alpha": {
-                    serverURL: buffer['widevine'] || null
+            availableDrmConfig.forEach(function (drm) {
+                var dpc = dashjsProtectionDataConf;
+
+                switch (drm) {
+                    case 'widevine':
+                        dpc["com.widevine.alpha"] = {
+                            serverURL: drmConfig[drm]
+                        };
+                        break;
+                    case 'playready':
+                        dpc["com.microsoft.playready"] = {
+                            serverURL: drmConfig[drm]
+                        };
+                        break;
                 }
             });
 
+            if(dashjsProtectionDataConf !== undefined){
+                this._dashjs.setProtectionData(dashjsProtectionDataConf);
+            }
+
             // Initialize dash.js MediaPlayer
-            this._dashjs.initialize(this._video, this._file['src'], false);
+            this._dashjs.initialize(this._video, file.src, false);
         },
 
         /**
