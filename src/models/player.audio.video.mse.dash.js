@@ -169,7 +169,9 @@
             }
 
             if (this._dashjs) {
+                if (this._dashjs.isReady()) {
                 this._dashjs.reset();
+                }
                 this._dashjs = null;
             }
 
