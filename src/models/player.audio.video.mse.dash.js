@@ -145,6 +145,20 @@
                 ref.sendUpdate('error', 5, error);
             });
 
+            this._dashjs.on("public_keyError", function (error) {
+                ref.sendUpdate('error', 302, error);
+            });
+
+            this._dashjs.on("public_keySessionClosed", function (event) {
+                if(event.error !== undefined){
+                    ref.sendUpdate('error', 302, event.error);
+                }
+            });
+            this._dashjs.on("public_licenseRequestComplete", function (event) {
+                if(event.error !== undefined){
+                    ref.sendUpdate('error', 302, event.error);
+                }
+            });
             this.applySrc();
         },
 
