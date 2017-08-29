@@ -1270,8 +1270,6 @@ var projekktorControlbar = (function () {
                 },
 
                 pointerUp = function (evt) {
-                    console.warn('pointerUp', evt);
-
                     $(window).off(jqEventNS);
 
                     applyValue(lastPointerPosition);
@@ -1284,7 +1282,6 @@ var projekktorControlbar = (function () {
                     lastPointerPosition = ref._getPointerPosition(evt);
                     
                     clearTimeout(ref._cTimer);
-                    console.warn('pointerMove');
                     applyValue(lastPointerPosition);
                     return false;
                 };
