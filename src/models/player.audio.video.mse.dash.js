@@ -150,23 +150,19 @@
 
         detachMedia: function () {
 
-            if (!!this.mediaElement) {
+            if (this.mediaElement) {
                 this.mediaElement = null;
             }
 
-            if (!!this._dashjs) {
+            if (this._dashjs) {
                 this._dashjs.reset();
                 this._dashjs = null;
             }
 
-            if (!!this._video) {
-                this._video.parentNode.removeChild(this._video);
                 this._video = null;
-            }
 
             this._qualityMap = null;
             this._quality = null;
-
         },
 
         applySrc: function () {
