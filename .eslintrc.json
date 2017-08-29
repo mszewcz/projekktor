@@ -12,11 +12,25 @@
         },
         "sourceType": "module"
     },
+    //"extends": "eslint:recommended",
     "globals": {
         "$p": true,
-        "projekktorMessages": true
+        "projekktorMessages": true,
+        "projekktorConfig": true,
+        "projekktorPersistentStorage": true,
+        "projekktorPluginInterface": true,
+        "projekktor": true,
+        "playerModel": true,
+        "Hls": true
     },
     "rules": {
+        "no-caller": "error",
+        "curly": ["error", "all"],
+        //"eqeqeq": ["error", "always"],
+        "guard-for-in": "error",
+        "no-multi-spaces": "warn",
+        "no-new-wrappers": "warn",
+        "no-implicit-globals": "error",
         "no-const-assign": "warn",
         "no-this-before-super": "warn",
         "no-undef": "warn",
@@ -28,6 +42,7 @@
             }
         ],
         "constructor-super": "warn",
-        "valid-typeof": "warn"
+        "valid-typeof": "warn",
+        "semi": "error"
     }
 }
