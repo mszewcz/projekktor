@@ -1027,7 +1027,6 @@ window.projekktor = window.$p = (function (window, document, $) {
             return result;
         };
 
-
         /* media element update listener */
         this._modelUpdateListener = function (evtName, value) {
 
@@ -1048,8 +1047,11 @@ window.projekktor = window.$p = (function (window, document, $) {
         /* promote an event to all registered plugins */
         this.__promote = function (evt, value) {
 
-            var event = evt,
-                debug = this.getConfig('debug');
+            var ref = this,
+            event = evt,
+            pluginEventHandlersCache = this._pluginCache,
+            playerListeners = this.listeners || [],
+            pluginsWithHandlers;
 
             if (typeof event === 'object') {
 
@@ -1060,66 +1062,47 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
 
             if (event !== 'time' && event !== 'progress' && event !== 'mousemove') {
-                $p.utils.log("Event: [" + event + "]", value, this.listeners);
+                $p.utils.log('Event: [' + event + ']', value, playerListeners);
             }
 
             // fire on plugins
-            if (this._pluginCache[event + "Handler"] && this._pluginCache[event + "Handler"].length > 0) {
-
-                for (var i = 0; i < this._pluginCache[event + "Handler"].length; i++) {
-
-                    if (debug) {
-
+            pluginsWithHandlers = pluginEventHandlersCache[event + 'Handler'] || [];
+            pluginsWithHandlers.forEach(function (plugin) {
                         try {
-                            this._pluginCache[event + "Handler"][i][event + "Handler"](value, this);
-                        } catch (e) {
-                            $p.utils.log(e);
-                        }
-                    } else {
-                        this._pluginCache[event + "Handler"][i][event + "Handler"](value, this);
-                    }
-                }
+                    plugin[event + 'Handler'](value, ref);
+                } catch (error) {
+                    $p.utils.log(error);
             }
+            });
 
-            if (this._pluginCache["eventHandler"] && this._pluginCache["eventHandler"].length > 0) {
-
-                for (var i = 0; i < this._pluginCache["eventHandler"].length; i++) {
-
-                    if (debug) {
+            // universal plugin event handler
+            pluginsWithHandlers = pluginEventHandlersCache['eventHandler'] || [];
+            pluginsWithHandlers.forEach(function (plugin) {
                         try {
-                            this._pluginCache["eventHandler"][i]["eventHandler"](event, value, this);
-                        } catch (e) {
-                            $p.utils.log(e);
-                        }
-                    } else {
-                        this._pluginCache["eventHandler"][i]["eventHandler"](event, value, this);
-                    }
-                }
+                    plugin['eventHandler'](event, value, ref);
+                } catch (error) {
+                    $p.utils.log(error);
             }
+            });
 
-            // fire on custom (3rd party) listeners
-            if (this.listeners.length > 0) {
-
-                for (var i = 0; i < this.listeners.length; i++) {
-
-                    if (this.listeners[i]['event'] === event || this.listeners[i]['event'] === '*') {
-
-                        if (debug) {
+            // fire on custom player listeners
+            playerListeners.forEach(function(listener) {
+                if(listener.event === event || listener.event === '*') {
                             try {
-                                this.listeners[i]['callback'](value, this);
-                            } catch (e) {
-                                $p.utils.log(e);
-                            }
-                        } else {
-                            this.listeners[i]['callback'](value, this);
-                        }
-                    }
+                        listener.callback(value, ref);
+                    } catch (error) {
+                        $p.utils.log(error);
                 }
             }
+            });
 
             // fire on self:
-            if (this[evt + 'Handler']) {
-                this[evt + 'Handler'](value);
+            if (ref.hasOwnProperty(event + 'Handler')) {
+                try {
+                    ref[evt + 'Handler'](value);
+                } catch (error) {
+                    $p.utils.log(error);
+                }
             }
         };
 
