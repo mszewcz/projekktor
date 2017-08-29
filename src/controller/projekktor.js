@@ -949,7 +949,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
                     if (propName.indexOf('Handler') > 1) {
 
-                        if (this._pluginCache[propName] == null) {
+                        if (!this._pluginCache.hasOwnProperty(propName)) {
                             this._pluginCache[propName] = [];
                         }
                         this._pluginCache[propName].push(pluginObj);
@@ -1528,7 +1528,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 result = this.playerModel.getState();
             } catch (e) {}
 
-            if (compare != null) {
+            if (compare) {
                 return (result === compare.toUpperCase());
             }
 
@@ -1651,9 +1651,9 @@ window.projekktor = window.$p = (function (window, document, $) {
                 },
                 id = item.id || this.getItemId();
 
-            return $.inArray($.grep(this.media, function (e) {
-                return (e.id === id);
-            })[0], this.media);
+            return this.media.indexOf(this.media.find(function (item) {
+                return item.id === id;
+            }));
         };
 
         this.getCurrentItem = function () {
@@ -3911,7 +3911,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                                 break;
                         }
                     }
-                } while (childNode.attr('src'))
+                } while (childNode.attr('src'));
             }
 
             // ... within a good browser ...
