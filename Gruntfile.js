@@ -263,7 +263,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'node_modules/dashjs/dist/',
-            src: ['*.js', '*.map'],
+            src: ['dash.all.*.js', 'dash.all.*.map'],
             dest: 'platforms/mse/dash.js/'
           },
           {
