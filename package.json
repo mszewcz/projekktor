@@ -42,7 +42,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-lineending": "^1.0.0",
     "gzip-js": "^0.3.0",
-    "hls.js": "^0.7.11",
+    "hls.js": "^0.8.1",
     "jquery": "^3.2.1"
   },
   "keywords": []
