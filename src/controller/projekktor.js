@@ -130,10 +130,9 @@ window.projekktor = window.$p = (function (window, document, $) {
 
                 // item is not processed by _prepareMedia yet
                 if (item.processed !== true) {
-                    item = this._prepareMedia({
+                    item = this._processItem({
                         file: files,
-                        config: item.config || {},
-                        errorCode: this.errorCode || 0
+                        config: item.config || {}
                     });
                 }
 
@@ -142,7 +141,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                     item.id = item.id + '_' + $p.utils.randomId(8);
                 }
 
-                // item is already on the playlist, so provide unique copy of it
+                // item is already on the playlist, so provide an unique copy of it
                 if (this.getItemById(item.id)) {
                     item = $.extend(true, {}, item);
                     item.id = $p.utils.randomId(8);
@@ -322,7 +321,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             var platformsSet = new Set(),
                 mILove = $p.cache.modelsILove || [];
 
-            mILove.forEach(function (iLove, idx) {
+            mILove.forEach(function (iLove) {
                 if (iLove.type === mimeType) {
                     iLove.platform.forEach(function(platform) {
                         platformsSet.add(platform);
@@ -357,269 +356,255 @@ window.projekktor = window.$p = (function (window, document, $) {
             return platformMimeTypeMap.get(pt).has(type);
         };
 
-            if (checkIn.indexOf(type) > -1) {
-                return true;
+        this._processItem = function(itemData) {
+            var files = itemData.file || [],
+            config = itemData.config || {},    
+            defaultItem = {
+                id: config.id || $p.utils.randomId(8),
+                cat: 'clip',
+                file: [],
+                availableFiles: files,
+                platform: 'browser', 
+                qualities: [], // available quality keys
+                model: 'NA',
+                errorCode: undefined,
+                viewcount: 0,
+                processed: false,
+                config: config,
+                cuepoints: []
+            },
+            resultItem = $.extend({}, defaultItem);
+
+            // leave only supported files
+            resultItem = this._filterSupportedItemFiles(resultItem);
+
+            if(resultItem.file.length){
+                // In this place we are dealing only with potentially playable files.
+                // Now we need to select the best one(s) to play.
+                resultItem = this._getBestModelForItem(resultItem);
+
+                // leave only valid files for the selected model/platform
+                resultItem = this._filterFiles(resultItem, function(file, idx, files){
+                    return file.type === files[0].type;
+                });
+
+                // finally check for available qualities and remove redundant file formats
+                resultItem = this._filterQualities(resultItem);
             }
 
-            return false;
+            resultItem.processed = true;
+
+            return resultItem;
         };
 
-        /* apply available data and playout models */
-        this._prepareMedia = function (data) {
+        this._processItemFile = function(file){
+            var parsedMimeType,
+            resultFile = {
+                src: $p.utils.toAbsoluteURL(file.src),
+                type: 'none/none',
+                originalType: file.type,
+                drm: file.drm || [],
+                codecs: undefined,
+                quality: file.quality || 'auto'
+            };
+
+            // check and cleanup provided mimeType
+            if(file.type){
+                parsedMimeType = $p.utils.parseMimeType(file.type);
+                resultFile.type = parsedMimeType.type + "/" + parsedMimeType.subtype;
+                resultFile.codecs = parsedMimeType.parameters.codecs;
+            }
+            // if type is not set try to get it from file extension
+            else {
+                resultFile.type = ref._getTypeFromFileExtension(file.src);
+            }
+
+            return resultFile;
+        };
+
+        this._filterSupportedItemFiles = function(item){
 
             var ref = this,
-                types = [],
-                mediaFiles = [],
-                qualities = [],
-                extTypes = {},
-                typesModels = {},
-                modelSet = {},
-                modelSets = [],
-                result = {},
-                bestMatch = 0,
-                currentMediaPlatforms = [],
-                platformsConfig = this.getConfig('platforms'),
-                supportedPlatforms = this._testMediaSupport(true),
-                mmap = $p.mmap;
+            inFiles = item.availableFiles || [],
+            outFiles = [];
 
-            // filter duplicate extensions and more ...
-            mmap.forEach(function (iLove, mmapIndex) {
+            // select only playable files
+            inFiles.forEach(function (file) {
+                var processedFile = ref._processItemFile(file),
+                    mimeType = processedFile.type,
+                    drm = processedFile.drm;
 
-                var modelPlatforms = iLove.platform || [],
-                    mimeType = iLove.type,
-                    modelDrmSystems = iLove.drm || [];
-
-                $.each(modelPlatforms, function (_na, platform) {
-
-                    var k = 0,
-                        streamType,
-                        requiredDrmSystems,
-                        drmSupport = false,
-                        files = data.file || [],
-                        file,
-                        i, l;
-
-                    for (i = 0, l = files.length; i < l; i++) {
-
-                        file = files[i];
-                        streamType = file.streamType || data.config.streamType || 'http',
-                            requiredDrmSystems = file.drm || [];
-
-                        if (ref._canPlay(mimeType, platform, streamType)) {
-
-                            if (requiredDrmSystems.length) {
-
-                                if (modelDrmSystems.length) {
-
-                                    drmSupport = requiredDrmSystems.some(function (drmSystem) {
-                                        return (ref.getIsDrmSystemSupported(drmSystem) &&
-                                            (modelDrmSystems.indexOf(drmSystem) > -1));
-                                    });
-                                } else {
-                                    drmSupport = false;
+                // check if the format is supported
+                if(ref.getCanPlay(mimeType)){
+                    // check if there is any DRM system specified 
+                    if(drm.length) {
+                        // if it is then check if it's supported
+                        if(drm.some(function(drmSystem){return ref.getCanPlayWithDrm(drmSystem, mimeType);})){
+                            // if so add this file to the list
+                            outFiles.push(processedFile);
                                 }
-
-                                if (drmSupport) {
-                                    k += 1;
-                                }
-                            } else {
-                                k += 1;
-                            }
-                        }
-
-                        // this platform does not support any of the provided streamtypes:
-                        if (k === 0) {
-                            continue;
-                        }
-
-                        // set priority level
-                        iLove.level = $.inArray(platform, platformsConfig);
-                        iLove.level = (iLove.level < 0) ? 100 : iLove.level;
-
-                        // build extension2filetype map
-                        if (!extTypes.hasOwnProperty(iLove.ext)) {
-                            extTypes[iLove.ext] = [];
-                        }
-                        extTypes[iLove.ext].push(iLove);
-
-                        // check stream type
-                        if (!iLove.hasOwnProperty('streamType') || iLove.streamType.toString() === '*' || $.inArray(streamType, iLove.streamType || '') > -1) {
-
-                            if (!typesModels.hasOwnProperty(iLove.type)) {
-                                typesModels[iLove.type] = [];
-                            }
-                            k = -1;
-
-                            for (var ci = 0, len = typesModels[iLove.type].length; ci < len; ci++) {
-
-                                if (typesModels[iLove.type][ci].model === iLove.model) {
-                                    k = ci;
-                                    break;
+                        // if it's not then add appropriate error code
+                        else {
+                            item.errorCode = 300;
                                 }
                             }
-
-                            if (k === -1) {
-                                typesModels[iLove.type].push(iLove);
-                            }
-                        }
-                    }
-                    return true;
-                });
-            });
-
-            for (var index in data.file) {
-                if (data.file.hasOwnProperty(index)) {
-
-                    // if type is set, get rid of the codec mess
-                    if (data.file[index].hasOwnProperty('type') && typeof data.file[index].type === 'string' && data.file[index].type !== '') {
-                        try {
-                            var codecMatch = data.file[index].type.split(' ').join('')
-                                .split(/[\;]codecs=.([a-zA-Z0-9\,]*)[\'|\"]/i);
-                            if (codecMatch.hasOwnProperty(1)) {
-                                data.file[index].codec = codecMatch[1];
-                            }
-                            data.file[index].type = codecMatch[0].toLowerCase(); // mimeTypes are case insensitive
-                            data.file[index].originalType = data.file[index].type;
-                        } catch (e) {}
-                    }
-                    // if type is not set try to get it from file extension
+                    // if it's not then just add the file to the list
                     else {
-                        data.file[index].type = this._getTypeFromFileExtension(data.file[index].src);
-                    }
-
-                    //
-                    if (typesModels.hasOwnProperty(data.file[index].type) && typesModels[data.file[index].type].length > 0) {
-
-                        // sort models by their priorities
-                        typesModels[data.file[index].type].sort(function (a, b) {
-                            return a.level - b.level;
-                        });
-                        modelSets.push(typesModels[data.file[index].type][0]);
-                    }
-                }
-            }
-
-            // if no model is able to play this media
-            if (modelSets.length === 0) {
-                modelSets = typesModels['none/none'];
-            } else {
-
-                // find highest prioritized playback model
-                modelSets.sort(function (a, b) {
-                    return a.level - b.level;
-                });
-
-                bestMatch = modelSets[0].level;
-
-                modelSets = $.grep(modelSets, function (value) {
-                    return value.level === bestMatch;
-                });
-            }
-
-            types = [];
-
-            $.each(modelSets || [], function () {
-                types.push(this.type);
-            });
-
-            // check for DRM support for selected models
-            // leave only those which are able to decode the content
-
-
-
-            modelSet = (modelSets && modelSets.length > 0) ? modelSets[0] : {
-                type: 'none/none',
-                model: 'NA',
-                errorCode: data.errorCode || 11,
-                config: data.config
-            };
-
-            types = $p.utils.unique(types);
-
-            for (index in data.file) {
-
-                if (data.file.hasOwnProperty(index)) {
-
-                    if (!data.hasOwnProperty('availableFiles')) {
-
-                        data.availableFiles = data.file.slice(); // clone array
-                    }
-
-                    // discard files not matching the selected model
-                    if (data.file[index].type == null) {
-                        continue;
-                    }
-
-                    if (($.inArray(data.file[index].type, types) < 0) && modelSet.type !== 'none/none') {
-                        continue;
-                    }
-
-                    // make srcURL absolute for non-RTMP files
-                    if ($.isEmptyObject(data.config) || !data.config.hasOwnProperty('streamType') || data.config.streamType.indexOf('rtmp') === -1) {
-                        data.file[index].src = $p.utils.toAbsoluteURL(data.file[index].src);
-                    }
-
-                    // set "auto" quality
-                    if (!data.file[index].hasOwnProperty('quality')) {
-                        data.file[index].quality = 'auto';
-                    }
-
-                    // add this file quality key to index
-                    qualities.push(data.file[index].quality);
-
-                    // add platforms
-                    for (var j = 0, l = supportedPlatforms.length; j < l; j++) {
-                        if (this._canPlay(data.file[index].type, supportedPlatforms[j].toLowerCase(), data.file[index].streamType || data.config.streamType || 'http')) {
-                            if ($.inArray(supportedPlatforms[j].toLowerCase(), currentMediaPlatforms) === -1) {
-                                currentMediaPlatforms.push(supportedPlatforms[j].toLowerCase());
-                            }
+                        outFiles.push(processedFile);
                         }
-                    }
-
-                    // add media variant
-                    mediaFiles.push(data.file[index]);
-                }
-            }
-
-            if (mediaFiles.length === 0) {
-                mediaFiles.push({
-                    src: null,
-                    quality: "auto"
-                });
-            }
-
-            // check quality index against configured index:
-            var _setQual = [];
-            $.each(this.getConfig('playbackQualities'), function () {
-                _setQual.push(this.key || 'auto');
+                        }
+                // add error code for unsupported file format
+                else {
+                    item.errorCode = 5;
+                        }
             });
 
-            // sort platforms by priority
-            currentMediaPlatforms.sort(function (a, b) {
-                return $.inArray(a, platformsConfig) - $.inArray(b, platformsConfig);
-            });
+            // cleanup errorCode if there are some playable files
+            if(outFiles.length){
+                item.errorCode = undefined;
+                            }
 
-            result = {
-                id: !!data.config.id && !this.getItemById(data.config.id) ? data.config.id : $p.utils.randomId(8),
-                cat: data.config.cat || 'clip',
-                file: mediaFiles,
-                availableFiles: data.availableFiles,
-                platform: modelSet.platform,
-                platforms: currentMediaPlatforms,
-                qualities: $p.utils.intersect($p.utils.unique(_setQual), $p.utils.unique(qualities)),
-                model: modelSet.model || 'NA',
-                errorCode: modelSet.errorCode || data.errorCode || 7,
-                viewcount: 0,
-                processed: true,
-                config: data.config || {},
-                cuepoints: data.file.cuepoints
-            };
+            item.file = outFiles;
 
-            return result;
+            return item;
         };
 
+        this._getBestModelForItem = function(item){
+            var ref = this,
+            files = item.file,
+            config = item.config || {},
+            prioritizeBy = config.prioritizeBy || this.getConfig('prioritizeBy'),
+            platformPriorities = Array.from(this.getSupportedPlatforms().keys()),
+            resultILoves = [],
+            file,
+            selectedModel = item.model,
+            selectedPlatform = item.platform;
 
+            // select best model based on defined priorities
+            if(prioritizeBy === 'sourcesOrder'){
+                // in 'sourcesOrder' mode we just need to find a proper model
+                // for the first playable file
+                file = files[0];
+                            }
+                    else {
+                /**
+                 * In platformsOrder mode we need to find the first file supported by the 
+                 * platform with highest priority.
+                 */
+                platformPriorities.some(function (pt) {
+                    selectedPlatform = pt;
+                    file = files.find(function (f) {
+                        if(f.drm.length){
+                            return f.drm.some(function (drmSystem) {
+                                return ref.getCanPlayWithDrm(drmSystem, f.type, [pt]);
+                        });
+                    }
+                        else{
+                            return ref.getCanPlay(f.type, [pt]);
+                }
+                    });
+                    return file !== undefined;
+                });
+            }
 
+            /**
+             * Get only sensible iLoves in this context
+             */
+            resultILoves = this._filterModelILoves(file.type, file.drm);
+
+            /**
+             * Now resultILoves is filled only with compatible and supported models iLoves
+             * but probably in the wrong order. Select first one with the highest priority
+             * for supported platforms.
+             */
+
+            platformPriorities.some(function(pt){
+                selectedPlatform = pt;
+                selectedModel = resultILoves.find(function(iLove){
+                    return (iLove.platform.indexOf(pt) > -1);
+                });
+
+                return selectedModel !== undefined;
+            });
+
+            // move selected file to the beginning of the array
+            item.file = files.splice(files.indexOf(file),1).concat(files);
+            item.model = selectedModel.model;
+            item.platform = selectedPlatform;
+
+            return item;
+            };
+
+        this._filterModelILoves = function(mimeType, drmSystems){
+            var modelsILoveSupported = $p.cache.modelsILoveSupported,
+            drm = drmSystems || [];
+
+            return modelsILoveSupported.filter(function(iLove){
+                return (iLove.type === mimeType
+                        && ( !drm.length // no DRM support needed
+                            // DRM support needed
+                            || (iLove.drm // model has defined DRM support
+                                && $p.utils.intersect(iLove.drm, drm).length // and this is the DRM support we need
+                                )
+                            )
+                        );
+            });
+        };
+
+        this._filterQualities = function(item){
+            var inFiles = item.file,
+            qualityDefinitions = item.config.playbackQualities || this.getConfig('playbackQualities') || [],
+            fileQualityKeys = [],
+            definedQualityKeys = qualityDefinitions.map(function (q) {
+                return q.key;
+            }),
+            outFiles = [];
+
+            // always push 'auto' to the definedQualityKeys
+            definedQualityKeys.push('auto');
+
+            // collect all quality keys from available files
+            inFiles.forEach(function (file) {
+                fileQualityKeys.push(file.quality);
+            });
+
+            // leave only unique ones
+            fileQualityKeys = $p.utils.unique(fileQualityKeys);
+
+            // are there proper definitions for those quality keys?
+            // leave only valid ones
+            fileQualityKeys = $p.utils.intersect(fileQualityKeys, definedQualityKeys);
+
+            // is there more than one quality
+            if(fileQualityKeys.length > 1){
+                // leave only one file for each valid key
+                fileQualityKeys.forEach(function(qKey) {
+                    outFiles.push(inFiles.find(function(file){
+                        return file.quality === qKey;
+                    }));
+                });
+            }
+
+            // if there is no usable quality file
+            // add first file from playable ones and overwrite its quality with 'auto'
+            if(outFiles.length === 0){
+                inFiles[0].quality = 'auto';
+                outFiles.push(inFiles[0]);
+            }
+
+            item.file = outFiles;
+            item.qualities = fileQualityKeys;
+
+            return item;
+        };
+
+        this._filterFiles = function (item, filterFunc) {
+            var files = item.file || [];
+
+            item.file = files.filter(filterFunc);
+
+            return item;
+        };
 
         /********************************************************************************************
          Event Handlers:
@@ -1816,7 +1801,7 @@ window.projekktor = window.$p = (function (window, document, $) {
          */
         this.getFullscreenType = function () {
             var config = this.getConfig('fullscreen') || [],
-                usedPlatform = $p.utils.intersect(this.getPlatform(), this.getPlatforms())[0] || [],
+                usedPlatform = this.getPlatform(),
                 fullscreenTypesAvailableForUsedPlatform = this.config._platformsFullscreenConfig[usedPlatform] || [],
                 availableFullscreenApiType = $p.fullscreenApi.type,
                 fullscreenTypeAvailableForApi = [],
@@ -3788,7 +3773,13 @@ window.projekktor = window.$p = (function (window, document, $) {
 
                     if(!supportedPlatformsLocal.size){
 
-                        platformsConfig = this.getConfig('platforms') || [];
+                        platformsConfig = this.getConfig('platforms') || ['browser'];
+
+                        // always add 'browser' platform if it's missing
+                        if(platformsConfig.indexOf('browser') === -1){
+                            platformsConfig.unshift('browser');
+                        }
+
                         platformsConfig.forEach(function(pt){
 
                             if(supportedPlatformsGlobal.has(pt)){
@@ -3814,6 +3805,27 @@ window.projekktor = window.$p = (function (window, document, $) {
                 return platforms.indexOf(platform);
         };
         }.call(this);
+
+        this.getCanPlayWithDrm = function (drmSystem, mimeType, platforms) {
+            var ref = this,
+            supportedDrmSystems = $p.drm.supportedDrmSystems,
+            modelsILoveSupported = $p.cache.modelsILoveSupported,
+            supportedPlatforms = Array.from(ref.getSupportedPlatforms().keys()),
+            pt = Array.isArray(platforms) ? $p.utils.intersect(supportedPlatforms, platforms) : supportedPlatforms;
+
+            // check if DRM system is supported at this device
+            if (supportedDrmSystems.indexOf(drmSystem) > -1) {
+                // check if DRM system is supported for specified mimeType
+                return modelsILoveSupported.some(function (iLove) {
+                    return (iLove.drm 
+                            && iLove.drm.indexOf(drmSystem) > -1 
+                            && iLove.type === mimeType 
+                            && $p.utils.intersect(iLove.platform, pt).length
+                    );
+                });
+            }
+            return false;
+        };
 
         this._readMediaTag = function (domNode) {
             var result = {},
