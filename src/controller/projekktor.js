@@ -38,7 +38,6 @@ window.projekktor = window.$p = (function (window, document, $) {
             volume: 1,
             playerDom: null,
             mediaContainer: null,
-            agent: 'standard',
             mouseIsOver: false,
             loading: false, // important
             className: '',
@@ -721,7 +720,6 @@ window.projekktor = window.$p = (function (window, document, $) {
                     break;
 
                 case 'AWAKENING':
-                    this.playerModel.mediaElement
                     this._syncPlugins('awakening');
                     break;
 
@@ -1469,7 +1467,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         /*******************************
          public (API) methods GETTERS
          *******************************/
-        this.getVersion = this.getPlayerVer = function () {
+        this.getVersion = function () {
             return this.config._version;
         };
 
@@ -1481,7 +1479,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             return this.getPreviousItem() !== false;
         };
 
-        this.getItemConfig = this.getConfig = function () {
+        this.getConfig = function () {
 
             var idx = this.getItemIdx(),
                 name = null,
@@ -1573,15 +1571,6 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             try {
                 return this.playerModel.getLoadProgress();
-            } catch (e) {
-                return 0;
-            }
-        };
-
-        this.getKbPerSec = function () {
-
-            try {
-                return this.playerModel.getKbPerSec();
             } catch (e) {
                 return 0;
             }
@@ -2186,14 +2175,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             var item = item || this.getItem();
 
-            return item.platform || [];
-        };
-
-        this.getPlatforms = function (item) {
-
-            var item = item || this.getItem();
-
-            return item.platforms || [];
+            return item.platform || 'browser';
         };
 
         this.getId = function () {
