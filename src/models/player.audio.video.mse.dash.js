@@ -49,6 +49,7 @@
          */
         _initMedia: function (destContainer) {
             var ref = this,
+                dashjsConfig = ref.pp.getConfig('platformsConfig').mse.dashjs.initVars,
                 wasAwakening = ref.getState('AWAKENING');
 
             ///// Stage 1:
@@ -150,6 +151,20 @@
                     ref.sendUpdate('error', 302, event.error);
                 }
             });
+
+            // set config
+            Object.keys(dashjsConfig).forEach(function(configKey) {
+                var val = dashjsConfig[configKey];
+                switch (configKey) {
+                    case 'debug':
+                        ref._dashjs.getDebug().setLogToBrowserConsole(val);
+                        break;
+                    case 'fastSwitchEnabled':
+                        ref._dashjs.setFastSwitchEnabled(val);
+                        break;
+                }
+            });
+
             this.applySrc();
         },
 
