@@ -1,13 +1,12 @@
-(function(window, document, $, $p){
+(function (window, document, $, $p) {
 
     "use strict";
 
     $p.newModel({
         modelId: 'MSEVIDEODASH',
         mseVersion: '1.0',
-        
-        iLove: [
-            {
+
+        iLove: [{
                 ext: 'ism',
                 type: 'application/dash+xml',
                 platform: ['mse'],
@@ -37,8 +36,8 @@
             this._fetchDashJs(function (dashjsLib) {
                 $p.utils.log('dashjs lib successfully loaded');
 
-                    ref._initMedia(destContainer);
-                });
+                ref._initMedia(destContainer);
+            });
         },
 
         /**
@@ -142,18 +141,18 @@
             });
 
             this._dashjs.on("public_keySessionClosed", function (event) {
-                if(event.error !== undefined){
+                if (event.error !== undefined) {
                     ref.sendUpdate('error', 302, event.error);
                 }
             });
             this._dashjs.on("public_licenseRequestComplete", function (event) {
-                if(event.error !== undefined){
+                if (event.error !== undefined) {
                     ref.sendUpdate('error', 302, event.error);
                 }
             });
 
             // set config
-            Object.keys(dashjsConfig).forEach(function(configKey) {
+            Object.keys(dashjsConfig).forEach(function (configKey) {
                 var val = dashjsConfig[configKey];
                 switch (configKey) {
                     case 'debug':
@@ -176,12 +175,12 @@
 
             if (this._dashjs) {
                 if (this._dashjs.isReady()) {
-                this._dashjs.reset();
+                    this._dashjs.reset();
                 }
                 this._dashjs = null;
             }
 
-                this._video = null;
+            this._video = null;
 
             this._qualityMap = null;
             this._quality = null;
@@ -199,8 +198,7 @@
                 if (availableDrmConfig.length > 0) {
                     // DRM config required and available
                     dashjsProtectionDataConf = {};
-                    }
-                else {
+                } else {
                     // DRM system required but no valid license server config defined
                     this.sendUpdate('error', 301);
                     return;
@@ -224,7 +222,7 @@
                 }
             });
 
-            if(dashjsProtectionDataConf !== undefined){
+            if (dashjsProtectionDataConf !== undefined) {
                 this._dashjs.setProtectionData(dashjsProtectionDataConf);
             }
 
@@ -247,8 +245,7 @@
 
             if (typeof window.dashjs === "object") {
                 cb(window.dashjs);
-            }
-            else {
+            } else {
                 $p.utils.getScript(ref.pp.getConfig('platformsConfig').mse.dashjs.src, {
                     cache: true
                 }).done(function () {
@@ -275,7 +272,7 @@
                 audioList = null,
                 videoList = null,
                 buffer = [],
-                keyName = null
+                keyName = null;
 
 
             if (!!this._showAudioOnly) {
@@ -366,5 +363,5 @@
         }
 
     }, 'VIDEO');
-    
+
 }(window, document, jQuery, projekktor));
