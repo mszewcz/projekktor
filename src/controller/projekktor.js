@@ -2326,7 +2326,8 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             var lastItem = this.getItem(),
                 newItem = null,
-                ap = this.config._autoplay;
+                ap = this.config._autoplay,
+                M;
 
             if (typeof mixedData === 'string') {
 
@@ -2388,15 +2389,16 @@ window.projekktor = window.$p = (function (window, document, $) {
             var newModel = newItem.model;
 
             // model does not exist or is faulty:
-            if (!$p.models[newModel]) {
+            if (!$p.models.has(newModel)) {
                 newModel = 'NA';
-                newItem.mediaModel = newModel;
+                newItem.model = newModel;
                 newItem.errorCode = 8;
             }
 
             // start model
             this.playerModel = new playerModel();
-            $.extend(this.playerModel, new $p.models[newModel]());
+            M = $p.models.get(newModel);
+            $.extend(this.playerModel, new M());
 
             this.__promote('synchronizing', 'display');
 
