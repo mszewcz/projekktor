@@ -3710,10 +3710,8 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this._processQueue = function () {
 
-            var ref = this,
-                modelReady = false;
+            var ref = this;
 
-            // if (this._processing===true || this.env.loading===true) return;
             if (this._processing === true) {
                 return;
             }
@@ -3723,11 +3721,9 @@ window.projekktor = window.$p = (function (window, document, $) {
                     try {
 
                         var msg = ref._queue.shift();
-
                         if (msg != null) {
 
                             if (typeof msg.command === 'string') {
-
                                 if (msg.delay > 0) {
                                     setTimeout(function () {
                                         ref.playerModel.applyCommand(msg.command, msg.params);
