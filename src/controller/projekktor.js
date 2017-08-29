@@ -1318,7 +1318,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             return true;
         };
 
-        /* make player back to original size */
+        /* return player to the original size */
         this._collapseView = function (win, target, targetParent) {
             var isSelf = (win[0] === window.self),
                 fsData = target ? target.data('fsdata') : null,
@@ -1326,8 +1326,6 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             // reset
             if (fsData !== null) {
-
-
 
                 $(win[0].document.body)
                     .css({
@@ -2011,7 +2009,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                         })
                         .appendTo(this.env.playerDom.find('.' + this.getNS() + 'display'));
                 }
-                // elsewise create a 1x1 pixel dummy somewhere
+                // else create a 1x1 pixel dummy somewhere
                 else {
                     this.env.mediaContainer = $(document.createElement('div'))
                         .attr({
@@ -4117,7 +4115,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             return projekktors[arg];
         }
 
-        // by string selection unqiue "id" or "*"
+        // by string selection unique "id" or "*"
         if (typeof arg === 'string') {
 
             // get all instances
