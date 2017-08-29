@@ -4177,6 +4177,7 @@ window.projekktor = window.$p = (function (window, document, $) {
         cache: {
             value: {
                 modelsILove: [],
+                modelsILoveSupported: undefined,
                 platformMimeTypeMap: undefined,
                 fileExtensionMimeTypeMap: undefined
             }
@@ -4213,22 +4214,26 @@ window.projekktor = window.$p = (function (window, document, $) {
                 return true;
             }
         },
-        /* generates:
-            platform -> mimeType map 
-            file extension -> mimeType map    
+        /**
+         * generates:
+         * - platform -> mimeType map 
+         * - file extension -> mimeType map 
+         * - supported iLoves array
         */
         testMediaSupport: {
             value: function () {
 
-                var platformMimeTypeMap,
-                    fileExtensionMimeTypeMap,
+                var fileExtensionMimeTypeMap,
+                    platformMimeTypeMap,
+                    modelsILoveSupported,
                     mILove;
 
                 // process only once
                 if (!$p.cache.platformMimeTypeMap && !$p.cache.fileExtensionMimeTypeMap) {
 
-                    platformMimeTypeMap = new Map();
                     fileExtensionMimeTypeMap = new Map();
+                    platformMimeTypeMap = new Map();
+                    modelsILoveSupported = [];
                     mILove = $p.cache.modelsILove || [];
 
                     mILove.forEach(function (iLove) {
@@ -4262,14 +4267,17 @@ window.projekktor = window.$p = (function (window, document, $) {
                                     }
                                     // add mimeType to the set of supported for this platform
                                     platformMimeTypeMap.get(platform).add(mimeType);
+
+                                    modelsILoveSupported.push(iLove);
                                 }
                             }
                         });
                     });
 
                     // cache values
-                    $p.cache.platformMimeTypeMap = platformMimeTypeMap;
                     $p.cache.fileExtensionMimeTypeMap = fileExtensionMimeTypeMap;
+                    $p.cache.platformMimeTypeMap = platformMimeTypeMap;
+                    $p.cache.modelsILoveSupported = modelsILoveSupported;
                 }
             }
         }
