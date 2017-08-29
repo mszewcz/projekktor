@@ -323,10 +323,10 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             mILove.forEach(function (iLove) {
                 if (iLove.type === mimeType) {
-                    iLove.platform.forEach(function(platform) {
+                    iLove.platform.forEach(function (platform) {
                         platformsSet.add(platform);
                     });
-                    }
+                }
             });
 
             return platformsSet;
@@ -337,7 +337,7 @@ window.projekktor = window.$p = (function (window, document, $) {
          */
         this._canPlay = function (mimeType, platform) {
 
-            var platformMimeTypeMap = this.getSupportedPlatforms(), 
+            var platformMimeTypeMap = this.getSupportedPlatforms(),
                 pt = (typeof platform === "string") ? platform.toLowerCase() : "browser",
                 type = (typeof mimeType === "string") ? mimeType.toLowerCase() : undefined;
 
@@ -356,35 +356,35 @@ window.projekktor = window.$p = (function (window, document, $) {
             return platformMimeTypeMap.get(pt).has(type);
         };
 
-        this._processItem = function(itemData) {
+        this._processItem = function (itemData) {
             var files = itemData.file || [],
-            config = itemData.config || {},    
-            defaultItem = {
-                id: config.id || $p.utils.randomId(8),
-                cat: 'clip',
-                file: [],
-                availableFiles: files,
-                platform: 'browser', 
-                qualities: [], // available quality keys
-                model: 'NA',
-                errorCode: undefined,
-                viewcount: 0,
-                processed: false,
-                config: config,
-                cuepoints: []
-            },
-            resultItem = $.extend({}, defaultItem);
+                config = itemData.config || {},
+                defaultItem = {
+                    id: config.id || $p.utils.randomId(8),
+                    cat: 'clip',
+                    file: [],
+                    availableFiles: files,
+                    platform: 'browser',
+                    qualities: [], // available quality keys
+                    model: 'NA',
+                    errorCode: undefined,
+                    viewcount: 0,
+                    processed: false,
+                    config: config,
+                    cuepoints: []
+                },
+                resultItem = $.extend({}, defaultItem);
 
             // leave only supported files
             resultItem = this._filterSupportedItemFiles(resultItem);
 
-            if(resultItem.file.length){
+            if (resultItem.file.length) {
                 // In this place we are dealing only with potentially playable files.
                 // Now we need to select the best one(s) to play.
                 resultItem = this._getBestModelForItem(resultItem);
 
                 // leave only valid files for the selected model/platform
-                resultItem = this._filterFiles(resultItem, function(file, idx, files){
+                resultItem = this._filterFiles(resultItem, function (file, idx, files) {
                     return file.type === files[0].type;
                 });
 
@@ -397,19 +397,19 @@ window.projekktor = window.$p = (function (window, document, $) {
             return resultItem;
         };
 
-        this._processItemFile = function(file){
+        this._processItemFile = function (file) {
             var parsedMimeType,
-            resultFile = {
-                src: $p.utils.toAbsoluteURL(file.src),
-                type: 'none/none',
-                originalType: file.type,
-                drm: file.drm || [],
-                codecs: undefined,
-                quality: file.quality || 'auto'
-            };
+                resultFile = {
+                    src: $p.utils.toAbsoluteURL(file.src),
+                    type: 'none/none',
+                    originalType: file.type,
+                    drm: file.drm || [],
+                    codecs: undefined,
+                    quality: file.quality || 'auto'
+                };
 
             // check and cleanup provided mimeType
-            if(file.type){
+            if (file.type) {
                 parsedMimeType = $p.utils.parseMimeType(file.type);
                 resultFile.type = parsedMimeType.type + "/" + parsedMimeType.subtype;
                 resultFile.codecs = parsedMimeType.parameters.codecs;
@@ -422,11 +422,11 @@ window.projekktor = window.$p = (function (window, document, $) {
             return resultFile;
         };
 
-        this._filterSupportedItemFiles = function(item){
+        this._filterSupportedItemFiles = function (item) {
 
             var ref = this,
-            inFiles = item.availableFiles || [],
-            outFiles = [];
+                inFiles = item.availableFiles || [],
+                outFiles = [];
 
             // select only playable files
             inFiles.forEach(function (file) {
@@ -435,58 +435,59 @@ window.projekktor = window.$p = (function (window, document, $) {
                     drm = processedFile.drm;
 
                 // check if the format is supported
-                if(ref.getCanPlay(mimeType)){
+                if (ref.getCanPlay(mimeType)) {
                     // check if there is any DRM system specified 
-                    if(drm.length) {
+                    if (drm.length) {
                         // if it is then check if it's supported
-                        if(drm.some(function(drmSystem){return ref.getCanPlayWithDrm(drmSystem, mimeType);})){
+                        if (drm.some(function (drmSystem) {
+                                return ref.getCanPlayWithDrm(drmSystem, mimeType);
+                            })) {
                             // if so add this file to the list
                             outFiles.push(processedFile);
-                                }
+                        }
                         // if it's not then add appropriate error code
                         else {
                             item.errorCode = 300;
-                                }
-                            }
+                        }
+                    }
                     // if it's not then just add the file to the list
                     else {
                         outFiles.push(processedFile);
-                        }
-                        }
+                    }
+                }
                 // add error code for unsupported file format
                 else {
                     item.errorCode = 5;
-                        }
+                }
             });
 
             // cleanup errorCode if there are some playable files
-            if(outFiles.length){
+            if (outFiles.length) {
                 item.errorCode = undefined;
-                            }
+            }
 
             item.file = outFiles;
 
             return item;
         };
 
-        this._getBestModelForItem = function(item){
+        this._getBestModelForItem = function (item) {
             var ref = this,
-            files = item.file,
-            config = item.config || {},
-            prioritizeBy = config.prioritizeBy || this.getConfig('prioritizeBy'),
-            platformPriorities = Array.from(this.getSupportedPlatforms().keys()),
-            resultILoves = [],
-            file,
-            selectedModel = item.model,
-            selectedPlatform = item.platform;
+                files = item.file,
+                config = item.config || {},
+                prioritizeBy = config.prioritizeBy || this.getConfig('prioritizeBy'),
+                platformPriorities = Array.from(this.getSupportedPlatforms().keys()),
+                resultILoves = [],
+                file,
+                selectedModel = item.model,
+                selectedPlatform = item.platform;
 
             // select best model based on defined priorities
-            if(prioritizeBy === 'sourcesOrder'){
+            if (prioritizeBy === 'sourcesOrder') {
                 // in 'sourcesOrder' mode we just need to find a proper model
                 // for the first playable file
                 file = files[0];
-                            }
-                    else {
+            } else {
                 /**
                  * In platformsOrder mode we need to find the first file supported by the 
                  * platform with highest priority.
@@ -494,14 +495,13 @@ window.projekktor = window.$p = (function (window, document, $) {
                 platformPriorities.some(function (pt) {
                     selectedPlatform = pt;
                     file = files.find(function (f) {
-                        if(f.drm.length){
+                        if (f.drm.length) {
                             return f.drm.some(function (drmSystem) {
                                 return ref.getCanPlayWithDrm(drmSystem, f.type, [pt]);
-                        });
-                    }
-                        else{
+                            });
+                        } else {
                             return ref.getCanPlay(f.type, [pt]);
-                }
+                        }
                     });
                     return file !== undefined;
                 });
@@ -518,9 +518,9 @@ window.projekktor = window.$p = (function (window, document, $) {
              * for supported platforms.
              */
 
-            platformPriorities.some(function(pt){
+            platformPriorities.some(function (pt) {
                 selectedPlatform = pt;
-                selectedModel = resultILoves.find(function(iLove){
+                selectedModel = resultILoves.find(function (iLove) {
                     return (iLove.platform.indexOf(pt) > -1);
                 });
 
@@ -528,37 +528,39 @@ window.projekktor = window.$p = (function (window, document, $) {
             });
 
             // move selected file to the beginning of the array
-            item.file = files.splice(files.indexOf(file),1).concat(files);
+            item.file = files.splice(files.indexOf(file), 1).concat(files);
             item.model = selectedModel.model;
             item.platform = selectedPlatform;
 
             return item;
-            };
+        };
 
-        this._filterModelILoves = function(mimeType, drmSystems){
+        this._filterModelILoves = function (mimeType, drmSystems) {
             var modelsILoveSupported = $p.cache.modelsILoveSupported,
-            drm = drmSystems || [];
+                drm = drmSystems || [];
 
-            return modelsILoveSupported.filter(function(iLove){
-                return (iLove.type === mimeType
-                        && ( !drm.length // no DRM support needed
-                            // DRM support needed
-                            || (iLove.drm // model has defined DRM support
-                                && $p.utils.intersect(iLove.drm, drm).length // and this is the DRM support we need
-                                )
-                            )
-                        );
+            return modelsILoveSupported.filter(function (iLove) {
+                return (iLove.type === mimeType &&
+                    (!drm.length // no DRM support needed
+                        // DRM support needed
+                        ||
+                        (iLove.drm // model has defined DRM support
+                            &&
+                            $p.utils.intersect(iLove.drm, drm).length // and this is the DRM support we need
+                        )
+                    )
+                );
             });
         };
 
-        this._filterQualities = function(item){
+        this._filterQualities = function (item) {
             var inFiles = item.file,
-            qualityDefinitions = item.config.playbackQualities || this.getConfig('playbackQualities') || [],
-            fileQualityKeys = [],
-            definedQualityKeys = qualityDefinitions.map(function (q) {
-                return q.key;
-            }),
-            outFiles = [];
+                qualityDefinitions = item.config.playbackQualities || this.getConfig('playbackQualities') || [],
+                fileQualityKeys = [],
+                definedQualityKeys = qualityDefinitions.map(function (q) {
+                    return q.key;
+                }),
+                outFiles = [];
 
             // always push 'auto' to the definedQualityKeys
             definedQualityKeys.push('auto');
@@ -576,10 +578,10 @@ window.projekktor = window.$p = (function (window, document, $) {
             fileQualityKeys = $p.utils.intersect(fileQualityKeys, definedQualityKeys);
 
             // is there more than one quality
-            if(fileQualityKeys.length > 1){
+            if (fileQualityKeys.length > 1) {
                 // leave only one file for each valid key
-                fileQualityKeys.forEach(function(qKey) {
-                    outFiles.push(inFiles.find(function(file){
+                fileQualityKeys.forEach(function (qKey) {
+                    outFiles.push(inFiles.find(function (file) {
                         return file.quality === qKey;
                     }));
                 });
@@ -587,7 +589,7 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             // if there is no usable quality file
             // add first file from playable ones and overwrite its quality with 'auto'
-            if(outFiles.length === 0){
+            if (outFiles.length === 0) {
                 inFiles[0].quality = 'auto';
                 outFiles.push(inFiles[0]);
             }
@@ -1033,10 +1035,10 @@ window.projekktor = window.$p = (function (window, document, $) {
         this.__promote = function (evt, value) {
 
             var ref = this,
-            event = evt,
-            pluginEventHandlersCache = this._pluginCache,
-            playerListeners = this.listeners || [],
-            pluginsWithHandlers;
+                event = evt,
+                pluginEventHandlersCache = this._pluginCache,
+                playerListeners = this.listeners || [],
+                pluginsWithHandlers;
 
             if (typeof event === 'object') {
 
@@ -1053,32 +1055,32 @@ window.projekktor = window.$p = (function (window, document, $) {
             // fire on plugins
             pluginsWithHandlers = pluginEventHandlersCache[event + 'Handler'] || [];
             pluginsWithHandlers.forEach(function (plugin) {
-                        try {
+                try {
                     plugin[event + 'Handler'](value, ref);
                 } catch (error) {
                     $p.utils.log(error);
-            }
+                }
             });
 
             // universal plugin event handler
             pluginsWithHandlers = pluginEventHandlersCache['eventHandler'] || [];
             pluginsWithHandlers.forEach(function (plugin) {
-                        try {
+                try {
                     plugin['eventHandler'](event, value, ref);
                 } catch (error) {
                     $p.utils.log(error);
-            }
+                }
             });
 
             // fire on custom player listeners
-            playerListeners.forEach(function(listener) {
-                if(listener.event === event || listener.event === '*') {
-                            try {
+            playerListeners.forEach(function (listener) {
+                if (listener.event === event || listener.event === '*') {
+                    try {
                         listener.callback(value, ref);
                     } catch (error) {
                         $p.utils.log(error);
+                    }
                 }
-            }
             });
 
             // fire on self:
@@ -2384,7 +2386,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             if (wasFullscreen) {
                 this.getDC().addClass('fullscreen');
             }
-            
+
             // create player instance
             var newModel = newItem.model;
 
@@ -3686,31 +3688,31 @@ window.projekktor = window.$p = (function (window, document, $) {
             this._processing = true;
 
             (function pq() {
-                    try {
+                try {
 
-                        var msg = ref._queue.shift();
-                        if (msg != null) {
+                    var msg = ref._queue.shift();
+                    if (msg != null) {
 
-                            if (typeof msg.command === 'string') {
-                                if (msg.delay > 0) {
-                                    setTimeout(function () {
-                                        ref.playerModel.applyCommand(msg.command, msg.params);
-                                    }, msg.delay);
-                                } else {
+                        if (typeof msg.command === 'string') {
+                            if (msg.delay > 0) {
+                                setTimeout(function () {
                                     ref.playerModel.applyCommand(msg.command, msg.params);
-                                }
+                                }, msg.delay);
                             } else {
-                                msg.command(ref);
+                                ref.playerModel.applyCommand(msg.command, msg.params);
                             }
+                        } else {
+                            msg.command(ref);
                         }
-                    } catch (e) {
-                        $p.utils.log("ERROR:", e);
                     }
+                } catch (e) {
+                    $p.utils.log("ERROR:", e);
+                }
 
-                    if (ref._queue.length === 0) {
-                        ref._processing = false;
-                        return;
-                    }
+                if (ref._queue.length === 0) {
+                    ref._processing = false;
+                    return;
+                }
                 pq();
             })();
         };
@@ -3731,14 +3733,14 @@ window.projekktor = window.$p = (function (window, document, $) {
                 extMatch,
                 fileExt = 'na'; // file extension string, 'na' -> none/none
 
-            if(!regExp) {
+            if (!regExp) {
 
-                regExp = function(){
+                regExp = function () {
 
                     var extensions = [];
 
                     // build regexp matching all known extensions
-                    extTypes.forEach(function(mimeType, ext) {
+                    extTypes.forEach(function (mimeType, ext) {
                         extensions.push('\\\.' + ext);
                     });
 
@@ -3747,7 +3749,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 }();
 
                 $p.cache.fileExtensionsRegExp = regExp;
-                        }
+            }
 
             if (typeof url === 'string') {
 
@@ -3761,66 +3763,66 @@ window.projekktor = window.$p = (function (window, document, $) {
             return Array.from(extTypes.get(fileExt))[0];
         };
 
-        this._getSupportedPlatforms = function(global){
+        this._getSupportedPlatforms = function (global) {
             var supportedPlatformsGlobal = $p.cache.platformMimeTypeMap,
                 supportedPlatformsLocal = new Map(),
                 platformsConfig;
 
-                return function(){
-                    if(global){
-                        return supportedPlatformsGlobal;
-            }
+            return function () {
+                if (global) {
+                    return supportedPlatformsGlobal;
+                }
 
-                    if(!supportedPlatformsLocal.size){
+                if (!supportedPlatformsLocal.size) {
 
-                        platformsConfig = this.getConfig('platforms') || ['browser'];
+                    platformsConfig = this.getConfig('platforms') || ['browser'];
 
-                        // always add 'browser' platform if it's missing
-                        if(platformsConfig.indexOf('browser') === -1){
-                            platformsConfig.unshift('browser');
+                    // always add 'browser' platform if it's missing
+                    if (platformsConfig.indexOf('browser') === -1) {
+                        platformsConfig.unshift('browser');
+                    }
+
+                    platformsConfig.forEach(function (pt) {
+
+                        if (supportedPlatformsGlobal.has(pt)) {
+                            supportedPlatformsLocal.set(pt, supportedPlatformsGlobal.get(pt));
                         }
-
-                        platformsConfig.forEach(function(pt){
-
-                            if(supportedPlatformsGlobal.has(pt)){
-                                supportedPlatformsLocal.set(pt, supportedPlatformsGlobal.get(pt));
-                            }
-                        });
-                            }
-                    return supportedPlatformsLocal;
-                };
+                    });
+                }
+                return supportedPlatformsLocal;
+            };
         };
 
         this.getSupportedPlatforms = this._getSupportedPlatforms();
 
         this.getSupportedPlatformsGlobal = this._getSupportedPlatforms(true);
 
-        this.getPriorityForPlatform = function(){
+        this.getPriorityForPlatform = function () {
             var platforms;
 
-            return function(platform) {
-                if(!platforms){
+            return function (platform) {
+                if (!platforms) {
                     platforms = Array.from(this.getSupportedPlatforms());
-                    }
+                }
                 return platforms.indexOf(platform);
-        };
+            };
         }.call(this);
 
         this.getCanPlayWithDrm = function (drmSystem, mimeType, platforms) {
             var ref = this,
-            supportedDrmSystems = $p.drm.supportedDrmSystems,
-            modelsILoveSupported = $p.cache.modelsILoveSupported,
-            supportedPlatforms = Array.from(ref.getSupportedPlatforms().keys()),
-            pt = Array.isArray(platforms) ? $p.utils.intersect(supportedPlatforms, platforms) : supportedPlatforms;
+                supportedDrmSystems = $p.drm.supportedDrmSystems,
+                modelsILoveSupported = $p.cache.modelsILoveSupported,
+                supportedPlatforms = Array.from(ref.getSupportedPlatforms().keys()),
+                pt = Array.isArray(platforms) ? $p.utils.intersect(supportedPlatforms, platforms) : supportedPlatforms;
 
             // check if DRM system is supported at this device
             if (supportedDrmSystems.indexOf(drmSystem) > -1) {
                 // check if DRM system is supported for specified mimeType
                 return modelsILoveSupported.some(function (iLove) {
-                    return (iLove.drm 
-                            && iLove.drm.indexOf(drmSystem) > -1 
-                            && iLove.type === mimeType 
-                            && $p.utils.intersect(iLove.platform, pt).length
+                    return (iLove.drm &&
+                        iLove.drm.indexOf(drmSystem) > -1 &&
+                        iLove.type === mimeType &&
+                        $p.utils.intersect(iLove.platform, pt).length
                     );
                 });
             }
@@ -4082,7 +4084,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                     }
                 }
             }
-            
+
             this.setFile(this.config._playlist);
 
             return this;
@@ -4095,7 +4097,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             },
             function (reason) {
                 $p.utils.log('initPromises failed: ' + reason);
-                
+
             });
     }
 
@@ -4231,7 +4233,7 @@ window.projekktor = window.$p = (function (window, document, $) {
          * - platform -> mimeType map 
          * - file extension -> mimeType map 
          * - supported iLoves array
-        */
+         */
         testMediaSupport: {
             value: function () {
 
