@@ -21,10 +21,7 @@
             }
         ],
 
-        DASHJS: null,
         _dashjs: null,
-        _hasInit: false,
-        _file: null,
         _video: null,
         _quality: null,
         _qualityMap: null,
@@ -37,17 +34,11 @@
 
             this._showAudioOnly = this.pp.getConfig('dynamicStreamShowAudioOnlyQualities');
 
-            if (!this._hasInit) {
-                this._hasInit = true;
+            this._fetchDashJs(function (dashjsLib) {
+                $p.utils.log('dashjs lib successfully loaded');
 
-                this._fetchDashJs(function (dashjs_) {
-                    ref.DASHJS = dashjs_;
-                    ref._file = ref.getSource()[0];
                     ref._initMedia(destContainer);
                 });
-            } else {
-                this._initMedia(destContainer);
-            }
         },
 
         /**
@@ -62,7 +53,7 @@
 
             ///// Stage 1:
             // Create dash.js MediaPlayer instance.
-            this._dashjs = this.DASHJS.MediaPlayer().create();
+            this._dashjs = window.dashjs.MediaPlayer().create();
 
             ///// Stage 2:
             // If there is <video> element in the display container then use it,
@@ -97,7 +88,7 @@
 
             ///// Stage 3:
             // Attach event listeners `this._dashjs`.
-            var events = this.DASHJS.MediaPlayer.events;
+            var events = window.dashjs.MediaPlayer.events;
 
             this._dashjs.on(events["STREAM_INITIALIZED"], function (data) {
                 if (wasAwakening) {
