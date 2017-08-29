@@ -123,7 +123,6 @@
 
         $p.initPromises.push(
             getSupportedDrmSystems().then(function (val) {
-                console.warn("DRM DONE", supportedDrmSystems);
                 $p.drm = {
                     supportedDrmSystems: supportedDrmSystems,
                     drmSystems: drmSystems,
