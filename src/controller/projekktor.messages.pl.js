@@ -76,6 +76,8 @@ var projekktorMessages = (function(window, document, $, $p){
 
     // DRM errors
     "error300": "#300 Brak wsparcia dla systemów DRM użytych do zaszyfrowania tego pliku audio/video.",
+    "error301": "#301 System DRM jest wymagadny do odtworzenia tego pliku lecz nie znaleziono konfiguracji dla serwera licencyjnego.",
+    "error302": "#302 Licencja DRM nieprawidłowa bądź serwer licencyjny nie jest dostępny.",
 
     // youtube errors:
     "error500": 'To wideo zostało usunięte albo zostało ustawione jako prywatne',

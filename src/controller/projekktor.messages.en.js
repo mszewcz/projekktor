@@ -78,6 +78,8 @@ return {
 
     // DRM errors
     "error300": "#300 No support for any of the DRM systems used to encrypt this media.",
+    "error301": "#301 DRM system required but no valid license server config defined.",
+    "error302": "#302 DRM license invalid or license server unavailable.",
 
     // youtube errors:
     "error500": 'This Youtube video has been removed or set to private',
