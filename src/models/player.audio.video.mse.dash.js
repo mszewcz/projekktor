@@ -91,6 +91,10 @@
             var events = window.dashjs.MediaPlayer.events;
 
             this._dashjs.on(events["STREAM_INITIALIZED"], function (data) {
+
+                // after "STREAM_INITIALIZED" it should be safe to set config values
+                ref._setDashJsConfig(dashjsConfig);
+
                 if (wasAwakening) {
                     ref.displayReady();
                     return;
@@ -151,20 +155,46 @@
                 }
             });
 
-            // set config
-            Object.keys(dashjsConfig).forEach(function (configKey) {
-                var val = dashjsConfig[configKey];
-                switch (configKey) {
-                    case 'debug':
-                        ref._dashjs.getDebug().setLogToBrowserConsole(val);
-                        break;
-                    case 'fastSwitchEnabled':
-                        ref._dashjs.setFastSwitchEnabled(val);
-                        break;
-                }
+            // set config set only 'debug' value here
+            this._setDashJsConfig({
+                debug: dashjsConfig.debug ? true : false
             });
 
             this.applySrc();
+        },
+
+        _setDashJsConfig: function(dashjsConfig){
+
+            var ref = this;
+
+            Object.keys(dashjsConfig).forEach(function (configKey) {
+
+                var configVal = dashjsConfig[configKey];
+
+                // not all of the methods are available in every phase of dashjs instance
+                // life cycle so we need to catch that 
+                try {
+                    switch (configKey) {
+                        case 'debug':
+                            ref._dashjs.getDebug().setLogToBrowserConsole(configVal);
+                            break;
+                        case 'fastSwitchEnabled':
+                            ref._dashjs.setFastSwitchEnabled(configVal);
+                            break;
+                        case 'limitBitrateByPortal':
+                            ref._dashjs.setLimitBitrateByPortal(configVal);
+                            break;
+                        case 'usePixelRatioInLimitBitrateByPortal':
+                            ref._dashjs.setUsePixelRatioInLimitBitrateByPortal(configVal);
+                            break;
+                        case 'enableBufferOccupancyABR':
+                            ref._dashjs.enableBufferOccupancyABR(configVal);
+                            break;
+                    }
+                } catch (error) {
+                    $p.utils.log("DASHJS config setting failed on: ", configKey, configVal, error);
+                }
+            });
         },
 
         detachMedia: function () {
