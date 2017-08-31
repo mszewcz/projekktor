@@ -105,10 +105,6 @@ module.exports = function (grunt) {
             flag: "videojs",
             src: "src/models/player.videojs.js"
           },
-          {
-            flag: "youtube",
-            src: "src/models/player.youtube.js"
-          },
           "src/plugins/projekktor.display.js",
           "src/plugins/projekktor.controlbar.js",
           "src/plugins/projekktor.contextmenu.js",
@@ -133,6 +129,9 @@ module.exports = function (grunt) {
       }
     },
     concat: {
+      options: {
+        sourceMap: false
+      },
       vpaidvideojs: {
         files: {
           'platforms/videojs/videojs.vpaid.css': ['platforms/videojs/video-js.css', 'platforms/videojs/videojs.vast.vpaid.css', 'platforms/videojs/videojs-projekktor-model-custom.css'],
@@ -157,6 +156,21 @@ module.exports = function (grunt) {
         prereleaseName: false,
         metadata: '',
         regExp: /([\"\']?version[\"\']?\s*?[:=]\s*?[\'\"])(\d+\.\d+\.\d+(-\.\d+)?(-\d+)?)[\d||A-a|.|-]*(['|"]?)/i
+      }
+    },
+    cssmin: {
+      options: {
+        sourceMap: false
+      },
+      main: {
+        files: {
+          [dest + "themes/maccaco/projekktor.style.min.css"]: dest + "themes/maccaco/projekktor.style.css"
+        }
+      },
+      vpaidvideojs: {
+        files: {
+          'platforms/videojs/videojs.vpaid.min.css': 'platforms/videojs/videojs.vpaid.css'
+        }
       }
     },
     uglify: {
@@ -553,6 +567,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-compare-size");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-lineending');
   grunt.loadNpmTasks('grunt-browser-sync');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -576,6 +591,7 @@ module.exports = function (grunt) {
     "compare_size",
     "index",
     "copy:main",
+    "cssmin",
     "compress"
   ]);
 
@@ -583,6 +599,7 @@ module.exports = function (grunt) {
     grunt.task.run("copy:platforms");
     grunt.task.run("concat:vpaidvideojs");
     grunt.task.run("uglify:vpaidvideojs");
+    grunt.task.run("cssmin:vpaidvideojs");
   });
 
   // Build preview
@@ -593,7 +610,8 @@ module.exports = function (grunt) {
     "uglify:all",
     "dist:*",
     "index",
-    "copy:main"
+    "copy:main",
+    "cssmin"
   ]);
 
   // preview in browserSync

@@ -38,6 +38,7 @@
     "grunt-contrib-compress": "1.x",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "1.x",
+    "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-uglify": "3.x",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-lineending": "^1.0.0",
