@@ -12,8 +12,8 @@ var projekktorContextmenu = (function () {
 
     projekktorContextmenu.prototype = {
 
-        version: '1.1.00',
-        reqVer: '1.2.13',
+        version: '1.1.1',
+        reqVer: '1.7.0',
 
         _dest: null,
         _items: {},
@@ -68,7 +68,7 @@ var projekktorContextmenu = (function () {
                     this._dest.css({
                         top: yPos + "px",
                         left: xPos + "px"
-                    })
+                    });
                     break;
                 case 1:
                     try {

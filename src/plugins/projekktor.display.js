@@ -16,7 +16,8 @@ var projekktorDisplay = (function () {
 
     projekktorDisplay.prototype = {
 
-        version: '1.1.00',
+        version: '1.1.1',
+        reqVer: '1.7.0',
 
         logo: null,
         logoIsFading: false,

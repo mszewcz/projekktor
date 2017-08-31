@@ -12,8 +12,8 @@ var projekktorSettings = (function () {
 
     projekktorSettings.prototype = {
 
-        reqVer: '1.4.00',
-        version: '1.0.00',
+        version: '1.0.1',
+        reqVer: '1.7.0',
 
         _qualities: [],
 

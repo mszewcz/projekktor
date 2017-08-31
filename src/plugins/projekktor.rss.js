@@ -13,8 +13,8 @@ var projekktorRSS = (function () {
     projekktorRSS.prototype = {
 
         parserId: 'RSS',
-        version: '1.0.00',
-        reqVer: '1.4.00',
+        version: '1.0.1',
+        reqVer: '1.7.0',
 
         initialize: function () {
             this.pluginReady = true;
@@ -35,7 +35,7 @@ var projekktorRSS = (function () {
                 }
 
             } catch (e) {
-                console.log(e)
+                console.log(e);
             }
             this.pluginReady = true;
         },

@@ -17,7 +17,8 @@ var projekktorControlbar = (function () {
     projekktorControlbar.prototype = {
 
         version: '1.2.1',
-
+        reqVer: '1.7.0',
+        
         _cTimer: null,
         _lastPos: -1,
         _isDVR: false,
