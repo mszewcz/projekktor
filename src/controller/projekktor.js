@@ -4091,14 +4091,22 @@ window.projekktor = window.$p = (function (window, document, $) {
         };
 
         var ref = this;
-        // wait with _init() until all startup promises will be fulfilled
-        Promise.all($p.initPromises).then(function (result) {
+        // if there are some initPromises, wait with _init() 
+        // until all of them will be fulfilled. Otherwise _init() immediately
+        if ($p.initPromises.length > 0) {
+            Promise.all($p.initPromises).then(function (result) {
+                // clear promises queue
+                $p.initPromises.length = 0;
                 return ref._init();
             },
-            function (reason) {
-                $p.utils.log('initPromises failed: ' + reason);
+                function (reason) {
+                    $p.utils.log('initPromises failed: ' + reason);
 
-            });
+                });
+        }
+        else {
+            ref._init();
+        }
     }
 
     function Projekktor() {
