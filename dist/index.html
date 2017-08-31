@@ -44,11 +44,23 @@
                         }
                     },
                     mse: {
-                        src: 'platforms/mse/hls.js/hls.min.js',
-                        initVars: {
-                            debug: false,
-                            capLevelToPlayerSize: true,
-                            startFragPrefech: true
+                        hlsjs: {
+                            src: 'platforms/mse/hls.js/hls.min.js',
+                            initVars: {
+                                debug: false,
+                                capLevelToPlayerSize: true,
+                                startFragPrefech: true
+                            }
+                        },
+                        dashjs: {
+                            src: 'platforms/mse/dash.js/dash.all.min.js',
+                            initVars: {
+                                debug: false,
+                                fastSwitchEnabled: true,
+                                limitBitrateByPortal: true,
+                                usePixelRatioInLimitBitrateByPortal: true,
+                                enableBufferOccupancyABR: true
+                            }
                         }
                     },
                     videojs: {
