@@ -361,7 +361,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 config = itemData.config || {},
                 defaultItem = {
                     id: config.id || $p.utils.randomId(8),
-                    cat: 'clip',
+                    cat: config.cat || 'clip',
                     file: [],
                     availableFiles: files,
                     platform: 'browser',
