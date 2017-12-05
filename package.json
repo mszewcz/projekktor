@@ -28,8 +28,8 @@
   "dependencies": {},
   "devDependencies": {
     "archiver": "1.x",
-    "core-js": "^2.5.0",
-    "dashjs": "^2.5.0",
+    "core-js": "^2.5.1",
+    "dashjs": "^2.6.3",
     "grunt": "^1.0.1",
     "grunt-browser-sync": "^2.2.0",
     "grunt-bump": "^0.8.0",
@@ -39,11 +39,11 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "1.x",
     "grunt-contrib-cssmin": "^2.2.1",
-    "grunt-contrib-uglify": "3.x",
+    "grunt-contrib-uglify": "^3.2.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-lineending": "^1.0.0",
     "gzip-js": "^0.3.0",
-    "hls.js": "^0.8.1",
+    "hls.js": "^0.8.7",
     "jquery": "^3.2.1"
   },
   "keywords": []
