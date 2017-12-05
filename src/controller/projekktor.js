@@ -1852,13 +1852,15 @@ window.projekktor = window.$p = (function (window, document, $) {
 
                 case 'mediaonly':
                     /**
-                     * there could be 3 cases in this situation:
+                     * there could be 4 cases in this situation:
                      * a) there is only 'mediaonly' fullscreen API available
                      * b) there is 'full' fullscreen API available, but the user prefer 'mediaonly' in config
-                     * c) player is in <iframe> and has 'mediaonly' fullscreen API available, but there is no
-                     *    <iframe> allowfullscreen attribute so we respect that.
+                     * c) player is in the same-origin <iframe> and has 'mediaonly' fullscreen API available, 
+                     *    but there is no <iframe> `allowfullscreen` attribute so we respect that.
+                     * d) player is in the crossdomain <iframe> (so we can't check the attributes of the <iframe> element)
+                     *    and has 'mediaonly' fullscreen API available, so we try to use it
                      */
-                    if (this.getConfig('iframe')) {
+                    if (this.getConfig('iframe') && !this.config._isCrossDomain) {
                         result = (this.getIframeAllowFullscreen() && this._getFullscreenEnabledApi(apiType));
                     } else {
                         result = this._getFullscreenEnabledApi(apiType);
