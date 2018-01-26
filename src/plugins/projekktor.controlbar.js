@@ -262,7 +262,7 @@ var projekktorControlbar = (function () {
 
         config: {
             /* Plugin: cb - enable/disable fade away of overlayed controls */
-            toggleMute: false,
+            toggleMute: true,
             fadeDelay: 2500,
             showOnStart: false,
             showOnIdle: false,
@@ -309,7 +309,7 @@ var projekktorControlbar = (function () {
 
 
             /* Default layout */
-            controlsTemplate: '<ul class="left"><li><div %{play}></div><div %{pause}></div></li></ul><ul class="right"><li><div %{logo}></div></li><li><div %{fsexit}></div><div %{fsenter}></div></li><li><div %{settingsbtn}></div></li><li><div %{tracksbtn}></div></li><li><div %{vmax}></div></li><li><div %{vslider}><div %{vmarker}></div><div %{vknob}></div></div></li><li><div %{mute}></div></li><li><div %{timeleft}>%{hr_elp}:%{min_elp}:%{sec_elp} | %{hr_dur}:%{min_dur}:%{sec_dur}</div></li><li><div %{next}></div></li><li><div %{prev}></div></li></ul><ul class="bottom"><li><div %{scrubber}><div %{loaded}></div><div %{playhead}></div><div %{scrubberknob}></div><div %{scrubberdrag}></div></div></li></ul><div %{scrubbertip}>%{hr_tip}:%{min_tip}:%{sec_tip}</div>'
+            controlsTemplate: '<ul class="left"><li><div %{play}></div><div %{pause}></div></li></ul><ul class="right"><li><div %{logo}></div></li><li><div %{fsexit}></div><div %{fsenter}></div></li><li><div %{settingsbtn}></div></li><li><div %{tracksbtn}></div></li><li><div %{vmax}></div></li><li><div %{vslider}><div %{vmarker}></div><div %{vknob}></div></div></li><li><div %{mute}></div><div %{unmute}></div></li><li><div %{timeleft}>%{hr_elp}:%{min_elp}:%{sec_elp} | %{hr_dur}:%{min_dur}:%{sec_dur}</div></li><li><div %{next}></div></li><li><div %{prev}></div></li></ul><ul class="bottom"><li><div %{scrubber}><div %{loaded}></div><div %{playhead}></div><div %{scrubberknob}></div><div %{scrubberdrag}></div></div></li></ul><div %{scrubbertip}>%{hr_tip}:%{min_tip}:%{sec_tip}</div>'
         },
 
         initialize: function () {
@@ -663,14 +663,16 @@ var projekktorControlbar = (function () {
 
                 // update numeric displays
                 for (var key in this.controlElements) {
-                    if (key == 'cb') {
-                        break;
-                    }
+                    if(this.controlElements.hasOwnProperty(key)){
+                        if (key == 'cb') {
+                            break;
+                        }
 
-                    if (times[key]) {
-                        $.each(this.controlElements[key], function () {
-                            $(this).html(times[key]);
-                        });
+                        if (times[key]) {
+                            $.each(this.controlElements[key], function () {
+                                $(this).html(times[key]);
+                            });
+                        }
                     }
                 }
             }
@@ -756,13 +758,11 @@ var projekktorControlbar = (function () {
                     case 0:
                         this._active('mute', false);
                         this._active('unmute', true);
-                        this._active('vmax', true);
                         break;
 
                     default:
                         this._active('mute', true);
                         this._active('unmute', false);
-                        this._active('vmax', false);
                         break;
                 }
             }

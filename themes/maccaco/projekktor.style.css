@@ -346,7 +346,10 @@ controlbar plugin
     background: url("maccaco.png") no-repeat -842px -36px transparent;
 }
 
-
+/* hide if can't be controlled */
+.ppnovolumecontrol .ppvmax {
+    display: none;
+}
 
 /* Mute / Min volume - right */
 .ppmute  {
@@ -362,7 +365,19 @@ controlbar plugin
     background: url("maccaco.png") no-repeat -750px -36px transparent;
 }
 
-
+/* Mute / Min volume - right */
+.ppunmute  {
+    width: 29px;
+    height: 30px;    
+    border-left:1px solid #413e3e;
+    background: url("maccaco.png") no-repeat -750px top transparent;
+}
+.ppunmute:hover  {
+    background: url("maccaco.png") no-repeat -750px -35px transparent;
+}
+.ppunmute:active  {
+    background: url("maccaco.png") no-repeat -750px -36px transparent;
+}
 
 /* volume slider - right */
 .ppvslider {
@@ -371,6 +386,11 @@ controlbar plugin
     height: 16px;
     width: 60px;
     background: url("maccaco.png") no-repeat -781px -13px transparent;
+}
+
+/* hide if can't be controlled */
+.ppnovolumecontrol .ppvslider {
+    display: none;
 }
 
 .ppvmarker {
