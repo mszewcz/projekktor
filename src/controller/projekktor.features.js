@@ -347,6 +347,16 @@ $p.features = (function () {
             window.MediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"'));
     };
 
+    tests['volumecontrol'] = function(){
+        var result = false,
+            testVideoEl = document.createElement('video'),
+            testVol = 0.4;
+
+            testVideoEl.volume = testVol;
+            
+            return (testVideoEl.volume === testVol);
+    };
+
     for (var feature in tests) {
         if (hasOwnProp(tests, feature)) {
             featureName = feature.toLowerCase();
