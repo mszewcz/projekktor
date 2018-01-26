@@ -172,17 +172,7 @@ var playerModel = (function(window, document, $, $p){
                 $('#' + this.mediaElement.id).empty();
             } catch (e) {
             }
-            if (!$p.userAgent.isMobile) {
-                try {
-                    $('#' + this.mediaElement.id).remove();
-                } catch (e) {
-                }
-                try {
-                    this.mediaElement.remove();
-                } catch (e) {
-                }
-                this.pp.getMediaContainer().html('');
-            }
+
             this.mediaElement = null;
 
             this.media.loadProgress = 0;
