@@ -23,9 +23,10 @@
                 poster: 'media/intro.png',
                 width: 640,
                 height: 380,
-                autoplay: false,
+                autoplay: true,
                 debug: true,
                 iframe: false,
+                forceMuted: true,
                 platforms: ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight',
                     'videojs'
                 ],
@@ -70,6 +71,20 @@
                     }
                 },
                 playlist: [{
+                    0: {
+                        src: "media/intro.mp4",
+                        type: "video/mp4"
+                    },
+                    1: {
+                        src: "media/intro.ogv",
+                        type: "video/ogg"
+                    },
+                    3: {
+                        src: "media/intro.webm",
+                        type: "video/webm"
+                    }
+                },
+                {
                     0: {
                         src: "media/intro.mp4",
                         type: "video/mp4"
