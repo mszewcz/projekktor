@@ -25,6 +25,7 @@ var playerModel = (function(window, document, $, $p){
         _ap: false, // autoplay
         _volume: 1, // async
         _fixedVolume: false,
+        _muted: false,
         _quality: 'auto',
         _displayReady: false,
         _isPlaying: false,
@@ -64,6 +65,7 @@ var playerModel = (function(window, document, $, $p){
             this._id = $p.utils.randomId(8);
             this._quality = params.quality || this._quality;
             this._volume = params.environment.volume;
+            this._muted = params.environment.muted;
             this.init();
         },
         init: function (params) {
@@ -158,7 +160,7 @@ var playerModel = (function(window, document, $, $p){
         },
         detachMedia: function () {
         },
-        destroy: function (silent) {
+        destroy: function () {
 
             this.removeListeners();
 
@@ -278,6 +280,9 @@ var playerModel = (function(window, document, $, $p){
         setVolume: function (volume) {
             this.volumeListener(volume);
         },
+        setMuted: function(muted) {
+
+        },
         setFullscreen: function (inFullscreen) {
             this.sendUpdate('fullscreen', this._isFullscreen);
             this.setResize();
@@ -321,6 +326,9 @@ var playerModel = (function(window, document, $, $p){
         },
         getVolume: function () {
             return this._volume;
+        },
+        getMuted: function () {
+            return this._muted;
         },
         getLoadProgress: function () {
             return this.media.loadProgress || 0;
@@ -689,6 +697,9 @@ var playerModel = (function(window, document, $, $p){
             var newVolume = obj.volume !== void(0) ? parseFloat(obj.volume) : parseFloat(obj);
             if(newVolume !== this._volume) {
                 this._volume = newVolume;
+                
+                // mute / unmute 
+                this.setMuted(this._volume === 0);
                 this.sendUpdate('volume', newVolume);
             }
         },

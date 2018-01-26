@@ -684,7 +684,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 onReady(this);
             }
 
-                this.synchronizedHandler(this.getConfig('autoplay'));
+            this.synchronizedHandler(this.getConfig('autoplay'));
         };
 
         this.stateHandler = function (stateValue) {
@@ -739,7 +739,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             if (muted !== this.env.muted) {
                 this.env.muted = muted;
                 this.storage.save('muted', muted);
-                this._promote('mute', muted);
+                this._promote('muted', muted);
             }
 
             this.storage.save('volume', value);
@@ -1695,10 +1695,15 @@ window.projekktor = window.$p = (function (window, document, $) {
 
         this.getVolume = function () {
             var volume = ('getIsReady' in this.playerModel && this.playerModel.getIsReady()) ? this.playerModel.getVolume() : this.env.volume,
-                fixedVolume = this.getConfig('fixedVolume');
+                fixedVolume = this.getConfig('fixedVolume'),
+                isMuted = this.getMuted();
 
             if (fixedVolume === true) {
                 volume = this.getConfig('volume');
+            }
+
+            if(isMuted){
+                volume = 0;
             }
 
             return volume;
@@ -2568,14 +2573,26 @@ window.projekktor = window.$p = (function (window, document, $) {
         };
 
         this.setMuted = function (value) {
-            var value = value === void(0) ? !this.env.muted : value;
+            var value = value === undefined ? !this.env.muted : value,
+                volume = this.getVolume(),
+                isVolumeControllable = $p.features.volumecontrol;
 
-            if (value) {
-                this.env.lastVolume = this.getVolume();
-                this.setVolume(0);
-            } else {
-                this.setVolume(typeof this.env.lastVolume === 'number' ? this.env.lastVolume : this.getVolume());
-                this.env.lastVolume = null;
+            if(isVolumeControllable){
+                if (value && volume > 0) {
+                    this.env.lastVolume = volume;
+                    this.setVolume(0);
+                } else {
+                    this.setVolume(typeof this.env.lastVolume === 'number' ? this.env.lastVolume : volume);
+                    this.env.lastVolume = null;
+                }
+            }
+            else {
+                if(value){
+                    this.setVolume(0);
+                }
+                else {
+                    this.setVolume(1);
+                }
             }
 
             return this;

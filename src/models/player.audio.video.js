@@ -81,7 +81,8 @@ $p.newModel({
                     "playsinline": ""
                 }).prop({
                     controls: false,
-                    volume: this.getVolume()
+                    volume: this.getVolume(),
+                    muted: this.getMuted()
                 }).css({
                     'width': '100%',
                     'height': '100%',
@@ -440,11 +441,20 @@ $p.newModel({
     },
 
     setVolume: function(volume) {
-        if (this.mediaElement === null) {
+        if (this.mediaElement === null || !$p.features.volumecontrol) {
             this.volumeListener(volume);
         }
         else {
             this.mediaElement.prop('volume', volume);
+        }
+    },
+
+    setMuted: function(muted) {
+        if (this.mediaElement === null) {
+            this.volumeListener(0);
+        }
+        else {
+            this.mediaElement.prop('muted', muted);
         }
     },
 
@@ -507,6 +517,14 @@ $p.newModel({
         }
 
         return this.mediaElement.prop('volume');
+    },
+
+    getMuted: function () {
+        if (this.mediaElement === null) {
+            return this._volume === 0;
+        }
+
+        return this.mediaElement.prop('muted');
     }
 });
 
