@@ -2442,7 +2442,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             }
 
             if ($p.userAgent.isMobile) {
-                this.getDC().addClass('mobile');
+                this.getDC().addClass(this.getNS() + 'mobile');
             }
         };
 
