@@ -2441,6 +2441,10 @@ window.projekktor = window.$p = (function (window, document, $) {
             if ($p.userAgent.isMobile) {
                 this.getDC().addClass(this.getNS() + 'mobile');
             }
+
+            if (!$p.features.volumecontrol){
+                this.getDC().addClass(this.getNS() + 'novolumecontrol');
+            }
         };
 
         /* queue ready */
