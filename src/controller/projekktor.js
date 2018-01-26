@@ -684,9 +684,7 @@ window.projekktor = window.$p = (function (window, document, $) {
                 onReady(this);
             }
 
-            if (!$p.userAgent.isMobile) {
                 this.synchronizedHandler(this.getConfig('autoplay'));
-            }
         };
 
         this.stateHandler = function (stateValue) {
@@ -4027,12 +4025,6 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             // initial DOM scaling
             this.setSize();
-
-            // force autoplay false on mobile devices:
-            if ($p.userAgent.isMobile) {
-                this.config._autoplay = false;
-                this.config.fixedVolume = true;
-            }
 
             // set initial volume and muted values
             if (this.getConfig('forceMuted')) {
