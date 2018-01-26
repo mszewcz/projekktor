@@ -419,7 +419,20 @@ $p.newModel({
      * Setters
      ****************************************/
     setPlay: function() {
-        try{this.mediaElement[0].play();} catch(e){}
+        var ref = this, 
+            promise;
+
+        try {
+            promise = this.mediaElement[0].play();
+
+            if (promise !== undefined) {
+                promise.catch(function(error) {
+                    // Auto-play was prevented reset and disable autoplay
+                    ref.pp.setActiveItem(0, false);
+                });
+            }
+            
+        } catch(e){}
     },
 
     setPause: function() {
