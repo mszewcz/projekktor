@@ -205,22 +205,26 @@ $p.features = (function () {
     }
 
     function testProps (props, prefixed) {
+        /* eslint-disable guard-for-in */
         for (var i in props) {
             var prop = props[i];
             if (!contains(prop, "-") && mStyle[prop] !== undefined) {
                 return prefixed == 'pfx' ? prop : true;
             }
         }
+        /* eslint-enable */
         return false;
     }
 
     function testDOMProps (props, obj, elem) {
+        /* eslint-disable guard-for-in */
         for (var i in props) {
             var item = obj[props[i]];
             if (item !== undefined) {
 
-                if (elem === false)
+                if (elem === false) {
                     return props[i];
+                }
 
                 if (is(item, 'function')) {
                     return item.bind(elem || obj);
@@ -229,6 +233,7 @@ $p.features = (function () {
                 return item;
             }
         }
+        /* eslint-enable */
         return false;
     }
 
