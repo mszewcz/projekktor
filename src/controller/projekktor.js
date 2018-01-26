@@ -2308,7 +2308,6 @@ window.projekktor = window.$p = (function (window, document, $) {
                     }
                 },
                 cache: true,
-                async: !$p.userAgent.isMobile,
                 dataType: dataType
             };
             ajaxConf.xhrFields = {
