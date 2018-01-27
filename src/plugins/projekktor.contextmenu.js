@@ -12,47 +12,37 @@ var projekktorContextmenu = (function () {
 
     projekktorContextmenu.prototype = {
 
-        version: '1.1.1',
+        version: '1.1.2',
         reqVer: '1.7.0',
 
         _dest: null,
-        _items: {},
-
-        initialize: function () {
-            var ref = this,
-                target = this.pp.getIframeParent() || $(window);
-
-            this._dest = $p.utils.blockSelection(this.applyToPlayer($('<ul/>')));
-            this._items['player'] = {
-                getContextTitle: function () {
-                    return ref.getConfig('playerName') + ' V' + ref.pp.getVersion();
-                },
-                open: function () {
-                    if (ref.getConfig('playerHome') != null) {
-                        target.get(0).location.href = ref.getConfig('playerHome');
-                        ref.pp.setPause();
+        config: {
+            items: {
+                playerInfo: {
+                    getContextTitle: function (pp) {
+                        return pp.getConfig('playerName') + ' V' + pp.getVersion();
+                    },
+                    open: function(pp) {
+                        
                     }
                 }
-            };
+            }
+        },
 
-            if (this.pp.getConfig('helpHome')) {
-                this._items['help'] = {
-                    getContextTitle: function () {
-                        return $p.utils.i18n('%{error100}');
-                    },
-                    open: function () {
-                        ref.popup(ref.pp.getConfig('helpHome'), 400, 600);
-                    }
-                };
-            };
+        initialize: function () {
+
+            this._dest = $p.utils.blockSelection(this.applyToPlayer($('<ul/>')));
 
             this.pluginReady = true;
         },
 
         mousedownHandler: function (evt) {
+            var parentOffset,
+                xPos, yPos;
+
             switch (evt.which) {
                 case 3:
-                    var parentOffset = this.pp.getDC().offset(),
+                        parentOffset = this.pp.getDC().offset(),
                         yPos = (evt.pageY - parentOffset.top),
                         xPos = (evt.pageX - parentOffset.left);
 
@@ -72,7 +62,7 @@ var projekktorContextmenu = (function () {
                     break;
                 case 1:
                     try {
-                        this._items[$(evt.target).data('plugin')].open();
+                        $(evt.target).data('plugin').open(this.pp);
                     } catch (e) {}
                 default:
                     this.setInactive();
@@ -84,9 +74,11 @@ var projekktorContextmenu = (function () {
         },
 
         eventHandler: function (evt, obj) {
+            var items = this.getConfig('items');
+
             if (evt.indexOf('Contextmenu') > -1) {
-                if (this._items[obj.name] == null) {
-                    this._items[obj.name] = obj;
+                if (items.hasOwnProperty(obj.name)) {
+                    items[obj.name] = obj;
                 }
             }
         },
@@ -94,27 +86,27 @@ var projekktorContextmenu = (function () {
         displayReadyHandler: function () {
             var ref = this,
                 span = null,
-                item;
+                items = this.getConfig('items');
 
             this.setInactive();
             this._dest.html('');
 
-            for (item in this._items) {
-                if (this._items.hasOwnProperty(item)) {
-                    span = $('<span/>')
-                        .data('plugin', item)
-                        .html(ref._items[item].getContextTitle() || item);
+            Object.keys(items).forEach(function(itemName){
+                var item = items[itemName];
 
-                    try {
-                        ref._items[item].setContextEntry(span);
-                    } catch (ignore) { }
+                span = $('<span/>')
+                    .data('plugin', item)
+                    .html(item.getContextTitle(ref.pp) || item);
 
-                    $('<li/>')
-                        .append(span)
-                        .data('plugin', item)
-                        .appendTo(ref._dest);
-                }
-            }
+                try {
+                    item.setContextEntry(span);
+                } catch (ignore) { }
+
+                $('<li/>')
+                    .append(span)
+                    .data('plugin', item)
+                    .appendTo(ref._dest);
+                });
         },
 
         popup: function (url, width, height) {
