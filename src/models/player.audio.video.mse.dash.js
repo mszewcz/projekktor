@@ -21,6 +21,7 @@
         ],
 
         _dashjs: null,
+        _dashjsPlatformConfig: {},
         _video: null,
         _quality: null,
         _qualityMap: null,
@@ -48,7 +49,7 @@
          */
         _initMedia: function (destContainer) {
             var ref = this,
-                dashjsConfig = ref.pp.getConfig('platformsConfig').mse.dashjs.initVars,
+                dashjsConfig = ref._dashjsPlatformConfig.initVars,
                 wasAwakening = ref.getState('AWAKENING');
 
             ///// Stage 1:
@@ -271,12 +272,16 @@
          *        {null} Callback function not specified.
          */
         _fetchDashJs: function (cb) {
-            var ref = this;
+            var ref = this,
+                msePlatformConfig = this.pp.getConfig('platformsConfig').mse || {};
+
+            // guarantee hls.js config values
+            $.extend(true, ref._dashjsPlatformConfig, {src:'/MISSING_PATH_TO_DASHJS_LIB/', initVars:{}}, msePlatformConfig.dashjs);
 
             if (typeof window.dashjs === "object") {
                 cb(window.dashjs);
             } else {
-                $p.utils.getScript(ref.pp.getConfig('platformsConfig').mse.dashjs.src, {
+                $p.utils.getScript(ref._dashjsPlatformConfig.src, {
                     cache: true
                 }).done(function () {
                     if (typeof window.dashjs === "object") {

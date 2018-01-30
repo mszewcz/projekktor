@@ -36,6 +36,7 @@
         }],
 
         _hlsjs: null,
+        _hlsjsPlatformConfig: {},
 
         availableQualities: {},
 
@@ -46,6 +47,7 @@
         _liveOffset: 2,
 
         applyMedia: function (destContainer) {
+
             var ref = this,
                 hlsJsLoadSuccess = function () {
                     if ($('#' + ref.pp.getMediaId() + "_html").length === 0) {
@@ -81,15 +83,19 @@
                 },
                 hlsJsLoadFailed = function (jqxhr, settings, exception) {
                     ref.sendUpdate('error', 2);
-                };
-
+                },
+                msePlatformConfig = this.pp.getConfig('platformsConfig').mse || {};
+            
+            // guarantee hls.js config values
+            $.extend(true, ref._hlsjsPlatformConfig, {src:'/MISSING_PATH_TO_HLSJS_LIB/', initVars:{}}, msePlatformConfig.hlsjs);
+            
             // check if hls.js is already loaded
             if (window.Hls && typeof window.Hls.isSupported === 'function') {
                 // just continue
                 hlsJsLoadSuccess();
             } else {
                 // load hls.js
-                $p.utils.getScript(ref.pp.getConfig('platformsConfig').mse.hlsjs.src, {
+                $p.utils.getScript(ref._hlsjsPlatformConfig.src, {
                         cache: true
                     })
                     .done(hlsJsLoadSuccess)
@@ -100,10 +106,9 @@
         applySrc: function () {
             var ref = this,
                 media = ref.getSource(),
-                wasAwakening = ref.getState('AWAKENING'),
-                hlsConfig = ref.pp.getConfig('platformsConfig').mse.hlsjs.initVars;
+                wasAwakening = ref.getState('AWAKENING');
 
-            ref._hlsjs = new Hls(hlsConfig);
+            ref._hlsjs = new Hls(ref._hlsjsPlatformConfig.initVars);
 
             ref._hlsjs.loadSource(media[0].src);
             ref._hlsjs.attachMedia(ref.mediaElement[0]);
