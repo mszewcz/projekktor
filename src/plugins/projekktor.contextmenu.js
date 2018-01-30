@@ -12,12 +12,13 @@ var projekktorContextmenu = (function () {
 
     projekktorContextmenu.prototype = {
 
-        version: '1.1.2',
+        version: '1.1.3',
         reqVer: '1.7.0',
 
         _dest: null,
         config: {
             items: {
+                /*
                 playerInfo: {
                     getContextTitle: function (pp) {
                         return pp.getConfig('playerName') + ' V' + pp.getVersion();
@@ -26,6 +27,7 @@ var projekktorContextmenu = (function () {
                         
                     }
                 }
+                */
             }
         },
 
