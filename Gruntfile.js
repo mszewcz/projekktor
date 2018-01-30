@@ -182,7 +182,7 @@ module.exports = function (grunt) {
             "* \n" +
             "* http://www.projekktor.com \n" +
             "* Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com \n" +
-            "* Copyright 2014-2018 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
+            "* Copyright 2014-2017 Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net \n" +
             "* \n" +
             "* under GNU General Public License \n" +
             "* http://www.projekktor.com/license/\n" +
@@ -584,6 +584,7 @@ module.exports = function (grunt) {
   // Default build that mirrors the Projekktor distribution
   grunt.registerTask("default", [
     "clean",
+    "platforms",
     "build:*:*:" + defaults,
     "lineending",
     "uglify:all",
