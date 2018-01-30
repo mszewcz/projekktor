@@ -452,6 +452,24 @@
                 console.log(Array.prototype.slice.call(arguments));
             }
         },
+        copyToClipboard: function (value) {
+            var element = document.createElement('textarea'),
+                result = false;
+
+            element.value = value;
+            document.body.appendChild(element);
+            element.focus();
+            element.setSelectionRange(0, element.value.length);
+
+            try {
+                result = document.execCommand('copy');
+            }
+            catch(e){}
+            // cleanup
+            document.body.removeChild(element);
+
+            return result;
+        },
         cleanResponse: function (responseText, type) {
             var data = false;
 
