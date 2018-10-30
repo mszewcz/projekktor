@@ -290,7 +290,7 @@
         },
 
         getStreamItems: function () {
-            return this._hlsjs.levels
+            return this._hlsjs.levels;
         },
 
         getNumDynamicStreams: function () {
