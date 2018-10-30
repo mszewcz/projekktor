@@ -2378,7 +2378,12 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             // do we have an continuous play situation?
             if (!this.getState('IDLE')) {
-                ap = this.config._continuous;
+                if(newItem.config.hasOwnProperty('continuous')){
+                    ap = newItem.config.continuous;
+                }
+                else {
+                    ap = this.config._continuous;
+                }
             }
 
             this._detachplayerModel();
