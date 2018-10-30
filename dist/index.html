@@ -27,23 +27,8 @@
                 debug: true,
                 iframe: false,
                 forceMuted: true,
-                platforms: ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight',
-                    'videojs'
-                ],
+                platforms: ['browser', 'android', 'ios', 'mse', 'native', 'videojs'],
                 platformsConfig: {
-                    flash: {
-                        src: 'platforms/flash/StrobeMediaPlayback/StrobeMediaPlayback.swf',
-                        minPlatformVersion: '11.4',
-                        initVars: {
-                            plugin_hls: 'platforms/flash/StrobeMediaPlayback/plugins/flashls/flashlsOSMF.swf',
-                        }
-                    },
-                    silverlight: {
-                        src: 'platforms/silverlight/mediaelement/silverlightmediaelement.xap',
-                        initVars: {
-                            debug: false
-                        }
-                    },
                     mse: {
                         hlsjs: {
                             src: 'platforms/mse/hls.js/hls.min.js',
@@ -70,6 +55,25 @@
                         initVars: {}
                     }
                 },
+                plugin_contextmenu: {
+                    items: {
+                        superPiotrMenu: {
+                            getContextTitle: function (pp) {
+                                return "Copy video URL";
+                            },
+                            open: function(pp) {
+                                var loc = window.location.href;
+
+                                if($p.utils.copyToClipboard(loc)){
+                                    alert('Copied: ' + loc);
+                                }
+                                else {
+                                    alert('Copy unsuccessful');
+                                }
+                            }
+                        }
+                    }
+                },
                 playlist: [{
                     0: {
                         src: "media/intro.mp4",
@@ -82,6 +86,18 @@
                     3: {
                         src: "media/intro.webm",
                         type: "video/webm"
+                    }
+                },
+                {
+                    0: {
+                        src: "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd",
+                        type: "application/dash+xml"
+                    }
+                },
+                {
+                    0: {
+                        src: "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8",
+                        type: "application/vnd.apple.mpegurl"
                     }
                 },
                 {
