@@ -295,20 +295,6 @@ module.exports = function (grunt) {
         ]
       }
     },
-    compress: {
-      main: {
-        options: {
-          archive: dest + "projekktor-" + version + '.zip'
-        },
-        files: [{
-            expand: true,
-            cwd: dest,
-            src: ['**'],
-            dest: ''
-          }, // makes all src relative to cwd
-        ]
-      }
-    },
     index: {
       src: 'dist/index.html', // source template file
       dest: dest + 'index.html', // destination file (usually index.html)
@@ -563,7 +549,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-bump");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-copy");
-  grunt.loadNpmTasks("grunt-contrib-compress");
   grunt.loadNpmTasks("grunt-compare-size");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -592,8 +577,7 @@ module.exports = function (grunt) {
     "compare_size",
     "index",
     "copy:main",
-    "cssmin",
-    "compress"
+    "cssmin"
   ]);
 
   grunt.registerMultiTask("platforms", "prepare platforms for distribution", function () {
