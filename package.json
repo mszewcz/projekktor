@@ -25,26 +25,31 @@
       "url": "http://www.projekktor.com/license.php"
     }
   ],
-  "dependencies": {},
+  "scripts": {
+    "build": "grunt",
+    "start": "grunt preview",
+    "platforms": "grunt platforms",
+    "bump-version": "grunt bump"
+  },
+  "dependencies": {
+    "core-js": "^2.5.7",
+    "dashjs": "^2.9.2",
+    "hls.js": "^0.11.0",
+    "jquery": "^3.3.1"
+  },
   "devDependencies": {
-    "archiver": "1.x",
-    "core-js": "^2.5.3",
-    "dashjs": "^2.6.5",
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.3",
     "grunt-browser-sync": "^2.2.0",
     "grunt-bump": "^0.8.0",
     "grunt-compare-size": "^0.4.0",
-    "grunt-contrib-clean": "1.x",
-    "grunt-contrib-compress": "1.x",
+    "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "1.x",
-    "grunt-contrib-cssmin": "^2.2.1",
-    "grunt-contrib-uglify": "^3.3.0",
-    "grunt-contrib-watch": "^1.0.0",
+    "grunt-contrib-cssmin": "^3.0.0",
+    "grunt-contrib-uglify": "^4.0.0",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-lineending": "^1.0.0",
-    "gzip-js": "^0.3.0",
-    "hls.js": "^0.8.9",
-    "jquery": "^3.3.1"
+    "gzip-js": "^0.3.2"
   },
   "keywords": []
 }
