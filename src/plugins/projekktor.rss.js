@@ -4,7 +4,7 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktorRSS = (function () {
+$p.projekktorRSS = (function () {
 
     "use strict";
 
