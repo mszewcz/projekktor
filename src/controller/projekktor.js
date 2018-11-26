@@ -4255,6 +4255,9 @@ window.projekktor = window.$p = (function (window, document, $) {
                 return true;
             }
         },
+        plugins: {
+            value: {}
+        },
         /**
          * generates:
          * - platform -> mimeType map 
@@ -4327,5 +4330,3 @@ window.projekktor = window.$p = (function (window, document, $) {
     return Projekktor;
 
 }(window, document, jQuery));
-
-window.projekktor.plugins = window.$p.plugins = {};
