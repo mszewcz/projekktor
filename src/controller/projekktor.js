@@ -928,12 +928,12 @@ window.projekktor = window.$p = (function (window, document, $) {
             for (var i = 0; i < plugins.length; i++) {
                 pluginName = "projekktor" + plugins[i].charAt(0).toUpperCase() + plugins[i].slice(1);
 
-                if (typeof window.projekktor[pluginName] !== 'function') {
+                if (typeof window.projekktor.plugins[pluginName] !== 'function') {
                     alert("Projekktor Error: Plugin '" + plugins[i] + "' malicious or not available.");
                     continue;
                 }
 
-                pluginObj = $.extend(true, {}, new projekktorPluginInterface(), window.projekktor[pluginName].prototype);
+                pluginObj = $.extend(true, {}, new projekktorPluginInterface(), window.projekktor.plugins[pluginName].prototype);
                 pluginObj.name = plugins[i].toLowerCase();
                 pluginObj.pp = this;
                 pluginObj.playerDom = this.env.playerDom;
@@ -4327,3 +4327,5 @@ window.projekktor = window.$p = (function (window, document, $) {
     return Projekktor;
 
 }(window, document, jQuery));
+
+window.projekktor.plugins = window.$p.plugins = {};
