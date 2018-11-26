@@ -8,7 +8,7 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-var projekktorDisplay = (function () {
+window.projekktorDisplay = (function () {
 
     "use strict";
 
