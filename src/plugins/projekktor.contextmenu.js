@@ -4,7 +4,7 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktorContextmenu = (function () {
+$p.projekktorContextmenu = (function () {
 
     "use strict";
 

@@ -8,7 +8,7 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktorControlbar = (function () {
+$p.projekktorControlbar = (function () {
 
     "use strict";
 
