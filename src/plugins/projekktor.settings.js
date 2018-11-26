@@ -4,7 +4,7 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-$p.projekktorSettings = (function () {
+window.projekktor.projekktorSettings = (function () {
 
     "use strict";
 
