@@ -20,9 +20,6 @@ module.exports = function (grunt) {
       "+playlist",
       "-youtube",
       "+html",
-      "+osmf",
-      "+osmfhls",
-      "+osmfmss",
       "+msehls",
       "+msedash"
     ].join(":"),
@@ -77,22 +74,6 @@ module.exports = function (grunt) {
           "src/models/player.audio.video.hls.js",
           "src/models/player.playlist.js",
           "src/models/player.image.html.js",
-          {
-            flag: "osmf",
-            src: "src/models/player.audio.video.osmf.js"
-          },
-          {
-            flag: "osmfhls",
-            src: "src/models/player.audio.video.osmf.hls.js"
-          },
-          {
-            flag: "osmfmss",
-            src: "src/models/player.audio.video.osmf.mss.js"
-          },
-          {
-            flag: "silverlight",
-            src: "src/models/player.audio.video.silverlight.js"
-          },
           {
             flag: "msehls",
             src: "src/models/player.audio.video.mse.hls.js"
