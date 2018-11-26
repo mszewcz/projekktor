@@ -928,12 +928,12 @@ window.projekktor = window.$p = (function (window, document, $) {
             for (var i = 0; i < plugins.length; i++) {
                 pluginName = "projekktor" + plugins[i].charAt(0).toUpperCase() + plugins[i].slice(1);
 
-                if (typeof window[pluginName] !== 'function') {
+                if (typeof window.projekktor[pluginName] !== 'function') {
                     alert("Projekktor Error: Plugin '" + plugins[i] + "' malicious or not available.");
                     continue;
                 }
 
-                pluginObj = $.extend(true, {}, new projekktorPluginInterface(), window[pluginName].prototype);
+                pluginObj = $.extend(true, {}, new projekktorPluginInterface(), window.projekktor[pluginName].prototype);
                 pluginObj.name = plugins[i].toLowerCase();
                 pluginObj.pp = this;
                 pluginObj.playerDom = this.env.playerDom;
