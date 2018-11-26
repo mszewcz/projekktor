@@ -36,18 +36,10 @@ projekktorConfig.prototype = {
     _ns:                            'pp',
 
     /* a prioritized array of available platforms */
-    _platforms:                     ['browser', 'android', 'ios', 'mse', 'native', 'flash', 'silverlight', 'videojs'],
+    _platforms:                     ['browser', 'android', 'ios', 'mse', 'native', 'videojs'],
 
     /* additional platforms config */
     _platformsConfig: {
-        flash: {
-            src: ''
-            // minPlatformVersion: '' // optional minimal flash plugin version rewrite
-        },
-        silverlight: {
-            src: ''
-            // minPlatformVersion: '' // optional minimal silverlight plugin version rewrite
-        },
         mse: {
             hlsjs: {
                 src: '',
@@ -68,8 +60,6 @@ projekktorConfig.prototype = {
         native: ['full', 'mediaonly', 'viewport'],
         android: ['full', 'mediaonly', 'viewport'],
         ios: ['full', 'mediaonly', 'viewport'],
-        flash: ['full', 'viewport'],
-        silverlight: ['full', 'viewport'],
         mse: ['full', 'viewport'],
         videojs: ['full', 'viewport']
     },
@@ -183,24 +173,8 @@ projekktorConfig.prototype = {
 
     /* defines the streamtype of the current item.
         'http':  http  streaming
-        'rtmp':  RTMP streaming - requires "flashRTMPServer" to be set.
     */
     streamType:                     'http',
-
-    /* *** DEPRECATED with OSMF model ***
-     *
-     *  if streamType is 'rtmp' you have to provide the serverURL here. */
-    streamServer:   '',
-
-    /*
-     * Indicates, for RTMP streaming URLs, whether the URL includes the application instance or not.
-     * If true, then the second part of the URL path is considered the instance name,
-     * such as rtmp://host/app/foo/bar/stream. In this case the instance name would be 'foo' and the stream
-     * would be 'bar/stream'. If false, then the second part of the URL path is considered to be the stream name,
-     * such as rtmp://host/app/foo/bar/stream. In this case there is no instance name and the stream would be 'foo/bar/stream'.
-     *
-     */
-    rtmpUrlIncludesApplicationInstance: false,
 
     /* Youtube offers two different player APIs: fLaSh and "iFrame" for HTML5 . Make your choice here:
       For mobile devices this is forced to TRUE
