@@ -1,4 +1,4 @@
-# Projekktor 1.5.03
+# Projekktor 1.8.0
 
 ### Konfiguracja
 Konfiguracja Projekktora dzieli się na trzy typy parametrów konfiguracyjnych:
@@ -58,7 +58,7 @@ Nazwa przestrzeni nazw (namespace) będąca prefiksem dołączanym do każdej na
 #### `platforms` [array]
 domyślnie:
 ```
-['browser', 'android', 'ios', 'native', 'flash', 'silverlight']
+['browser', 'android', 'ios', 'mse', 'native', 'videojs']
 ```
 
 Spriorytetyzowana lista platform, które mogą zostać wykorzystane do odtworzenia danej playlisty.
@@ -66,49 +66,51 @@ Spriorytetyzowana lista platform, które mogą zostać wykorzystane do odtworzen
 #### `platformsConfig` [object]
 domyślnie:
 ```
-{
-flash: {
-    src: ''
+mse: {
+    hlsjs: {
+        src: '',
+        initVars: {}
+    },
+    dashjs: {
+        src: '',
+        initVars: {}
+    }
 },
-silverlight: {
+videojs: {
     src: ''
 }
 ```
-Obiekt zawierający dodatkowe parametry konfiguracyjne specyficzne dla poszczególnych platform. Może zawierać ścieżkę do plików binarnych odtwarzaczy (swf, xap) oraz dodatkowe zmienne przekazywane bezpośrednio do nich (np. tzw. flashvars).
+Obiekt zawierający dodatkowe parametry konfiguracyjne specyficzne dla poszczególnych platform. Może zawierać ścieżkę do plików binarnych odtwarzaczy oraz dodatkowe zmienne przekazywane bezpośrednio do nich.
 
 Przykładowa konfiguracja:
 ```
 platformsConfig: {
-       flash: {
-           src: '/platforms/flash/StrobeMediaPlayback/StrobeMediaPlayback.swf',
-           minPlatformVersion: '11.4',
-           initVars: {
-                plugin_hls: '/platforms/flash/StrobeMediaPlayback/plugins/flashls/flashlsOSMF.swf',
-                hls_info: true, // parametry specyficzne dla pluginu flashls
-                hls_warn: true,
-                hls_error: true,
-                hls_debug: true,
-                hls_debug2: true,
-                hls_minbufferlength: -1,
-                hls_lowbufferlength: 2,
-                hls_maxbufferlength: 60,
-                hls_startfromlevel: -1,
-                hls_seekfromlevel: -1,
-                hls_live_flushurlcache: false,
-                hls_seekmode: 'ACCURATE',
-                hls_manifestloadmaxretry: 3,
-                hls_keyloadmaxretry: 3,
-                hls_fragmentloadmaxretry: 3,
-                hls_capleveltostage: true,
-                hls_maxlevelcappingmode: 'downscale'
-           }
-       },
-       silverlight: {
-           src: '/platforms/silverlight/mediaelement/silverlightmediaelement.xap',
-           initVars: {
-               debug: 'false'
-           }
-       }
+    mse: {
+        hlsjs: {
+            src: 'platforms/mse/hls.js/hls.min.js',
+            initVars: {
+                debug: false,
+                capLevelToPlayerSize: true,
+                startFragPrefech: true
+            }
+        },
+        dashjs: {
+            src: 'platforms/mse/dash.js/dash.all.min.js',
+            initVars: {
+                debug: false,
+                fastSwitchEnabled: true,
+                limitBitrateByPortal: true,
+                usePixelRatioInLimitBitrateByPortal: true,
+                enableBufferOccupancyABR: true
+            }
+        }
+    },
+    videojs: {
+        src: 'platforms/videojs/videojs.min.js',
+        css: 'platforms/videojs/videojs.min.css',
+        initVars: {}
+    }
+}     
 ```
 
 #### `platformsFullscreenConfig` [object]
@@ -119,8 +121,8 @@ domyślnie:
     native: ['full', 'mediaonly', 'viewport'],
     android: ['full', 'mediaonly', 'viewport'],
     ios: ['full', 'mediaonly', 'viewport'],
-    flash: ['full', 'viewport'],
-    silverlight: ['full', 'viewport']
+    mse: ['full', 'viewport'],
+    videojs: ['full', 'viewport']
 }
 ```
 Obiekt konfiguracyjny dla trybów wyświetlania pełnoekranowego dla poszczególnych platform. Każdej dostępnej platformie można przypisać spriorytetyzowaną tablicę trybów wyświetlania pełnoekranowego. Więcej na temat wyświetlania pełnoekranowego [tutaj]
@@ -298,19 +300,13 @@ Dla materiałów RTMP wskazuje na to, czy dany URL zawiera w sobie część okre
 #### Playlist
 #### Audio Video Native
 #### Audio Video Native HLS
-#### Audio Video OSMF
-#### Audio Video OSMF HLS
-#### Audio Video OSMF MSS
-#### Audio Video Silverlight
 
 ### Platformy
 
 #### ANDROID
 #### BROWSER
-#### FLASH
 #### IOS
 #### NATIVE
-#### SILVERLIGHT
 
 ### Plugins
 
