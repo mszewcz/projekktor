@@ -412,37 +412,6 @@
 
             return true;        
         },
-        // detectPlugin function adopted from MediaElement.js
-        //
-        // get the version number from the mimetype (all but IE) or ActiveX (IE)
-        detectPlugin: function (pluginName, mimeType, activeX, axDetect) {
-
-            var nav = window.navigator,
-                version = [0, 0, 0],
-                description,
-                i,
-                ax;
-
-            // Firefox, Webkit, Opera
-            if (typeof (nav.plugins) != 'undefined' && typeof nav.plugins[pluginName] == 'object') {
-                description = nav.plugins[pluginName].description;
-                if (description && !(typeof nav.mimeTypes != 'undefined' && nav.mimeTypes[mimeType] && !nav.mimeTypes[mimeType].enabledPlugin)) {
-                    version = description.replace(pluginName, '').replace(/^\s+/, '').replace(/\sr/gi, '.').split('.');
-                    for (i = 0; i < version.length; i++) {
-                        version[i] = parseInt(version[i].match(/\d+/), 10);
-                    }
-                }
-                // Internet Explorer / ActiveX
-            } else {
-                try {
-                    ax = new ActiveXObject(activeX);
-                    if (ax) {
-                        version = axDetect(ax);
-                    }
-                } catch (e) {}
-            }
-            return version;
-        },
         /**
          * replaces {}-tags with parameter equivalents
          * @public
