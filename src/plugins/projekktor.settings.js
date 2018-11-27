@@ -4,16 +4,19 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktor.plugins.projekktorSettings = (function () {
+(function (window, document, $, $p) {
+    'use strict';
 
-    "use strict";
+    if($p === undefined || !$p.hasOwnProperty('plugins')){
+        throw new Error('Projekktor player not found. Please initialize Projekktor before adding any plugins.');
+    }
 
     function projekktorSettings() {}
 
     projekktorSettings.prototype = {
 
-        version: '1.0.1',
-        reqVer: '1.7.0',
+        version: '1.0.2',
+        reqVer: '1.8.0',
 
         _qualities: [],
 
@@ -508,5 +511,5 @@ window.projekktor.plugins.projekktorSettings = (function () {
         }
     };
 
-    return projekktorSettings;
-}());
+    $p.plugins.projekktorSettings = projekktorSettings;
+}(window, document, jQuery, projekktor));

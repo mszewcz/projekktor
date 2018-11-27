@@ -108,7 +108,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
                 ref = this;
 
             try {
-                tmpClass = element.attr("class") || this.name
+                tmpClass = element.attr("class") || this.name;
             } catch (e) {
                 tmpClass = this.name;
             }
@@ -146,7 +146,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
                 return element;
             } else {
                 $.each(this._childDOMContainer[func], function () {
-                    $(this).attr(ref.getDA('func'), func)
+                    $(this).attr(ref.getDA('func'), func);
                     ref._appliedDOMObj.push($(this));
                 });
             }
@@ -159,7 +159,7 @@ var projekktorPluginInterface = (function (window, document, $, $p){
         },
 
         getElement: function (name) {
-            return this.pp.env.playerDom.find('.' + this.pp.getNS() + name)
+            return this.pp.env.playerDom.find('.' + this.pp.getNS() + name);
         },
 
         setInactive: function () {

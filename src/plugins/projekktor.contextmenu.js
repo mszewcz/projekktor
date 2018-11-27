@@ -4,16 +4,19 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktor.plugins.projekktorContextmenu = (function () {
+(function (window, document, $, $p) {
+    'use strict';
 
-    "use strict";
+    if($p === undefined || !$p.hasOwnProperty('plugins')){
+        throw new Error('Projekktor player not found. Please initialize Projekktor before adding any plugins.');
+    }
 
     function projekktorContextmenu() {}
 
     projekktorContextmenu.prototype = {
 
-        version: '1.1.3',
-        reqVer: '1.7.0',
+        version: '1.1.4',
+        reqVer: '1.8.0',
 
         _dest: null,
         config: {
@@ -118,5 +121,5 @@ window.projekktor.plugins.projekktorContextmenu = (function () {
         }
     };
 
-    return projekktorContextmenu;
-}());
+    $p.plugins.projekktorContextmenu = projekktorContextmenu;
+}(window, document, jQuery, projekktor));

@@ -3,21 +3,24 @@
  *
  * DESC: Adds a fully features cb element to the player
  * Copyright 2010-2014 Sascha Kluger, Spinning Airwhale Media, http://www.spinningairwhale.com
- * Copyright 2015-2017 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
+ * Copyright 2015-2018 - Radosław Włodkowski, www.wlodkowski.net, radoslaw@wlodkowski.net
  *
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktor.plugins.projekktorControlbar = (function () {
+(function (window, document, $, $p) {
+    'use strict';
 
-    "use strict";
+    if($p === undefined || !$p.hasOwnProperty('plugins')){
+        throw new Error('Projekktor player not found. Please initialize Projekktor before adding any plugins.');
+    }
 
     function projekktorControlbar() {}
 
     projekktorControlbar.prototype = {
 
-        version: '1.2.1',
-        reqVer: '1.7.0',
+        version: '1.2.2',
+        reqVer: '1.8.0',
         
         _cTimer: null,
         _lastPos: -1,
@@ -1440,5 +1443,5 @@ window.projekktor.plugins.projekktorControlbar = (function () {
         }
     };
 
-    return projekktorControlbar;
-}());
+    $p.plugins.projekktorControlbar = projekktorControlbar;
+}(window, document, jQuery, projekktor));
