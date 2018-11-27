@@ -100,8 +100,7 @@ platformsConfig: {
                 debug: false,
                 fastSwitchEnabled: true,
                 limitBitrateByPortal: true,
-                usePixelRatioInLimitBitrateByPortal: true,
-                enableBufferOccupancyABR: true
+                usePixelRatioInLimitBitrateByPortal: true
             }
         }
     },

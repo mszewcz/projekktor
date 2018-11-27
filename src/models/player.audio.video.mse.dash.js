@@ -188,9 +188,6 @@
                         case 'usePixelRatioInLimitBitrateByPortal':
                             ref._dashjs.setUsePixelRatioInLimitBitrateByPortal(configVal);
                             break;
-                        case 'enableBufferOccupancyABR':
-                            ref._dashjs.enableBufferOccupancyABR(configVal);
-                            break;
                     }
                 } catch (error) {
                     $p.utils.log("DASHJS config setting failed on: ", configKey, configVal, error);
