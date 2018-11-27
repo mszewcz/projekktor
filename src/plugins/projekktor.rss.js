@@ -4,17 +4,20 @@
  * under GNU General Public License
  * http://www.projekktor.com/license/
  */
-window.projekktor.plugins.projekktorRSS = (function () {
+(function (window, document, $, $p) {
+    'use strict';
 
-    "use strict";
+    if($p === undefined || !$p.hasOwnProperty('plugins')){
+        throw new Error('Projekktor player not found. Please initialize Projekktor before adding any plugins.');
+    }
 
-    function projekktorPluginInterface() {}
+    function projekktorRSS() {}
 
     projekktorRSS.prototype = {
 
         parserId: 'RSS',
-        version: '1.0.1',
-        reqVer: '1.7.0',
+        version: '1.0.2',
+        reqVer: '1.8.0',
 
         initialize: function () {
             this.pluginReady = true;
@@ -41,8 +44,7 @@ window.projekktor.plugins.projekktorRSS = (function () {
         },
 
         parse: function (xmlDocument) {
-            var result = {},
-                itm = 0;
+            var result = {};
 
             result.playlist = [];
 
@@ -66,5 +68,5 @@ window.projekktor.plugins.projekktorRSS = (function () {
         }
     };
 
-    return projekktorRSS;
-}());
+    $p.plugins.projekktorRSS = projekktorRSS;
+}(window, document, jQuery, projekktor));

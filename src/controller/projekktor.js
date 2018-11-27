@@ -918,22 +918,25 @@ window.projekktor = window.$p = (function (window, document, $) {
 
             var plugins = $.merge($.merge([], this.config._plugins), this.config._addplugins),
                 pluginName = '',
-                pluginObj = null;
+                pluginNamePrefix = 'projekktor',
+                pluginObj = null,
+                availablePlugins = $p.plugins,
+                i;
 
             // nothing to do
             if (this._plugins.length > 0 || plugins.length === 0) {
                 return;
             }
 
-            for (var i = 0; i < plugins.length; i++) {
-                pluginName = "projekktor" + plugins[i].charAt(0).toUpperCase() + plugins[i].slice(1);
+            for (i = 0; i < plugins.length; i++) {
+                pluginName = pluginNamePrefix + plugins[i].charAt(0).toUpperCase() + plugins[i].slice(1);
 
-                if (typeof window.projekktor.plugins[pluginName] !== 'function') {
-                    alert("Projekktor Error: Plugin '" + plugins[i] + "' malicious or not available.");
+                if (typeof availablePlugins[pluginName] !== 'function') {
+                    $p.utils.log("Projekktor Error: Plugin '" + plugins[i] + "' malicious or not available.");
                     continue;
                 }
 
-                pluginObj = $.extend(true, {}, new projekktorPluginInterface(), window.projekktor.plugins[pluginName].prototype);
+                pluginObj = $.extend(true, {}, new projekktorPluginInterface(), availablePlugins[pluginName].prototype);
                 pluginObj.name = plugins[i].toLowerCase();
                 pluginObj.pp = this;
                 pluginObj.playerDom = this.env.playerDom;
