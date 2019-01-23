@@ -2927,7 +2927,7 @@ window.projekktor = window.$p = (function (window, document, $) {
             switch (apiType) {
                 case 'full':
                     fsElement = document;
-                    fsElement[fsExitFunctionName]();
+                    this.getIsFullscreen() ? fsElement[fsExitFunctionName]() : null;
                     result = true;
                     break;
 
