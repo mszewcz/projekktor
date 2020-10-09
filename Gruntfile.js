@@ -37,7 +37,7 @@ module.exports = function (grunt) {
   dest = dest + name + "/";
   grunt.file.mkdir(dest);
 
-  grunt.initConfig({
+  grunt.config.init({
     pkg: pkg,
     dst: readOptionalJSON("dist/.destination.json"),
     compare_size: {
@@ -55,7 +55,7 @@ module.exports = function (grunt) {
       all: {
         dest: "dist/projekktor-" + version + ".js",
         src: [
-          "node_modules/core-js/client/shim.js",
+          "src/core-js.js",
           "src/controller/projekktor.js",
           "src/controller/projekktor.config.version.js",
           "src/controller/projekktor.config.js",
