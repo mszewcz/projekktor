@@ -75,7 +75,7 @@ var playerModel = (function(window, document, $, $p){
             this.sendUpdate('modelReady');
             this._isReady = true;
             if (!this._ap) {
-                this.displayItem(false);
+                this.displayItem(true);
             }
             else {
                 this.displayReady();
