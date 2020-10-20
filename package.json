@@ -2,7 +2,7 @@
   "name": "projekktor",
   "title": "Projekktor",
   "description": "Video (and audio) player for the web, written in JavaScript",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "homepage": "http://www.projekktor.com",
   "author": {
     "name": "Sascha Kluger, Spinning Airwhale Media",
