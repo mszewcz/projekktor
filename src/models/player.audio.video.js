@@ -244,12 +244,12 @@ $p.newModel({
     },
 
     _ended: function() {
-        var ref = this;
-        console.log('this', this);
-        console.log('this.mediaElement', this.mediaElement);
-        console.log('ref.mediaElement', ref.mediaElement);
-
         clearTimeout(this.endedTimeout);
+
+        if (!this.mediaElement) {
+            this.emptiedListener(this);
+            return;
+        }
 
         var dur = this.mediaElement[0].duration, // strange android behavior workaround
             complete = (Math.round(this.media.position) === Math.round(dur)),
