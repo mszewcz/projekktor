@@ -244,6 +244,11 @@ $p.newModel({
     },
 
     _ended: function() {
+        var ref = this;
+        console.log('this', this);
+        console.log('this.mediaElement', this.mediaElement);
+        console.log('ref.mediaElement', ref.mediaElement);
+
         clearTimeout(this.endedTimeout);
 
         var dur = this.mediaElement[0].duration, // strange android behavior workaround
