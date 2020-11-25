@@ -2297,7 +2297,7 @@ var sample_aes_SampleAesDecrypter = /*#__PURE__*/function () {
 
         var curUnit = curUnits[unitIndex];
 
-        if (curUnit.length <= 48 || curUnit.type !== 1 && curUnit.type !== 5) {
+        if (curUnit.data.length <= 48 || curUnit.type !== 1 && curUnit.type !== 5) {
           continue;
         }
 
@@ -4339,13 +4339,13 @@ var mp4_remuxer_MP4Remuxer = /*#__PURE__*/function () {
       if (delta < -4294967296) {
         // 2^32, see PTSNormalize for reasoning, but we're hitting a rollover here, and we don't want that to impact the timeOffset calculation
         rolloverDetected = true;
-        return minPTS;
+        return PTSNormalize(minPTS, sample.pts);
       } else if (delta > 0) {
         return minPTS;
       } else {
         return sample.pts;
       }
-    }, PTSNormalize(videoSamples[0].pts, 0));
+    }, videoSamples[0].pts);
 
     if (rolloverDetected) {
       logger["logger"].debug('PTS rollover detected');
@@ -4372,7 +4372,7 @@ var mp4_remuxer_MP4Remuxer = /*#__PURE__*/function () {
         // when providing timeOffset to remuxAudio / remuxVideo. if we don't do that, there might be a permanent / small
         // drift between audio and video streams
         var startPTS = this.getVideoStartPts(videoTrack.samples);
-        var tsDelta = PTSNormalize(audioTrack.samples[0].pts, 0) - startPTS;
+        var tsDelta = PTSNormalize(audioTrack.samples[0].pts, startPTS) - startPTS;
         var audiovideoTimestampDelta = tsDelta / videoTrack.inputTimeScale;
         audioTimeOffset += Math.max(0, audiovideoTimestampDelta);
         videoTimeOffset += Math.max(0, -audiovideoTimestampDelta);
@@ -4501,7 +4501,7 @@ var mp4_remuxer_MP4Remuxer = /*#__PURE__*/function () {
       if (computePTSDTS) {
         var startPTS = this.getVideoStartPts(videoSamples);
         var startOffset = Math.round(inputTimeScale * timeOffset);
-        initDTS = Math.min(initDTS, PTSNormalize(videoSamples[0].dts, 0) - startOffset);
+        initDTS = Math.min(initDTS, PTSNormalize(videoSamples[0].dts, startPTS) - startOffset);
         initPTS = Math.min(initPTS, startPTS - startOffset);
         this.observer.trigger(events["default"].INIT_PTS_FOUND, {
           initPTS: initPTS
@@ -11311,7 +11311,7 @@ var stream_controller_StreamController = /*#__PURE__*/function (_BaseStreamContr
     var sliding = 0;
     logger["logger"].log("level " + newLevelId + " loaded [" + newDetails.startSN + "," + newDetails.endSN + "],duration:" + duration);
 
-    if (newDetails.live) {
+    if (newDetails.live || curLevel.details && curLevel.details.live) {
       var curDetails = curLevel.details;
 
       if (curDetails && newDetails.fragments.length > 0) {
@@ -14904,7 +14904,7 @@ var hls_Hls = /*#__PURE__*/function (_Observer) {
      * @type {string}
      */
     get: function get() {
-      return "0.14.14";
+      return "0.14.16";
     }
   }, {
     key: "Events",
