@@ -55,7 +55,6 @@ module.exports = function (grunt) {
       all: {
         dest: "dist/projekktor-" + version + ".js",
         src: [
-          "src/core-js.js",
           "src/controller/projekktor.js",
           "src/controller/projekktor.config.version.js",
           "src/controller/projekktor.config.js",
