@@ -1,11 +1,9 @@
-var projekktorConfig = (function (window, document, $, $p){
+var projekktorConfig = (function (window, document, $, $p) {
+  "use strict";
 
-    "use strict";
+  function projekktorConfig() {
+    this._version = "1.9.7";
+  }
 
-function projekktorConfig() {
-    this._version = "1.8.5";
-}
-
-return projekktorConfig;
-
-}(window, document, jQuery, projekktor));
+  return projekktorConfig;
+})(window, document, jQuery, projekktor);
