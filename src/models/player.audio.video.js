@@ -246,6 +246,11 @@ $p.newModel({
     _ended: function() {
         clearTimeout(this.endedTimeout);
 
+        if (!this.mediaElement) {
+            this.emptiedListener(this);
+            return;
+        }
+
         var dur = this.mediaElement[0].duration, // strange android behavior workaround
             complete = (Math.round(this.media.position) === Math.round(dur)),
             fixedEnd = ( (dur-this.media.maxpos) < 2 ) && (this.media.position===0) || false;

@@ -3,7 +3,7 @@ var projekktorConfig = (function (window, document, $, $p){
     "use strict";
 
 function projekktorConfig() {
-    this._version = "1.8.2";
+    this._version = "1.8.5";
 }
 
 return projekktorConfig;
